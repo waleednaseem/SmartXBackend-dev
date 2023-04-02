@@ -11,26 +11,26 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Refferal.belongsTo(models.User, {
+      Refferal.belongsTo(models.Profile, {
         foreignKey: 'refferal',
         id: 'id',
         as:'directReff',
         onDelete: 'CASCADE',
       });
-      Refferal.belongsTo(models.User, {
+      Refferal.belongsTo(models.Profile, {
         foreignKey: 'user_id',
         id: 'id',
         as:'ReffUsers',
         onDelete: 'CASCADE',
       });
-      Refferal.belongsTo(models.User,{
+      Refferal.belongsTo(models.Profile,{
         foreignKey:'placement_id',
         id:'id',
         as:'placement',
         onDelete: 'CASCADE',
       })
       
-      Refferal.belongsTo(models.User,{
+      Refferal.belongsTo(models.Profile,{
         foreignKey:'level_id',
         id:'id',
         as:'level',

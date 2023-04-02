@@ -18,12 +18,14 @@ App.use(bodyparser.urlencoded({ extended: false }))
 App.use(bodyparser.json())
 
 
-App.post('/signup', ctrl.makeUser)
+App.get('/admin', ctrl.ADMIN)
+App.post('/register', ctrl.Register)
 App.post('/login', ctrl.Login)
-App.post('/userDetail',ctrl.userDetail)
+App.post('/profile', ctrl.makeProfile)
+// App.get('/userDetail',ctrl.userDetail)
 App.post('/refferals',ctrl.refferals)
 
-App.post('/placement',ctrl.placementInvest)
+App.post('/upgrade',ctrl.placementInvest)
 
 App.post('/levels',ctrl.levelFromTable)
 
@@ -33,16 +35,14 @@ App.get('/trenduser/:userId',ctrl.getUserByTrend)
 
 //payments
 
-App.post('/wallet',ctrl.wallets)
-App.post('/upgrade',ctrl.UserUpgrade)
+App.get('/wallet',ctrl.wallets)
+// App.post('/upgrade',ctrl.Placements)
 
 //payments end 
 
 // small api for find pakages and transaction 
-App.get('/find', ctrl.FIndUser)
-App.post('/finduserpakage', ctrl.FindUserPakage)
-// App.post('/finduserpakage', ctrl.findTransac)
-// small api for find pakages and transaction finish 
+App.get('/finduserdetail', ctrl.FIndUserDetail)
+App.get('/finduserpakage', ctrl.FindUserPakage)
 
 //decode
 App.post('/decode', ctrl.decode)

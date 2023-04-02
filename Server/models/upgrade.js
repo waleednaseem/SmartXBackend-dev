@@ -11,11 +11,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Upgrade.belongsTo(models.Profile,{
+        foreignKey:'profile_id',
+        id:'id'
+      })
     }
   }
   Upgrade.init({
-    pkg: DataTypes.INTEGER,
-    user_id: DataTypes.INTEGER
+    upgrade: DataTypes.INTEGER,
+    user_id: DataTypes.INTEGER,
+    profile_id: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'Upgrade',
