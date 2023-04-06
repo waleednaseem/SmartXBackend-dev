@@ -919,123 +919,161 @@ const placementInvest = async (req, res) => {
 
   const userx = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(userx)
-  const Selected = await Profile.findOne({ where: { user_id: user_info.id } })
+  const Selected = await Profile.findOne({ where: { user_id: 5 } })
 
-  if (Selected.pkg == pakage_prices1) {
-    let placements = [];
-    let placement = await Profile.findOne({
+  let placements = [];
+  let placement = await Profile.findOne({
 
-      // attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
-      where: {
-        [Sequelize.Op.or]: [{ left: Selected.user_id, pkg: pakage_prices1 }, { right: Selected.user_id, pkg: pakage_prices1 }],
-      },
-      include: [{ model: Pakage, attributes: ['pkg_name', 'pkg_price'] }],
-      include: [{ model: Upgrade }]
+    // attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
+    where: {
+      [Sequelize.Op.or]: [{ left: Selected.user_id, pkg: pakage_prices1 }, { right: Selected.user_id, pkg: pakage_prices1 }],
+    },
+    include: [{ model: Pakage, attributes: ['pkg_name', 'pkg_price'] }],
+    include: [{ model: Upgrade }]
 
-    })
-    if (!placement) {
-      null
-    } else {
-      placements.push(placement);
-    }
-
-    for (let i = 2; i <= 8; i++) {
-      if (!placement) {
-        break;
-      }
-      placement = await Profile.findOne({
-        // attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
-        where: {
-          [Sequelize.Op.or]: [{ left: placement.id, pkg: pakage_prices1 }, { right: placement.id, pkg: pakage_prices1 }]
-        }, include: [{ model: Pakage, attributes: ['pkg_name', 'pkg_price'] }],
-        include: [{ model: Upgrade }]
-      })
-      if (!placement) {
-        null
-      } else {
-        placements.push(placement);
-      }
-    }
-    res.status(200).json({
-      placements: placements
-    });
-  } else if (Selected.pkg == pakage_prices2) {
-    let placements = [];
-    let placement = await Profile.findOne({
-
-      // attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
-      where: {
-        [Sequelize.Op.or]: [{ left: Selected.user_id, pkg: pakage_prices2 }, { right: Selected.user_id, pkg: pakage_prices2 }],
-      },
-      include: [{ model: Pakage, attributes: ['pkg_name', 'pkg_price'] }],
-      include: [{ model: Upgrade }]
-
-    })
-    if (!placement) {
-      null
-    } else {
-      placements.push(placement);
-    }
-
-    for (let i = 2; i <= 8; i++) {
-      if (!placement) {
-        break;
-      }
-      placement = await Profile.findOne({
-        // attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
-        where: {
-          [Sequelize.Op.or]: [{ left: placement.id, pkg: pakage_prices2 }, { right: placement.id, pkg: pakage_prices2 }]
-        }, include: [{ model: Pakage, attributes: ['pkg_name', 'pkg_price'] }],
-        include: [{ model: Upgrade }]
-      })
-      if (!placement) {
-        null
-      } else {
-        placements.push(placement);
-      }
-    }
-    res.status(200).json({
-      placements: placements
-    });
-  } else if (Selected.pkg == pakage_prices3) {
-    let placements = [];
-    let placement = await Profile.findOne({
-
-      // attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
-      where: {
-        [Sequelize.Op.or]: [{ left: Selected.user_id, pkg: pakage_prices3 }, { right: Selected.user_id, pkg: pakage_prices3 }],
-      },
-      include: [{ model: Pakage, attributes: ['pkg_name', 'pkg_price'] }],
-      include: [{ model: Upgrade }]
-
-    })
-    if (!placement) {
-      null
-    } else {
-      placements.push(placement);
-    }
-
-    for (let i = 2; i <= 8; i++) {
-      if (!placement) {
-        break;
-      }
-      placement = await Profile.findOne({
-        // attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
-        where: {
-          [Sequelize.Op.or]: [{ left: placement.id, pkg: pakage_prices3 }, { right: placement.id, pkg: pakage_prices3 }]
-        }, include: [{ model: Pakage, attributes: ['pkg_name', 'pkg_price'] }],
-        include: [{ model: Upgrade }]
-      })
-      if (!placement) {
-        null
-      } else {
-        placements.push(placement);
-      }
-    }
-    res.status(200).json({
-      placements: placements
-    });
+  })
+  if (!placement) {
+    null
+  } else {
+    placements.push(placement);
   }
+
+  for (let i = 2; i <= 8; i++) {
+    if (!placement) {
+      break;
+    }
+    placement = await Profile.findOne({
+      // attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
+      where: {
+        [Sequelize.Op.or]: [{ left: placement.id, pkg: pakage_prices1 }, { right: placement.id, pkg: pakage_prices1 }]
+      }, include: [{ model: Pakage, attributes: ['pkg_name', 'pkg_price'] }],
+      include: [{ model: Upgrade }]
+    })
+    if (!placement) {
+      null
+    } else {
+      placements.push(placement);
+    }
+  }
+  res.status(200).json({
+    placements: placements
+  });
+
+  // if (Selected.pkg == pakage_prices1) {
+  //   let placements = [];
+  //   let placement = await Profile.findOne({
+
+  //     // attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
+  //     where: {
+  //       [Sequelize.Op.or]: [{ left: Selected.user_id, pkg: pakage_prices1 }, { right: Selected.user_id, pkg: pakage_prices1 }],
+  //     },
+  //     include: [{ model: Pakage, attributes: ['pkg_name', 'pkg_price'] }],
+  //     include: [{ model: Upgrade }]
+
+  //   })
+  //   if (!placement) {
+  //     null
+  //   } else {
+  //     placements.push(placement);
+  //   }
+
+  //   for (let i = 2; i <= 8; i++) {
+  //     if (!placement) {
+  //       break;
+  //     }
+  //     placement = await Profile.findOne({
+  //       // attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
+  //       where: {
+  //         [Sequelize.Op.or]: [{ left: placement.id, pkg: pakage_prices1 }, { right: placement.id, pkg: pakage_prices1 }]
+  //       }, include: [{ model: Pakage, attributes: ['pkg_name', 'pkg_price'] }],
+  //       include: [{ model: Upgrade }]
+  //     })
+  //     if (!placement) {
+  //       null
+  //     } else {
+  //       placements.push(placement);
+  //     }
+  //   }
+  //   res.status(200).json({
+  //     placements: placements
+  //   });
+  // } else if (Selected.pkg == pakage_prices2) {
+  //   let placements = [];
+  //   let placement = await Profile.findOne({
+
+  //     // attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
+  //     where: {
+  //       [Sequelize.Op.or]: [{ left: Selected.user_id, pkg: pakage_prices2 }, { right: Selected.user_id, pkg: pakage_prices2 }],
+  //     },
+  //     include: [{ model: Pakage, attributes: ['pkg_name', 'pkg_price'] }],
+  //     include: [{ model: Upgrade }]
+
+  //   })
+  //   if (!placement) {
+  //     null
+  //   } else {
+  //     placements.push(placement);
+  //   }
+
+  //   for (let i = 2; i <= 8; i++) {
+  //     if (!placement) {
+  //       break;
+  //     }
+  //     placement = await Profile.findOne({
+  //       // attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
+  //       where: {
+  //         [Sequelize.Op.or]: [{ left: placement.id, pkg: pakage_prices2 }, { right: placement.id, pkg: pakage_prices2 }]
+  //       }, include: [{ model: Pakage, attributes: ['pkg_name', 'pkg_price'] }],
+  //       include: [{ model: Upgrade }]
+  //     })
+  //     if (!placement) {
+  //       null
+  //     } else {
+  //       placements.push(placement);
+  //     }
+  //   }
+  //   res.status(200).json({
+  //     placements: placements
+  //   });
+  // } else if (Selected.pkg == pakage_prices3) {
+  //   let placements = [];
+  //   let placement = await Profile.findOne({
+
+  //     // attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
+  //     where: {
+  //       [Sequelize.Op.or]: [{ left: Selected.user_id, pkg: pakage_prices3 }, { right: Selected.user_id, pkg: pakage_prices3 }],
+  //     },
+  //     include: [{ model: Pakage, attributes: ['pkg_name', 'pkg_price'] }],
+  //     include: [{ model: Upgrade }]
+
+  //   })
+  //   if (!placement) {
+  //     null
+  //   } else {
+  //     placements.push(placement);
+  //   }
+
+  //   for (let i = 2; i <= 8; i++) {
+  //     if (!placement) {
+  //       break;
+  //     }
+  //     placement = await Profile.findOne({
+  //       // attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
+  //       where: {
+  //         [Sequelize.Op.or]: [{ left: placement.id, pkg: pakage_prices3 }, { right: placement.id, pkg: pakage_prices3 }]
+  //       }, include: [{ model: Pakage, attributes: ['pkg_name', 'pkg_price'] }],
+  //       include: [{ model: Upgrade }]
+  //     })
+  //     if (!placement) {
+  //       null
+  //     } else {
+  //       placements.push(placement);
+  //     }
+  //   }
+  //   res.status(200).json({
+  //     placements: placements
+  //   });
+  // }
 }
 // ----------------- TREND START
 const ShowReff = async (req, res) => {
