@@ -171,7 +171,8 @@ const makeProfile = async (req, res) => {
 
     if (findRight3000) {
       // xx-------------------xx------------------------------xx---------------------xxx
-      const usermake = await Profile.create({
+      
+      const usermake= await Profile.create({
         email: req.body.email,
         phone: req.body.phone,
         refferal: req.body.refferal,
@@ -182,7 +183,7 @@ const makeProfile = async (req, res) => {
 
       await Profile.update(
         {
-          right: usermake.id,
+          right: user_info.id,
         },
         {
           where: {
@@ -192,7 +193,7 @@ const makeProfile = async (req, res) => {
       );
       await Upgrade.create({
         user_id: user_info.id,
-        profile_id: usermake.id,
+        profile_id: user_info.id,
         upgrade: 0,
       });
 
@@ -224,7 +225,7 @@ const makeProfile = async (req, res) => {
           { where: { user_id: adminkWallets1.user_id } }
         ); // 10% for admin
         await Transaction.create({
-          from: usermake.id,
+          from: user_info.id,
           to: 1,
           reason: "commision with tax for admin",
           payment: 3000,
@@ -240,7 +241,7 @@ const makeProfile = async (req, res) => {
           { where: { user_id: ReffkWallets1.user_id } }
         ); // 90% for user
         await Transaction.create({
-          from: usermake.id,
+          from: user_info.id,
           to: 1,
           reason: "tax for admin",
           payment: 300,
@@ -281,7 +282,7 @@ const makeProfile = async (req, res) => {
 
         await Profile.update(
           {
-            left: usermake.id,
+            left: user_info.id,
           },
           {
             where: {
@@ -291,7 +292,7 @@ const makeProfile = async (req, res) => {
         );
         await Upgrade.create({
           user_id: user_info.id,
-          profile_id: usermake.id,
+          profile_id: user_info.id,
           upgrade: 0,
         });
         await Refferal.create({
@@ -373,7 +374,7 @@ const makeProfile = async (req, res) => {
         });
         Upgrade.create({
           user_id: user_info.id,
-          profile_id: usermake.id,
+          profile_id: user_info.id,
           upgrade: 0,
         });
 
@@ -391,7 +392,7 @@ const makeProfile = async (req, res) => {
             { where: { user_id: adminkWallets1.user_id } }
           ); // 10% for admin
           await Transaction.create({
-            from: usermake.id,
+            from: user_info.id,
             to: 1,
             reason: "commision with tax for admin",
             payment: 3000,
@@ -407,7 +408,7 @@ const makeProfile = async (req, res) => {
             { where: { user_id: ReffkWallets1.user_id } }
           ); // 90% for user
           await Transaction.create({
-            from: usermake.id,
+            from: user_info.id,
             to: 1,
             reason: "tax for admin",
             payment: 300,
@@ -448,7 +449,7 @@ const makeProfile = async (req, res) => {
 
       await Profile.update(
         {
-          right: usermake.id,
+          right: user_info.id,
         },
         {
           where: {
@@ -458,7 +459,7 @@ const makeProfile = async (req, res) => {
       );
       await Upgrade.create({
         user_id: user_info.id,
-        profile_id: usermake.id,
+        profile_id: user_info.id,
         upgrade: 0,
       });
       await Refferal.create({
@@ -545,12 +546,12 @@ const makeProfile = async (req, res) => {
         });
         await Upgrade.create({
           user_id: user_info.id,
-          profile_id: usermake.id,
+          profile_id: user_info.id,
           upgrade: 0,
         });
         await Profile.update(
           {
-            left: usermake.id,
+            left: user_info.id,
           },
           {
             where: {
@@ -627,13 +628,13 @@ const makeProfile = async (req, res) => {
           user_id: user_info.id,
         });
         await Pakage.create({
-          user_id: usermake.id,
+          user_id: user_info.id,
           pkg_price: req.body.pkg_price,
           pkg_name: req.body.pkg_name,
         });
         await Upgrade.create({
           user_id: user_info.id,
-          profile_id: usermake.id,
+          profile_id: user_info.id,
           upgrade: 0,
         });
         await Transaction.create({
@@ -700,7 +701,7 @@ const makeProfile = async (req, res) => {
 
       await Profile.update(
         {
-          right: usermake.id,
+          right: user_info.id,
         },
         {
           where: {
@@ -710,7 +711,7 @@ const makeProfile = async (req, res) => {
       );
       await Upgrade.create({
         user_id: user_info.id,
-        profile_id: usermake.id,
+        profile_id: user_info.id,
         upgrade: 0,
       });
       await Refferal.create({
@@ -796,7 +797,7 @@ const makeProfile = async (req, res) => {
 
         await Profile.update(
           {
-            left: usermake.id,
+            left: user_info.id,
           },
           {
             where: {
@@ -812,7 +813,7 @@ const makeProfile = async (req, res) => {
         });
         await Upgrade.create({
           user_id: user_info.id,
-          profile_id: usermake.id,
+          profile_id: user_info.id,
           upgrade: 0,
         });
         const DirectReff = await Profile.findOne({
@@ -890,7 +891,7 @@ const makeProfile = async (req, res) => {
         });
         await Upgrade.create({
           user_id: user_info.id,
-          profile_id: usermake.id,
+          profile_id: user_info.id,
           upgrade: 0,
         });
         await wallet.create({
@@ -1142,8 +1143,8 @@ const placementInvest = async (req, res) => {
     include: [{ model: Pakage, attributes: ["pkg_name", "pkg_price"] }],
     include: [{ model: Upgrade }],
   });
-  // if (placement && placement.Upgrade.upgrade >= 100) {
-  if (placement ) {
+  if (placement && placement.Upgrade.upgrade >= 100) {
+  // if (placement ) {
     placements.push(placement);
   }
 
@@ -1154,22 +1155,28 @@ const placementInvest = async (req, res) => {
     placement = await Profile.findOne({
       where: {
         [Sequelize.Op.or]: [
-          { left: placement.id, pkg: pakage_prices1 },
-          { right: placement.id, pkg: pakage_prices1 },
+          { left: placement.user_id, pkg: pakage_prices1 },
+          { right: placement.user_id, pkg: pakage_prices1 },
         ],
       },
       include: [{ model: Pakage, attributes: ["pkg_name", "pkg_price"] }],
       include: [{ model: Upgrade }],
     });
-    // if (placement && placement.Upgrade.upgrade >= 100) {
-    if (placement ) {
+    if (placement && placement.Upgrade.upgrade >= 100) {
+    // if (placement ) {
       placements.push(placement);
     }
   }
+  
+  if (placements[0] == null) {
+    res.json('admin ko jaye ga sab');
+  } else {
 
-  res.status(200).json({
-    placements: placements,
-  });
+    res.status(200).json({
+      placements: `${placements[0].id} ko 50 % jaye `,
+      placementMember: placements,
+    });
+  }
 
   // if (Selected.pkg == pakage_prices1) {
   //   const userx = req.headers.authorization.split(" ")[1];
