@@ -29,6 +29,12 @@ module.exports = (sequelize, DataTypes) => {
         as:'placement',
         onDelete: 'CASCADE',
       })
+      Refferal.belongsTo(models.Profile,{
+        foreignKey:'user_id',
+        sourceKey: 'left',
+        as:'leftUser',
+        onDelete: 'CASCADE',
+      })
       
       Refferal.belongsTo(models.Profile,{
         foreignKey:'level_id',

@@ -20,6 +20,15 @@ const pakage_prices1 = 3000;
 const pakage_prices2 = 5000;
 const pakage_prices3 = 10000;
 
+const level_1=100
+const level_2=200
+const level_3=300
+const level_4=400
+const level_5=500
+const level_6=600
+const level_7=700
+const level_8=800
+
 // const user = req.headers.authorization.split(' ')[1]
 //   const user_info = jwt_decode(user)
 
@@ -171,12 +180,12 @@ const makeProfile = async (req, res) => {
 
     if (findRight3000) {
       // xx-------------------xx------------------------------xx---------------------xxx
-      
-      const usermake= await Profile.create({
+
+      const usermake = await Profile.create({
         email: req.body.email,
         phone: req.body.phone,
         refferal: req.body.refferal,
-        level: findRight3000.level + 1,
+        // level: findRight3000.level + 1,
         pkg: pakage_prices1,
         user_id: user_info.id,
       });
@@ -198,7 +207,7 @@ const makeProfile = async (req, res) => {
       });
 
       await Refferal.create({
-        level_id: usermake.level,
+        // level_id: usermake.level,
         placement_id: findRight3000.id,
         refferal: req.body.refferal,
         user_id: user_info.id,
@@ -275,7 +284,7 @@ const makeProfile = async (req, res) => {
           email: req.body.email,
           phone: req.body.phone,
           refferal: req.body.refferal,
-          level: findLeft3000.level + 1,
+          // level: findLeft3000.level + 1,
           pkg: pakage_prices1,
           user_id: user_info.id,
         });
@@ -296,7 +305,7 @@ const makeProfile = async (req, res) => {
           upgrade: 0,
         });
         await Refferal.create({
-          level_id: usermake.level,
+          // level_id: usermake.level,
           placement_id: findLeft3000.id,
           refferal: req.body.refferal,
           user_id: user_info.id,
@@ -363,7 +372,7 @@ const makeProfile = async (req, res) => {
         const usermake = await Profile.create({
           email: req.body.email,
           phone: req.body.phone,
-          level: 0,
+          // level: 0,
           pkg: pakage_prices1,
           user_id: user_info.id,
         });
@@ -442,7 +451,7 @@ const makeProfile = async (req, res) => {
         email: req.body.email,
         phone: req.body.phone,
         refferal: req.body.refferal,
-        level: findRight5000.level + 1,
+        // level: findRight5000.level + 1,
         pkg: pakage_prices2,
         user_id: user_info.id,
       });
@@ -463,7 +472,7 @@ const makeProfile = async (req, res) => {
         upgrade: 0,
       });
       await Refferal.create({
-        level_id: usermake.level,
+        // level_id: usermake.level,
         placement_id: findRight5000.id,
         refferal: req.body.refferal,
         user_id: user_info.id,
@@ -481,8 +490,7 @@ const makeProfile = async (req, res) => {
       const ReffkWallets1 = await wallet.findOne({
         where: { user_id: req.body.refferal },
       });
-      // await wallet.update({ payment: adminkWallets1.payment + 500 }, { where: { user_id: 1 } }) // 10% for admin
-      // await wallet.update({ payment: ReffkWallets1.payment + 4500 }, { where: { user_id: ReffkWallets1.user_id } }) // 90% for user
+      
       if (req.body.refferal == 1) {
         await wallet.update(
           { payment: adminkWallets1.payment + 5000 },
@@ -540,7 +548,7 @@ const makeProfile = async (req, res) => {
           email: req.body.email,
           phone: req.body.phone,
           refferal: req.body.refferal,
-          level: findLeft5000.level + 1,
+          // level: findLeft5000.level + 1,
           pkg: pakage_prices2,
           user_id: user_info.id,
         });
@@ -560,7 +568,7 @@ const makeProfile = async (req, res) => {
           }
         );
         await Refferal.create({
-          level_id: usermake.level,
+          // level_id: usermake.level,
           placement_id: findLeft5000.id,
           refferal: req.body.refferal,
           user_id: user_info.id,
@@ -595,23 +603,6 @@ const makeProfile = async (req, res) => {
             { where: { user_id: ReffkWallets1.user_id } }
           ); // 90% for user
         }
-        // await wallet.update({ payment: adminkWallets1.payment + 500 }, { where: { user_id: 1 } }) // 10% for admin
-        // await wallet.update({ payment: ReffkWallets1.payment + 4500 }, { where: { user_id: ReffkWallets1.user_id } }) // 90% for user
-        // await Transaction.create({
-        //   from: user_info.id,
-        //   to: 1,
-        //   reason: 'tax for admin',
-        //   payment: 500,
-        //   user_id: 1
-        // })
-
-        // await Transaction.create({
-        //   from: 'meta mask',
-        //   to: user_info.id,
-        //   reason: 'you purchased pakage',
-        //   payment: 4500,
-        //   user_id: user_info.id
-        // })
 
         await wallet.create({
           payment: 0,
@@ -623,7 +614,7 @@ const makeProfile = async (req, res) => {
         const usermake = await Profile.create({
           email: req.body.email,
           phone: req.body.phone,
-          level: 0,
+          // level: 0,
           pkg: pakage_prices2,
           user_id: user_info.id,
         });
@@ -694,7 +685,7 @@ const makeProfile = async (req, res) => {
         email: req.body.email,
         phone: req.body.phone,
         refferal: req.body.refferal,
-        level: findRight10000.level + 1,
+        // level: findRight10000.level + 1,
         pkg: pakage_prices3,
         user_id: user_info.id,
       });
@@ -715,7 +706,7 @@ const makeProfile = async (req, res) => {
         upgrade: 0,
       });
       await Refferal.create({
-        level_id: usermake.level,
+        // level_id: usermake.level,
         placement_id: findRight10000.id,
         refferal: req.body.refferal,
         user_id: user_info.id,
@@ -790,7 +781,7 @@ const makeProfile = async (req, res) => {
           email: req.body.email,
           phone: req.body.phone,
           refferal: req.body.refferal,
-          level: findLeft10000.level + 1,
+          // level: findLeft10000.level + 1,
           pkg: pakage_prices3,
           user_id: user_info.id,
         });
@@ -806,7 +797,7 @@ const makeProfile = async (req, res) => {
           }
         );
         await Refferal.create({
-          level_id: usermake.level,
+          // level_id: usermake.level,
           placement_id: findLeft10000.id,
           refferal: req.body.refferal,
           user_id: user_info.id,
@@ -880,7 +871,7 @@ const makeProfile = async (req, res) => {
         const usermake = await Profile.create({
           email: req.body.email,
           phone: req.body.phone,
-          level: 0,
+          // level: 0,
           pkg: pakage_prices3,
           user_id: user_info.id,
         });
@@ -966,129 +957,138 @@ const showusers = async (req, res) => {
 };
 
 const refferals = async (req, res) => {
-  // const user = await Profile.findAll()
-  const user = await Profile.findAll({
-    where: { id: req.body.id },
-    attributes: ["id", "username", "phone", "email"],
+  const userfind = req.headers.authorization.split(" ")[1];
+  const user_info = jwt_decode(userfind);
+  const user = await Profile.findOne({
+    where: { user_id: user_info.id },
+    attributes: ["id", "phone", "email", "left", "right"],
     include: [
       {
         model: Refferal,
-        attributes: ["id", "placement_id", "level_id", "refferal", "user_id"],
+        as: "left_placement",
+        attributes: ["user_id", "placement_id"],
         include: [
           {
             model: Profile,
-            attributes: ["id", "username", "phone", "email"],
+            as: "ReffUsers",
+            attributes: ["id", "phone", "email", "left", "right"],
             include: [
               {
                 model: Refferal,
-                attributes: [
-                  "id",
-                  "placement_id",
-                  "level_id",
-                  "refferal",
-                  "user_id",
-                ],
+                as: "left_placement",
+                attributes: ["user_id", "placement_id"],
                 include: [
                   {
                     model: Profile,
-                    attributes: ["id", "username", "phone", "email"],
+                    as: "ReffUsers",
+                    attributes: ["id", "phone", "email", "left", "right"],
                     include: [
                       {
                         model: Refferal,
-                        attributes: [
-                          "id",
-                          "placement_id",
-                          "level_id",
-                          "refferal",
-                          "user_id",
-                        ],
+                        as: "left_placement",
+                        attributes: ["user_id", "placement_id"],
                         include: [
                           {
                             model: Profile,
-                            attributes: ["id", "username", "phone", "email"],
+                            as: "ReffUsers",
+                            attributes: [
+                              "id",
+                              "phone",
+                              "email",
+                              "left",
+                              "right",
+                            ],
                             include: [
                               {
                                 model: Refferal,
-                                attributes: [
-                                  "id",
-                                  "placement_id",
-                                  "level_id",
-                                  "refferal",
-                                  "user_id",
-                                ],
+                                as: "left_placement",
+                                attributes: ["user_id", "placement_id"],
                                 include: [
                                   {
                                     model: Profile,
+                                    as: "ReffUsers",
                                     attributes: [
                                       "id",
-                                      "username",
                                       "phone",
                                       "email",
+                                      "left",
+                                      "right",
                                     ],
                                     include: [
                                       {
                                         model: Refferal,
-                                        attributes: [
-                                          "id",
-                                          "placement_id",
-                                          "level_id",
-                                          "refferal",
-                                          "user_id",
-                                        ],
+                                        as: "left_placement",
+                                        attributes: ["user_id", "placement_id"],
                                         include: [
                                           {
                                             model: Profile,
+                                            as: "ReffUsers",
                                             attributes: [
                                               "id",
-                                              "username",
                                               "phone",
                                               "email",
+                                              "left",
+                                              "right",
                                             ],
                                             include: [
                                               {
                                                 model: Refferal,
+                                                as: "left_placement",
                                                 attributes: [
-                                                  "id",
-                                                  "placement_id",
-                                                  "level_id",
-                                                  "refferal",
                                                   "user_id",
+                                                  "placement_id",
                                                 ],
                                                 include: [
                                                   {
                                                     model: Profile,
+                                                    as: "ReffUsers",
                                                     attributes: [
                                                       "id",
-                                                      "username",
                                                       "phone",
                                                       "email",
+                                                      "left",
+                                                      "right",
                                                     ],
                                                     include: [
                                                       {
                                                         model: Refferal,
+                                                        as: "left_placement",
                                                         attributes: [
-                                                          "id",
-                                                          "placement_id",
-                                                          "level_id",
-                                                          "refferal",
                                                           "user_id",
+                                                          "placement_id",
                                                         ],
                                                         include: [
                                                           {
                                                             model: Profile,
+                                                            as: "ReffUsers",
                                                             attributes: [
                                                               "id",
-                                                              "username",
                                                               "phone",
                                                               "email",
+                                                              "left",
+                                                              "right",
                                                             ],
                                                             include: [
                                                               {
                                                                 model: Refferal,
+                                                                as: "left_placement",
+                                                                attributes: [
+                                                                  "user_id",
+                                                                  "placement_id",
+                                                                ],
                                                                 include: [
                                                                   {
                                                                     model:
                                                                       Profile,
+                                                                    as: "ReffUsers",
+                                                                    attributes:
+                                                                      [
+                                                                        "id",
+                                                                        "phone",
+                                                                        "email",
+                                                                        "left",
+                                                                        "right",
+                                                                      ],
                                                                   },
                                                                 ],
                                                               },
@@ -1122,17 +1122,51 @@ const refferals = async (req, res) => {
       },
     ],
   });
-  res.status(200).send(user);
+  const CountLevel = [];
+
+  // countLevels(user, 1);
+  // res.json({ CountLevel: CountLevel });
+
+  // res
+  //   .status(200)
+  //   .send([
+  //     { first: user.left_placement.user_id },
+  //     { second: user.left_placement.ReffUsers.left_placement.user_id },
+  //     {
+  //       third:
+  //         user.left_placement.ReffUsers.left_placement.ReffUsers.left_placement
+  //           .user_id,
+  //     },
+  //     {
+  //       forth:
+  //         user.left_placement.ReffUsers.left_placement.ReffUsers.left_placement
+  //           .ReffUsers.left_placement.user_id,
+  //     },
+  //     // {
+  //     //   fifth:
+  //     //     user.left_placement.ReffUsers.left_placement.ReffUsers.left_placement
+  //     //       .ReffUsers.left_placement.ReffUsers.left_placement.user_id,
+  //     // },
+  //   ]);
 };
 
 const placementInvest = async (req, res) => {
-  const {} = req.body;
+  const {levels} = req.body;
 
   const userx = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(userx);
   const Selected = await Profile.findOne({ where: { user_id: user_info.id } });
 
   let placements = [];
+
+
+  // const Upgradelevel= await Profile.update({where:{user_id:user_info}},{level:levels});
+  // const UpgradeNow= await Upgrade.update({where:{user_id:user_info}},{upgrade:100});
+
+
+
+
+
   let placement = await Profile.findOne({
     where: {
       [Sequelize.Op.or]: [
@@ -1144,7 +1178,7 @@ const placementInvest = async (req, res) => {
     include: [{ model: Upgrade }],
   });
   if (placement && placement.Upgrade.upgrade >= 100) {
-  // if (placement ) {
+  // if (placement) {
     placements.push(placement);
   }
 
@@ -1163,26 +1197,30 @@ const placementInvest = async (req, res) => {
       include: [{ model: Upgrade }],
     });
     if (placement && placement.Upgrade.upgrade >= 100) {
-    // if (placement ) {
+    // if (placement) {
       placements.push(placement);
     }
   }
-  
-  if (placements[0] == null) {
-    res.json('admin ko jaye ga sab');
-  } else {
 
+  if (placements[0] == null) {
+    res.json("admin ko jaye ga sab");
+  } else {
     res.status(200).json({
       placements: `${placements[0].id} ko 50 % jaye `,
       placementMember: placements,
     });
   }
 
-  // if (Selected.pkg == pakage_prices1) {
+
+  // if(UpgradeNow){
+  
+  // }
+
+  // if (UpgradeNow.level == pakage_prices1) {
   //   const userx = req.headers.authorization.split(" ")[1];
   //   const user_info = jwt_decode(userx);
   //   const Selected = await Profile.findOne({ where: { user_id: user_info.id } });
-  
+
   //   let placements = [];
   //   let placement = await Profile.findOne({
   //     where: {
@@ -1197,7 +1235,7 @@ const placementInvest = async (req, res) => {
   //   if (placement && placement.Upgrade.upgrade >= pakage_prices1) {
   //     placements.push(placement);
   //   }
-  
+
   //   for (let i = 2; i <= 8; i++) {
   //     if (!placement) {
   //       break;
@@ -1216,7 +1254,7 @@ const placementInvest = async (req, res) => {
   //       placements.push(placement);
   //     }
   //   }
-  
+
   //   res.status(200).json({
   //     placements: placements,
   //   });
@@ -1224,7 +1262,7 @@ const placementInvest = async (req, res) => {
   //   const userx = req.headers.authorization.split(" ")[1];
   //   const user_info = jwt_decode(userx);
   //   const Selected = await Profile.findOne({ where: { user_id: user_info.id } });
-  
+
   //   let placements = [];
   //   let placement = await Profile.findOne({
   //     where: {
@@ -1239,7 +1277,7 @@ const placementInvest = async (req, res) => {
   //   if (placement && placement.Upgrade.upgrade >= pakage_prices2) {
   //     placements.push(placement);
   //   }
-  
+
   //   for (let i = 2; i <= 8; i++) {
   //     if (!placement) {
   //       break;
@@ -1258,7 +1296,7 @@ const placementInvest = async (req, res) => {
   //       placements.push(placement);
   //     }
   //   }
-  
+
   //   res.status(200).json({
   //     placements: placements,
   //   });
@@ -1266,7 +1304,7 @@ const placementInvest = async (req, res) => {
   //   const userx = req.headers.authorization.split(" ")[1];
   //   const user_info = jwt_decode(userx);
   //   const Selected = await Profile.findOne({ where: { user_id: user_info.id } });
-  
+
   //   let placements = [];
   //   let placement = await Profile.findOne({
   //     where: {
@@ -1281,7 +1319,7 @@ const placementInvest = async (req, res) => {
   //   if (placement && placement.Upgrade.upgrade >= pakage_prices3) {
   //     placements.push(placement);
   //   }
-  
+
   //   for (let i = 2; i <= 8; i++) {
   //     if (!placement) {
   //       break;
@@ -1300,7 +1338,7 @@ const placementInvest = async (req, res) => {
   //       placements.push(placement);
   //     }
   //   }
-  
+
   //   res.status(200).json({
   //     placements: placements,
   //   });
@@ -1351,7 +1389,7 @@ const wallets = async (req, res) => {
   const user_info = jwt_decode(user);
   // const Walletx = await Profile.findOne({
   //   where: { id: user_info.id },
-  //   attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
+  // attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
   //   include: [{
   //     model: wallet,
   //     attributes: ['payment']

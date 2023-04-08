@@ -64,6 +64,12 @@ module.exports = (sequelize, DataTypes) => {
         id:'id',
         onDelete: 'CASCADE',
       })
+      // Profile.hasOne(models.Refferal, {
+      //   foreignKey: 'user_id',
+      //   sourceKey: 'left',
+      //   onDelete: 'CASCADE',
+      //   as: 'left_placement',
+      // });
     }
   }
   Profile.init({
