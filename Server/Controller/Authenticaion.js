@@ -20,14 +20,14 @@ const pakage_prices1 = 3000;
 const pakage_prices2 = 5000;
 const pakage_prices3 = 10000;
 
-const level_1=100
-const level_2=200
-const level_3=300
-const level_4=400
-const level_5=500
-const level_6=600
-const level_7=700
-const level_8=800
+const level_1 = 100;
+const level_2 = 200;
+const level_3 = 300;
+const level_4 = 400;
+const level_5 = 500;
+const level_6 = 600;
+const level_7 = 700;
+const level_8 = 800;
 
 // const user = req.headers.authorization.split(' ')[1]
 //   const user_info = jwt_decode(user)
@@ -490,7 +490,7 @@ const makeProfile = async (req, res) => {
       const ReffkWallets1 = await wallet.findOne({
         where: { user_id: req.body.refferal },
       });
-      
+
       if (req.body.refferal == 1) {
         await wallet.update(
           { payment: adminkWallets1.payment + 5000 },
@@ -1151,7 +1151,7 @@ const refferals = async (req, res) => {
 };
 
 const placementInvest = async (req, res) => {
-  const {levels} = req.body;
+  const { levels } = req.body;
 
   const userx = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(userx);
@@ -1159,13 +1159,12 @@ const placementInvest = async (req, res) => {
 
   let placements = [];
 
-
-  // const Upgradelevel= await Profile.update({where:{user_id:user_info}},{level:levels});
   // const UpgradeNow= await Upgrade.update({where:{user_id:user_info}},{upgrade:100});
+  // const Upgradelevel= await Profile.update({where:{user_id:user_info}},{level:levels});
 
+  // if(Upgradelevel){
 
-
-
+  // }
 
   let placement = await Profile.findOne({
     where: {
@@ -1177,8 +1176,8 @@ const placementInvest = async (req, res) => {
     include: [{ model: Pakage, attributes: ["pkg_name", "pkg_price"] }],
     include: [{ model: Upgrade }],
   });
-  if (placement && placement.Upgrade.upgrade >= 100) {
-  // if (placement) {
+  if (placement && placement.level >= 1) {
+    // if (placement) {
     placements.push(placement);
   }
 
@@ -1196,25 +1195,45 @@ const placementInvest = async (req, res) => {
       include: [{ model: Pakage, attributes: ["pkg_name", "pkg_price"] }],
       include: [{ model: Upgrade }],
     });
-    if (placement && placement.Upgrade.upgrade >= 100) {
-    // if (placement) {
+    if (placement && placement.level >= 1) {
+      // if (placement) {
       placements.push(placement);
     }
   }
 
-  if (placements[0] == null) {
-    res.json("admin ko jaye ga sab");
-  } else {
-    res.status(200).json({
-      placements: `${placements[0].id} ko 50 % jaye `,
-      placementMember: placements,
-    });
+  if(placements[0]?.level == 1){
+    res.json({
+      msg:'found',
+      placement:placements[0]
+    })
+  }else{
+    res.json(`not found`)
   }
 
-
-  // if(UpgradeNow){
-  
+  // if (placements[0]?.level ===2) {
+  //   res.json(placements[0]);
+  // } else if (placements[1]?.level ===2) {
+  //   res.json(placements[1]);
+  // } else if (placements[2]?.level ===2) {
+  //   res.json(placements[2]);
+  // } else if (placements[3]?.level ===2) {
+  //   res.json(placements[3]);
+  // } else if (placements[4]?.level ===2) {
+  //   res.json(placements[4]);
+  // } else if (placements[5]?.level ===2) {
+  //   res.json(placements[5]);
+  // } else if (placements[6]?.level ===2) {
+  //   res.json(placements[6]);
+  // } else if (placements[7]?.level ===2) {
+  //   res.json(placements[7]);
+  // } else {
+  //   res.status(200).json({
+  //     placementMember: placements,
+  //   });
   // }
+  
+  
+
 
   // if (UpgradeNow.level == pakage_prices1) {
   //   const userx = req.headers.authorization.split(" ")[1];
