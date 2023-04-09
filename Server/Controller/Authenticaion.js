@@ -1176,7 +1176,7 @@ const placementInvest = async (req, res) => {
     include: [{ model: Pakage, attributes: ["pkg_name", "pkg_price"] }],
     include: [{ model: Upgrade }],
   });
-  if (placement && placement.level >= 1) {
+  if (placement ) {
     // if (placement) {
     placements.push(placement);
   }
@@ -1195,40 +1195,61 @@ const placementInvest = async (req, res) => {
       include: [{ model: Pakage, attributes: ["pkg_name", "pkg_price"] }],
       include: [{ model: Upgrade }],
     });
-    if (placement && placement.level >= 1) {
+    if (placement ) {
       // if (placement) {
       placements.push(placement);
+      // console.log({msg:'hogya',placement:placements})
     }
   }
+  
 
-  if(placements[0]?.level == 1){
-    res.json({
-      msg:'found',
-      placement:placements[0]
-    })
-  }else{
-    res.json(`not found`)
-  }
+  // 1ST
 
-  // if (placements[0]?.level ===2) {
+// placement if [0] is not equal to 1st level then find [1] if this placement is on 2nd level
+  // if (placements[0]?.level >=1) {
   //   res.json(placements[0]);
-  // } else if (placements[1]?.level ===2) {
+  // } else if (placements[1]?.level >=2) {
   //   res.json(placements[1]);
-  // } else if (placements[2]?.level ===2) {
+  // } else if (placements[2]?.level >=3) {
   //   res.json(placements[2]);
-  // } else if (placements[3]?.level ===2) {
+  // } else if (placements[3]?.level >=4) {
   //   res.json(placements[3]);
-  // } else if (placements[4]?.level ===2) {
+  // } else if (placements[4]?.level >=5) {
   //   res.json(placements[4]);
-  // } else if (placements[5]?.level ===2) {
+  // } else if (placements[5]?.level >=6) {
   //   res.json(placements[5]);
-  // } else if (placements[6]?.level ===2) {
+  // } else if (placements[6]?.level >=7) {
   //   res.json(placements[6]);
-  // } else if (placements[7]?.level ===2) {
+  // } else if (placements[7]?.level >=8) {
   //   res.json(placements[7]);
   // } else {
   //   res.status(200).json({
-  //     placementMember: placements,
+  //     placementMember: null,
+  //   });
+  // }
+
+  // 2nd
+
+  // const check = placements.findOne({where:{level:1}})
+  // if (placements[0]?.level ==1) {
+  //   res.json(placements[0]);
+  // } else if (placements[1]?.level ==1) {
+  //   res.json(placements[1]);
+  // } else if (placements[2]?.level ==1) {
+  //   res.json(placements[2]);
+  // } else if (placements[3]?.level ==1) {
+  //   res.json(placements[3]);
+  // } else if (placements[4]?.level ==1) {
+  //   res.json(placements[4]);
+  // } else if (placements[5]?.level ==1) {
+  //   res.json(placements[5]);
+  // } else if (placements[6]?.level ==1) {
+  //   res.json(placements[6]);
+  // } else if (placements[7]?.level ==1) {
+  //   res.json(placements[7]);
+  // } else {
+  //   res.status(200).json({
+  //     placementMember: null,
   //   });
   // }
   
