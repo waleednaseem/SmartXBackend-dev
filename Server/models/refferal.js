@@ -17,6 +17,12 @@ module.exports = (sequelize, DataTypes) => {
         as:'directReff',
         onDelete: 'CASCADE',
       });
+      Refferal.belongsTo(models.User, {
+        foreignKey: 'refferal',
+        id: 'id',
+        as:'directReffUser',
+        onDelete: 'CASCADE',
+      });
       Refferal.belongsTo(models.Profile, {
         foreignKey: 'user_id',
         id: 'id',
