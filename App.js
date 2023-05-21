@@ -25,7 +25,8 @@ App.post('/profile', ctrl.makeProfile)
 // App.get('/userDetail',ctrl.userDetail)
 App.post('/refferals',ctrl.refferals)
 
-App.post('/upgrade',ctrl.placementInvest)
+App.post('/upgrade',ctrl.Upgrades)
+App.post('/purchase_package',ctrl.placementInvest)
 
 App.post('/levels',ctrl.levelFromTable)
 
