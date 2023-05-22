@@ -12,13 +12,14 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Upgrade.belongsTo(models.Profile,{
-        foreignKey:'profile_id',
+        foreignKey:'user_id',
         id:'id'
       })
     }
   }
   Upgrade.init({
     upgrade: DataTypes.INTEGER,
+    level: DataTypes.INTEGER,
     user_id: DataTypes.INTEGER,
     profile_id: DataTypes.INTEGER,
   }, {

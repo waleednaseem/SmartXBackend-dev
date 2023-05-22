@@ -9,6 +9,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      level: {
+        type: Sequelize.INTEGER
+      },
       upgrade: {
         type: Sequelize.INTEGER
       },
