@@ -1183,7 +1183,7 @@ const refferals = async (req, res) => {
 };
 
 const Upgrades = async (req, res) => {
-  const { levels } = req.body;
+  const { levels, refferal } = req.body;
 
   const Upgrades1 = 10;
   const Upgrades2 = 20;
@@ -1192,15 +1192,31 @@ const Upgrades = async (req, res) => {
   const Upgrades5 = 200;
   const Upgrades6 = 350;
 
+  // const Upgrades4firstlevel=125
+  // const Upgrades4secondlevel=281.25
+  // const Upgrades4thirdlevel=632.813
+
   const userx = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(userx);
   const Selected = await Profile.findOne({
     where: { user_id: user_info.id },
     include: { model: Upgrade }
   });
-  const percentage10 = (pakage_prices1 * 10) / 100;
-  const percentage20 = (pakage_prices1 * 20) / 100;
-  const percentage70 = (pakage_prices1 * 70) / 100;
+  const finfReff = await Profile.findOne({
+    where: { user_id: refferal },
+    include: { model: wallet }
+  });
+  const adminWallet=await Profile.findOne({
+    where: { user_id: 1 },
+    include: { model: wallet }
+  });
+  //   res.json(finfReff.wallet.payment)
+  // return false
+
+  const percentage10 = (Upgrades4 * 10) / 100;
+  const percentage20 = (Upgrades4 * 20) / 100;
+  const percentage70 = (Upgrades4 * 70) / 100;
+
   // Selected.Upgrade.upgrade
   // placements[2].Upgrade.upgrade
 
@@ -1214,8 +1230,11 @@ const Upgrades = async (req, res) => {
         { right: Selected.user_id, pkg: pakage_prices4 },
       ],
     },
-    include: [{ model: Pakage, attributes: ["pkg_name", "pkg_price"] }],
-    include: [{ model: Upgrade }],
+    include: [
+      { model: Pakage, attributes: ["pkg_name", "pkg_price"] },
+      { model: Upgrade },
+      { model: wallet },
+    ],
   });
   if (placement) {
     // if (placement) {
@@ -1233,18 +1252,284 @@ const Upgrades = async (req, res) => {
           { right: placement.user_id, pkg: pakage_prices4 },
         ],
       },
-      include: [{ model: Pakage, attributes: ["pkg_name", "pkg_price"] }],
-      include: [{ model: Upgrade }],
+      include: [
+        { model: Pakage, attributes: ["pkg_name", "pkg_price"] },
+        { model: Upgrade },
+        { model: wallet },
+      ],
     });
     if (placement) {
       placements.push(placement);
     }
   }
+  // res.json(adminWallet.wallet.payment )
+  // return false
+  if (Selected.pkg == Upgrades4) {
 
+    switch (Selected.Upgrade.level) {
+      case 0:
+        await Upgrade.upgrade({
+          level: 1,
+          upgrade: 125
+        }, {
+          where:
+          {
+            user_id: user_info.id
+          }
+        }
+        )
+        await wallet.update(
+          {
+            payment: finfReff.wallet.payment + 31.25
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        await wallet.update(
+          {
+            payment: adminWallet.wallet.payment + 12.50
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        break
+      case 1:
+        await Upgrade.upgrade({
+          level: 2,
+          upgrade: 281.25
+        }, {
+          where:
+          {
+            user_id: user_info.id
+          }
+        }
+        )
+        await wallet.update(
+          {
+            payment: finfReff.wallet.payment + 70.31
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        await wallet.update(
+          {
+            payment: adminWallet.wallet.payment + 28.125
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        break
+      case 2:
+        await Upgrade.upgrade({
+          level: 3,
+          upgrade: 632.813
+        }, {
+          where:
+          {
+            user_id: user_info.id
+          }
+        }
+        )
+        await wallet.update(
+          {
+            payment: finfReff.wallet.payment + 126.562
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        await wallet.update(
+          {
+            payment: adminWallet.wallet.payment + 63.281
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        break
+      case 3:
+        await Upgrade.upgrade({
+          level: 4,
+          upgrade: 1423.82
+        }, {
+          where:
+          {
+            user_id: user_info.id
+          }
+        }
+        )
+        await wallet.update(
+          {
+            payment: finfReff.wallet.payment + 284.76
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        await wallet.update(
+          {
+            payment: adminWallet.wallet.payment + 142.38
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        break
+      case 4:
+        await Upgrade.upgrade({
+          level: 5,
+          upgrade: 3203.61
+        }, {
+          where:
+          {
+            user_id: user_info.id
+          }
+        }
+        )
+        await wallet.update(
+          {
+            payment: finfReff.wallet.payment + 640.72
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        await wallet.update(
+          {
+            payment: adminWallet.wallet.payment + 320.36
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        break
+      case 5:
+        await Upgrade.upgrade({
+          level: 6,
+          upgrade: 7208.13
+        }, {
+          where:
+          {
+            user_id: user_info.id
+          }
+        }
+        )
+        await wallet.update(
+          {
+            payment: finfReff.wallet.payment + 1441.64
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        await wallet.update(
+          {
+            payment: adminWallet.wallet.payment + 720.81
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        break
+      case 6:
+        await Upgrade.upgrade({
+          level: 7,
+          upgrade: 16218.29
+        }, {
+          where:
+          {
+            user_id: user_info.id
+          }
+        }
+        )
+        await wallet.update(
+          {
+            payment: finfReff.wallet.payment + 3243.6
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        await wallet.update(
+          {
+            payment: adminWallet.wallet.payment + 1621.82
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        break
+      case 7:
+        await Upgrade.upgrade({
+          level: 8,
+          upgrade: 36491.15
+        }, {
+          where:
+          {
+            user_id: user_info.id
+          }
+        }
+        )
+        await wallet.update(
+          {
+            payment: finfReff.wallet.payment + 7298.23
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        await wallet.update(
+          {
+            payment: adminWallet.wallet.payment + 3649.11
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        break
+    }
+  }
 
-  res.json(Selected)
+  res.json(placements)
   //placement end
 };
+
 const placementInvest = async (req, res) => {
   const { levels, pkg } = req.body;
 
