@@ -1206,7 +1206,7 @@ const Upgrades = async (req, res) => {
     where: { user_id: refferal },
     include: { model: wallet }
   });
-  const adminWallet=await Profile.findOne({
+  const adminWallet = await Profile.findOne({
     where: { user_id: 1 },
     include: { model: wallet }
   });
@@ -1222,6 +1222,8 @@ const Upgrades = async (req, res) => {
 
   //placement start
   let placements = [];
+  let Placement_Upgrade = []
+  let Placement_check
 
   let placement = await Profile.findOne({
     where: {
@@ -1242,6 +1244,7 @@ const Upgrades = async (req, res) => {
   }
 
   for (let i = 2; i <= 16; i++) {
+
     if (!placement) {
       break;
     }
@@ -1265,268 +1268,622 @@ const Upgrades = async (req, res) => {
   // res.json(adminWallet.wallet.payment )
   // return false
   if (Selected.pkg == Upgrades4) {
+    for (let i = 1; i < placements.length; i += 2) {
+      Placement_Upgrade.push(placements[i]);
+    }
+    Placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level >= Selected.Upgrade.level);
 
-    switch (Selected.Upgrade.level) {
-      case 0:
-        await Upgrade.upgrade({
-          level: 1,
-          upgrade: 125
-        }, {
-          where:
-          {
-            user_id: user_info.id
-          }
-        }
-        )
-        await wallet.update(
-          {
-            payment: finfReff.wallet.payment + 31.25
-          }
-          ,
-          {
-            where: {
-              user_id: finfReff.id
+    if (Placement_check.length === 0) {
+      switch (Selected.Upgrade.level) {
+        case 0:
+          await Upgrade.update({
+            level: 1,
+            upgrade: 125
+          }, {
+            where:
+            {
+              user_id: user_info.id
             }
-          })
-        await wallet.update(
-          {
-            payment: adminWallet.wallet.payment + 12.50
           }
-          ,
-          {
-            where: {
-              user_id: finfReff.id
+          )
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 25
             }
-          })
-        break
-      case 1:
-        await Upgrade.upgrade({
-          level: 2,
-          upgrade: 281.25
-        }, {
-          where:
-          {
-            user_id: user_info.id
-          }
-        }
-        )
-        await wallet.update(
-          {
-            payment: finfReff.wallet.payment + 70.31
-          }
-          ,
-          {
-            where: {
-              user_id: finfReff.id
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 12.50
             }
-          })
-        await wallet.update(
-          {
-            payment: adminWallet.wallet.payment + 28.125
-          }
-          ,
-          {
-            where: {
-              user_id: finfReff.id
+            ,
+            {
+              where: {
+                user_id: 1
+              }
+            })
+          break
+        case 1:
+          await Upgrade.update({
+            level: 2,
+            upgrade: 281.25
+          }, {
+            where:
+            {
+              user_id: user_info.id
             }
-          })
-        break
-      case 2:
-        await Upgrade.upgrade({
-          level: 3,
-          upgrade: 632.813
-        }, {
-          where:
-          {
-            user_id: user_info.id
           }
-        }
-        )
-        await wallet.update(
-          {
-            payment: finfReff.wallet.payment + 126.562
-          }
-          ,
-          {
-            where: {
-              user_id: finfReff.id
+          )
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 56.25
             }
-          })
-        await wallet.update(
-          {
-            payment: adminWallet.wallet.payment + 63.281
-          }
-          ,
-          {
-            where: {
-              user_id: finfReff.id
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 28.125
             }
-          })
-        break
-      case 3:
-        await Upgrade.upgrade({
-          level: 4,
-          upgrade: 1423.82
-        }, {
-          where:
-          {
-            user_id: user_info.id
-          }
-        }
-        )
-        await wallet.update(
-          {
-            payment: finfReff.wallet.payment + 284.76
-          }
-          ,
-          {
-            where: {
-              user_id: finfReff.id
+            ,
+            {
+              where: {
+                user_id: 1
+              }
+            })
+          break
+        case 2:
+          await Upgrade.update({
+            level: 3,
+            upgrade: 632.813
+          }, {
+            where:
+            {
+              user_id: user_info.id
             }
-          })
-        await wallet.update(
-          {
-            payment: adminWallet.wallet.payment + 142.38
           }
-          ,
-          {
-            where: {
-              user_id: finfReff.id
+          )
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 126.562
             }
-          })
-        break
-      case 4:
-        await Upgrade.upgrade({
-          level: 5,
-          upgrade: 3203.61
-        }, {
-          where:
-          {
-            user_id: user_info.id
-          }
-        }
-        )
-        await wallet.update(
-          {
-            payment: finfReff.wallet.payment + 640.72
-          }
-          ,
-          {
-            where: {
-              user_id: finfReff.id
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 63.281
             }
-          })
-        await wallet.update(
-          {
-            payment: adminWallet.wallet.payment + 320.36
-          }
-          ,
-          {
-            where: {
-              user_id: finfReff.id
+            ,
+            {
+              where: {
+                user_id: 1
+              }
+            })
+          break
+        case 3:
+          await Upgrade.update({
+            level: 4,
+            upgrade: 1423.82
+          }, {
+            where:
+            {
+              user_id: user_info.id
             }
-          })
-        break
-      case 5:
-        await Upgrade.upgrade({
-          level: 6,
-          upgrade: 7208.13
-        }, {
-          where:
-          {
-            user_id: user_info.id
           }
-        }
-        )
-        await wallet.update(
-          {
-            payment: finfReff.wallet.payment + 1441.64
-          }
-          ,
-          {
-            where: {
-              user_id: finfReff.id
+          )
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 284.76
             }
-          })
-        await wallet.update(
-          {
-            payment: adminWallet.wallet.payment + 720.81
-          }
-          ,
-          {
-            where: {
-              user_id: finfReff.id
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 142.38
             }
-          })
-        break
-      case 6:
-        await Upgrade.upgrade({
-          level: 7,
-          upgrade: 16218.29
-        }, {
-          where:
-          {
-            user_id: user_info.id
-          }
-        }
-        )
-        await wallet.update(
-          {
-            payment: finfReff.wallet.payment + 3243.6
-          }
-          ,
-          {
-            where: {
-              user_id: finfReff.id
+            ,
+            {
+              where: {
+                user_id: 1
+              }
+            })
+          break
+        case 4:
+          await Upgrade.update({
+            level: 5,
+            upgrade: 3203.61
+          }, {
+            where:
+            {
+              user_id: user_info.id
             }
-          })
-        await wallet.update(
-          {
-            payment: adminWallet.wallet.payment + 1621.82
           }
-          ,
-          {
-            where: {
-              user_id: finfReff.id
+          )
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 640.72
             }
-          })
-        break
-      case 7:
-        await Upgrade.upgrade({
-          level: 8,
-          upgrade: 36491.15
-        }, {
-          where:
-          {
-            user_id: user_info.id
-          }
-        }
-        )
-        await wallet.update(
-          {
-            payment: finfReff.wallet.payment + 7298.23
-          }
-          ,
-          {
-            where: {
-              user_id: finfReff.id
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 320.36
             }
-          })
-        await wallet.update(
-          {
-            payment: adminWallet.wallet.payment + 3649.11
-          }
-          ,
-          {
-            where: {
-              user_id: finfReff.id
+            ,
+            {
+              where: {
+                user_id: 1
+              }
+            })
+          break
+        case 5:
+          await Upgrade.update({
+            level: 6,
+            upgrade: 7208.13
+          }, {
+            where:
+            {
+              user_id: user_info.id
             }
-          })
-        break
+          }
+          )
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 1441.64
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 720.81
+            }
+            ,
+            {
+              where: {
+                user_id: 1
+              }
+            })
+          break
+        case 6:
+          await Upgrade.update({
+            level: 7,
+            upgrade: 16218.29
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 3243.65
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 1621.82
+            }
+            ,
+            {
+              where: {
+                user_id: 1
+              }
+            })
+          break
+        case 7:
+          await Upgrade.update({
+            level: 8,
+            upgrade: 36491.15
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 7298.23
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 3649.11
+            }
+            ,
+            {
+              where: {
+                user_id: 1
+              }
+            })
+          break
+        default:
+          // Handle the default case if needed
+          break;
+      }
+      res.json('koi bi ni hay bhai tere agay');
+    }
+    else {
+      switch (Selected.Upgrade.level) {
+        case 0:
+          await Upgrade.update({
+            level: 1,
+            upgrade: 125
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 25
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          await wallet.update(
+            {
+              payment: Placement_check[0].wallet.payment + 87.5
+            }
+            ,
+            {
+              where: {
+                user_id: Placement_check[0].id
+              }
+            })
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 12.50
+            }
+            ,
+            {
+              where: {
+                user_id: 1
+              }
+            })
+          break
+        case 1:
+          await Upgrade.update({
+            level: 2,
+            upgrade: 281.25
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 56.25
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 28.125
+            }
+            ,
+            {
+              where: {
+                user_id: 1
+              }
+            })
+          await wallet.update(
+            {
+              payment: Placement_check[0].wallet.payment + 196.875
+            }
+            ,
+            {
+              where: {
+                user_id: Placement_check[0].id
+              }
+            })
+          break
+        case 2:
+          await Upgrade.update({
+            level: 3,
+            upgrade: 632.813
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 126.562
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 63.281
+            }
+            ,
+            {
+              where: {
+                user_id: 1
+              }
+            })
+          await wallet.update(
+            {
+              payment: Placement_check[0].wallet.payment + 442.469
+            }
+            ,
+            {
+              where: {
+                user_id: Placement_check[0].id
+              }
+            })
+          break
+        case 3:
+          await Upgrade.update({
+            level: 4,
+            upgrade: 1423.82
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 284.76
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 142.38
+            }
+            ,
+            {
+              where: {
+                user_id: 1
+              }
+            })
+          await wallet.update(
+            {
+              payment: Placement_check[0].wallet.payment + 996.67
+            }
+            ,
+            {
+              where: {
+                user_id: Placement_check[0].id
+              }
+            })
+          break
+        case 4:
+          await Upgrade.update({
+            level: 5,
+            upgrade: 3203.61
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 640.72
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 320.36
+            }
+            ,
+            {
+              where: {
+                user_id: 1
+              }
+            })
+          await wallet.update(
+            {
+              payment: Placement_check[0].wallet.payment + 2242.52
+            }
+            ,
+            {
+              where: {
+                user_id: Placement_check[0].id
+              }
+            })
+          break
+        case 5:
+          await Upgrade.update({
+            level: 6,
+            upgrade: 7208.13
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 1441.64
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 720.81
+            }
+            ,
+            {
+              where: {
+                user_id: 1
+              }
+            })
+          await wallet.update(
+            {
+              payment: Placement_check[0].wallet.payment + 5045.69
+            }
+            ,
+            {
+              where: {
+                user_id: Placement_check[0].id
+              }
+            })
+          break
+        case 6:
+          await Upgrade.update({
+            level: 7,
+            upgrade: 16218.29
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 3243.65
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 1621.82
+            }
+            ,
+            {
+              where: {
+                user_id: 1
+              }
+            })
+          await wallet.update(
+            {
+              payment: Placement_check[0].wallet.payment + 11352.80
+            }
+            ,
+            {
+              where: {
+                user_id: Placement_check[0].id
+              }
+            })
+          break
+        case 7:
+          await Upgrade.update({
+            level: 8,
+            upgrade: 36491.15
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 7298.23
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 3649.11
+            }
+            ,
+            {
+              where: {
+                user_id: 1
+              }
+            })
+          await wallet.update(
+            {
+              payment: Placement_check[0].wallet.payment + 25543.80
+            }
+            ,
+            {
+              where: {
+                user_id: Placement_check[0].id
+              }
+            })
+          break
+        default:
+          // Handle the default case if needed
+          break;
+      }
+      res.status(200).json('Upgrade successful'); // Send a success response
     }
   }
 
-  res.json(placements)
+  // res.json({ placements, Placement_Upgrade, Placement_check })
   //placement end
 };
 
