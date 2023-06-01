@@ -1266,352 +1266,691 @@ const Upgrades = async (req, res) => {
 
     //user ka level
     if (Placement_check.length === 0) {
-      // switch (Selected.Upgrade.level) {
-      //   case 0:
-      //     //upgrade level
-      //     await Upgrade.update({
-      //       level: 1,
-      //       upgrade: 125
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     //upgrade level transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 125,
-      //         user_id: user_info.id
-      //       },
-      //       {
-      //         where:
-      //         {
-      //           user_id: user_info.id
-      //         }
-      //       }
-      //     )
+      switch (Selected.Upgrade.level) {
+        case 0:
+          //upgrade levels
+          await Upgrade.update({
+            level: 1,
+            upgrade: 125
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          //upgrade levels transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 125,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          //payment to referal
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 25
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Upgraded package",
+              payment: 31.250,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 12.50 + 87.5
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 12.50 + 87.5,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 1:
+          //upgrade levels
+          await Upgrade.update({
+            level: 2,
+            upgrade: 281.250
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 281.250,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
 
-      //     //wallet payment added to refferal
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 25
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     //wallet payment added to refferal transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 31.250,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     //wallet payment added to admin
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 12.50
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     //admin commision cutt
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Tax to admin",
-      //         payment: 12.50,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     break
-      //   case 1:
-      //     //upgrade level
-      //     await Upgrade.update({
-      //       level: 2,
-      //       upgrade: 281.250
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     //upgrade level transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 281.250,
-      //         user_id: user_info.id
-      //       },
-      //       {
-      //         where:
-      //         {
-      //           user_id: user_info.id
-      //         }
-      //       }
-      //     )
+          //payment to referal
 
-      //     //wallet payment added to refferal
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 56.250
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     //wallet payment added to refferal transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: finfReff.id,
-      //         reason: "Refferal",
-      //         payment: 70.313,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     //wallet payment added to admin
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 28.125
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     //admin commision cutt
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Tax to admin",
-      //         payment: 28.125,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     break
-      //   case 2:
-      //     await Upgrade.update({
-      //       level: 3,
-      //       upgrade: 632.813
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 126.562
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 63.281
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 3:
-      //     await Upgrade.update({
-      //       level: 4,
-      //       upgrade: 1423.82
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 284.76
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 142.38
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 4:
-      //     await Upgrade.update({
-      //       level: 5,
-      //       upgrade: 3203.61
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 640.72
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 320.36
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 5:
-      //     await Upgrade.update({
-      //       level: 6,
-      //       upgrade: 7208.13
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 1441.64
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 720.81
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 6:
-      //     await Upgrade.update({
-      //       level: 7,
-      //       upgrade: 16218.29
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 3243.65
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 1621.82
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 7:
-      //     await Upgrade.update({
-      //       level: 8,
-      //       upgrade: 36491.15
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 7298.23
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 3649.11
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   default:
-      //     // Handle the default case if needed
-      //     break;
-      // }
-      res.json('koi bi ni hay bhai tere agay');
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 56.250
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 70.313,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 28.125+ 196.875
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 28.125+ 196.875,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 2:
+             //upgrade levels
+             await Upgrade.update({
+              level: 3,
+              upgrade: 632.813
+            }, {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+            )
+            // upradde transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: 1,
+                reason: "Upgraded package",
+                payment: 632.813,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+  
+            //payment to referal
+  
+            await wallet.update(
+              {
+                payment: finfReff.wallet.payment + 126.563
+              }
+              ,
+              {
+                where: {
+                  user_id: finfReff.id
+                }
+              })
+            //payment refferal transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: finfReff.id,
+                reason: "Refferal trasaction",
+                payment: 158.203,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+            // admin wallet
+            await wallet.update(
+              {
+                payment: adminWallet.wallet.payment + 63.281+ 442.969
+              }
+              ,
+              {
+                where: {
+                  user_id: user_info.id
+                }
+              })
+            // admin wallet transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: 1,
+                reason: " Tax for admin",
+                payment: 63.281+ 442.969,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+          break
+        case 3:
+             //upgrade levels
+             await Upgrade.update({
+              level: 4,
+              upgrade: 1423.828
+            }, {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+            )
+            // upradde transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: 1,
+                reason: "Upgraded package",
+                payment: 1423.828,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+  
+            //payment to referal
+  
+            await wallet.update(
+              {
+                payment: finfReff.wallet.payment + 284.766
+              }
+              ,
+              {
+                where: {
+                  user_id: finfReff.id
+                }
+              })
+            //payment refferal transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: finfReff.id,
+                reason: "Refferal trasaction",
+                payment: 355.957,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+            // admin wallet
+            await wallet.update(
+              {
+                payment: adminWallet.wallet.payment + 142.383 + 996.680
+              }
+              ,
+              {
+                where: {
+                  user_id: user_info.id
+                }
+              })
+            // admin wallet transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: 1,
+                reason: " Tax for admin",
+                payment: 142.383 + 996.680,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+          break
+        case 4:
+          //upgrade levels
+          await Upgrade.update({
+            level: 5,
+            upgrade: 3203.613
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 3203.613,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 640.723
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 800.903,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 320.361 + 2242.529
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 320.361 + 2242.529,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 5:
+           //upgrade levels
+           await Upgrade.update({
+            level: 6,
+            upgrade: 7208.130
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 7208.130,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 1441.626
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 1802.032,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 720.813 + 5045.691
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 720.813 + 5045.691,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 6:
+          //upgrade levels
+          await Upgrade.update({
+            level: 7,
+            upgrade: 16218.292
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 16218.292,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 3243.658
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 4054.573,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 1621.829 + 11352.805
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 1621.829 + 11352.805,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 7:
+          //upgrade levels
+          await Upgrade.update({
+            level: 8,
+            upgrade: 36491.158
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 36491.158,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 7298.232
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 9122.789,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 3649.116 + 25549.810
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 3649.116 + 25549.810,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        default:
+          // Handle the default case if needed
+          break;
+      }
+      res.json('No placement!..');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -2523,352 +2862,686 @@ const Upgrades = async (req, res) => {
 
     //user ka level
     if (Placement_check.length === 0) {
-      // switch (Selected.Upgrade.level) {
-      //   case 0:
-      //     //upgrade level
-      //     await Upgrade.update({
-      //       level: 1,
-      //       upgrade: 125
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     //upgrade level transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 125,
-      //         user_id: user_info.id
-      //       },
-      //       {
-      //         where:
-      //         {
-      //           user_id: user_info.id
-      //         }
-      //       }
-      //     )
+      switch (Selected.Upgrade.level) {
+        case 0:
+          //upgrade levels
+          await Upgrade.update({
+            level: 1,
+            upgrade: 12.5
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          //upgrade levels transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 12.5,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          //payment to referal
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 2.5
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Referal",
+              payment: 3.125,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 1.250 +8.75
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 1.250 +8.75,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 1:
+        //upgrade levels
+        await Upgrade.update({
+          level: 2,
+          upgrade: 28.125
+        }, {
+          where:
+          {
+            user_id: user_info.id
+          }
+        }
+        )
+        //upgrade levels transaction
+        await Transaction.update(
+          {
+            from: user_info.id,
+            to: 1,
+            reason: "Upgraded package",
+            payment: 28.125,
+            user_id: user_info.id
+          },
+          {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+        )
+        //payment to referal
+        await wallet.update(
+          {
+            payment: finfReff.wallet.payment + 12.656
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        //payment refferal transaction
+        await Transaction.update(
+          {
+            from: user_info.id,
+            to: finfReff.id,
+            reason: "Referal",
+            payment: 15.820,
+            user_id: user_info.id
+          },
+          {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+        )
+        // admin wallet
+        await wallet.update(
+          {
+            payment: adminWallet.wallet.payment + 6.382 +44.297
+          }
+          ,
+          {
+            where: {
+              user_id: user_info.id
+            }
+          })
+        // admin wallet transaction
+        await Transaction.update(
+          {
+            from: user_info.id,
+            to: 1,
+            reason: " Tax for admin",
+            payment: 6.382 +44.297,
+            user_id: user_info.id
+          },
+          {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+        )
+          break
+        case 2:
+            //upgrade levels
+          await Upgrade.update({
+            level: 3,
+            upgrade: 63.281
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          //upgrade levels transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 63.281,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          //payment to referal
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 12.656
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Referal",
+              payment: 15.820,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 6.328  + 44.297
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 6.328  + 44.297,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 3:
+             //upgrade levels
+             await Upgrade.update({
+              level: 4,
+              upgrade: 142.383
+            }, {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+            )
+            // upradde transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: 1,
+                reason: "Upgraded package",
+                payment: 142.383,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+  
+            //payment to referal
+  
+            await wallet.update(
+              {
+                payment: finfReff.wallet.payment + 82.47
+              }
+              ,
+              {
+                where: {
+                  user_id: finfReff.id
+                }
+              })
+            //payment refferal transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: finfReff.id,
+                reason: "Refferal trasaction",
+                payment: 35.596,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+            // admin wallet
+            await wallet.update(
+              {
+                payment: adminWallet.wallet.payment + 41.238  + 99.668
+              }
+              ,
+              {
+                where: {
+                  user_id: user_info.id
+                }
+              })
+            // admin wallet transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: 1,
+                reason: " Tax for admin",
+                payment: 41.238  + 99.668,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+          break
+        case 4:
+          //upgrade levels
+          await Upgrade.update({
+            level: 5,
+            upgrade: 320.361
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 320.361,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
 
-      //     //wallet payment added to refferal
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 25
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     //wallet payment added to refferal transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 31.250,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     //wallet payment added to admin
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 12.50
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     //admin commision cutt
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Tax to admin",
-      //         payment: 12.50,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     break
-      //   case 1:
-      //     //upgrade level
-      //     await Upgrade.update({
-      //       level: 2,
-      //       upgrade: 281.250
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     //upgrade level transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 281.250,
-      //         user_id: user_info.id
-      //       },
-      //       {
-      //         where:
-      //         {
-      //           user_id: user_info.id
-      //         }
-      //       }
-      //     )
+          //payment to referal
 
-      //     //wallet payment added to refferal
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 56.250
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     //wallet payment added to refferal transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: finfReff.id,
-      //         reason: "Refferal",
-      //         payment: 70.313,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     //wallet payment added to admin
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 28.125
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     //admin commision cutt
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Tax to admin",
-      //         payment: 28.125,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     break
-      //   case 2:
-      //     await Upgrade.update({
-      //       level: 3,
-      //       upgrade: 632.813
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 126.562
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 63.281
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 3:
-      //     await Upgrade.update({
-      //       level: 4,
-      //       upgrade: 1423.82
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 284.76
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 142.38
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 4:
-      //     await Upgrade.update({
-      //       level: 5,
-      //       upgrade: 3203.61
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 640.72
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 320.36
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 5:
-      //     await Upgrade.update({
-      //       level: 6,
-      //       upgrade: 7208.13
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 1441.64
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 720.81
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 6:
-      //     await Upgrade.update({
-      //       level: 7,
-      //       upgrade: 16218.29
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 3243.65
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 1621.82
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 7:
-      //     await Upgrade.update({
-      //       level: 8,
-      //       upgrade: 36491.15
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 7298.23
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 3649.11
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   default:
-      //     // Handle the default case if needed
-      //     break;
-      // }
-      res.json('koi bi ni hay bhai tere agay');
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 64.072
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 80.090,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 32.036+ 224.253
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 32.036+ 224.253,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 5:
+           //upgrade levels
+           await Upgrade.update({
+            level: 6,
+            upgrade: 720.813
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 720.813,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 144.163
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 180.203,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 72.081+ 504.569
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 72.081+ 504.569,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 6:
+          //upgrade levels
+          await Upgrade.update({
+            level: 7,
+            upgrade: 1621.029
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 1621.029,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 324.366
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 405.457,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 162.183 + 1135.280
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 162.183 + 1135.280,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 7:
+          //upgrade levels
+          await Upgrade.update({
+            level: 8,
+            upgrade: 3649.116
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 3649.116,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 729.823
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 912.279,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 364.912 + 2554.381
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 364.912 + 2554.381,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        default:
+          // Handle the default case if needed
+          break;
+      }
+      res.json('No placement!..');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -3776,352 +4449,686 @@ const Upgrades = async (req, res) => {
 
     //user ka level
     if (Placement_check.length === 0) {
-      // switch (Selected.Upgrade.level) {
-      //   case 0:
-      //     //upgrade level
-      //     await Upgrade.update({
-      //       level: 1,
-      //       upgrade: 125
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     //upgrade level transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 125,
-      //         user_id: user_info.id
-      //       },
-      //       {
-      //         where:
-      //         {
-      //           user_id: user_info.id
-      //         }
-      //       }
-      //     )
+      switch (Selected.Upgrade.level) {
+        case 0:
+          //upgrade levels
+          await Upgrade.update({
+            level: 1,
+            upgrade: 25
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          //upgrade levels transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 25,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          //payment to referal
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 5.0
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Referal",
+              payment: 6.250,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 2.500 + 17.500
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 2.500 + 17.500,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 1:
+        //upgrade levels
+        await Upgrade.update({
+          level: 2,
+          upgrade: 56.250
+        }, {
+          where:
+          {
+            user_id: user_info.id
+          }
+        }
+        )
+        //upgrade levels transaction
+        await Transaction.update(
+          {
+            from: user_info.id,
+            to: 1,
+            reason: "Upgraded package",
+            payment: 56.250,
+            user_id: user_info.id
+          },
+          {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+        )
+        //payment to referal
+        await wallet.update(
+          {
+            payment: finfReff.wallet.payment + 11.250
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        //payment refferal transaction
+        await Transaction.update(
+          {
+            from: user_info.id,
+            to: finfReff.id,
+            reason: "Referal",
+            payment: 14.063,
+            user_id: user_info.id
+          },
+          {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+        )
+        // admin wallet
+        await wallet.update(
+          {
+            payment: adminWallet.wallet.payment + 5.625 + 39.375
+          }
+          ,
+          {
+            where: {
+              user_id: user_info.id
+            }
+          })
+        // admin wallet transaction
+        await Transaction.update(
+          {
+            from: user_info.id,
+            to: 1,
+            reason: " Tax for admin",
+            payment: 5.625 + 39.375,
+            user_id: user_info.id
+          },
+          {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+        )
+          break
+        case 2:
+            //upgrade levels
+          await Upgrade.update({
+            level: 3,
+            upgrade: 126.563
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          //upgrade levels transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 126.563,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          //payment to referal
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 25.313
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Referal",
+              payment: 31.641,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 12.656 + 88.594
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 12.656 + 88.594,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 3:
+             //upgrade levels
+             await Upgrade.update({
+              level: 4,
+              upgrade: 284.766
+            }, {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+            )
+            // upradde transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: 1,
+                reason: "Upgraded package",
+                payment: 284.766,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+  
+            //payment to referal
+  
+            await wallet.update(
+              {
+                payment: finfReff.wallet.payment + 56.953
+              }
+              ,
+              {
+                where: {
+                  user_id: finfReff.id
+                }
+              })
+            //payment refferal transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: finfReff.id,
+                reason: "Refferal trasaction",
+                payment: 71.191,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+            // admin wallet
+            await wallet.update(
+              {
+                payment: adminWallet.wallet.payment + 28.477 + 199.336
+              }
+              ,
+              {
+                where: {
+                  user_id: user_info.id
+                }
+              })
+            // admin wallet transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: 1,
+                reason: " Tax for admin",
+                payment: 28.477 + 199.336,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+          break
+        case 4:
+          //upgrade levels
+          await Upgrade.update({
+            level: 5,
+            upgrade: 640.723
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 640.723,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
 
-      //     //wallet payment added to refferal
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 25
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     //wallet payment added to refferal transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 31.250,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     //wallet payment added to admin
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 12.50
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     //admin commision cutt
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Tax to admin",
-      //         payment: 12.50,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     break
-      //   case 1:
-      //     //upgrade level
-      //     await Upgrade.update({
-      //       level: 2,
-      //       upgrade: 281.250
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     //upgrade level transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 281.250,
-      //         user_id: user_info.id
-      //       },
-      //       {
-      //         where:
-      //         {
-      //           user_id: user_info.id
-      //         }
-      //       }
-      //     )
+          //payment to referal
 
-      //     //wallet payment added to refferal
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 56.250
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     //wallet payment added to refferal transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: finfReff.id,
-      //         reason: "Refferal",
-      //         payment: 70.313,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     //wallet payment added to admin
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 28.125
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     //admin commision cutt
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Tax to admin",
-      //         payment: 28.125,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     break
-      //   case 2:
-      //     await Upgrade.update({
-      //       level: 3,
-      //       upgrade: 632.813
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 126.562
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 63.281
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 3:
-      //     await Upgrade.update({
-      //       level: 4,
-      //       upgrade: 1423.82
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 284.76
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 142.38
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 4:
-      //     await Upgrade.update({
-      //       level: 5,
-      //       upgrade: 3203.61
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 640.72
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 320.36
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 5:
-      //     await Upgrade.update({
-      //       level: 6,
-      //       upgrade: 7208.13
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 1441.64
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 720.81
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 6:
-      //     await Upgrade.update({
-      //       level: 7,
-      //       upgrade: 16218.29
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 3243.65
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 1621.82
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 7:
-      //     await Upgrade.update({
-      //       level: 8,
-      //       upgrade: 36491.15
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 7298.23
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 3649.11
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   default:
-      //     // Handle the default case if needed
-      //     break;
-      // }
-      res.json('koi bi ni hay bhai tere agay');
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 128.145
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 160.181,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 64.072 + 448.506
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 64.072 + 448.506,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 5:
+           //upgrade levels
+           await Upgrade.update({
+            level: 6,
+            upgrade: 1441.626
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 1441.626,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 288.325
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 360.406,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 144.163 + 1009.138
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 144.163 + 1009.138,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 6:
+          //upgrade levels
+          await Upgrade.update({
+            level: 7,
+            upgrade: 3243.658
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 3243.658,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 648.732
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 810.915,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 324.366 + 2270.561
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 324.366 + 2270.561,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 7:
+          //upgrade levels
+          await Upgrade.update({
+            level: 8,
+            upgrade: 7298.232
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 7298.232,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 1459.646
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 1824.558,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 729.823 + 5108.762
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 729.823 + 5108.762,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        default:
+          // Handle the default case if needed
+          break;
+      }
+      res.json('No placement!..');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -5029,352 +6036,686 @@ const Upgrades = async (req, res) => {
 
     //user ka level
     if (Placement_check.length === 0) {
-      // switch (Selected.Upgrade.level) {
-      //   case 0:
-      //     //upgrade level
-      //     await Upgrade.update({
-      //       level: 1,
-      //       upgrade: 125
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     //upgrade level transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 125,
-      //         user_id: user_info.id
-      //       },
-      //       {
-      //         where:
-      //         {
-      //           user_id: user_info.id
-      //         }
-      //       }
-      //     )
+      switch (Selected.Upgrade.level) {
+        case 0:
+          //upgrade levels
+          await Upgrade.update({
+            level: 1,
+            upgrade: 62.500
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          //upgrade levels transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 62.500,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          //payment to referal
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 12.500
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Referal",
+              payment: 15.625,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 6.250 + 43.750
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 6.250 + 43.750,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 1:
+        //upgrade levels
+        await Upgrade.update({
+          level: 2,
+          upgrade: 140.625
+        }, {
+          where:
+          {
+            user_id: user_info.id
+          }
+        }
+        )
+        //upgrade levels transaction
+        await Transaction.update(
+          {
+            from: user_info.id,
+            to: 1,
+            reason: "Upgraded package",
+            payment: 140.625,
+            user_id: user_info.id
+          },
+          {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+        )
+        //payment to referal
+        await wallet.update(
+          {
+            payment: finfReff.wallet.payment + 28.125
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        //payment refferal transaction
+        await Transaction.update(
+          {
+            from: user_info.id,
+            to: finfReff.id,
+            reason: "Referal",
+            payment: 35.156,
+            user_id: user_info.id
+          },
+          {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+        )
+        // admin wallet
+        await wallet.update(
+          {
+            payment: adminWallet.wallet.payment + 14.063 + 98.438
+          }
+          ,
+          {
+            where: {
+              user_id: user_info.id
+            }
+          })
+        // admin wallet transaction
+        await Transaction.update(
+          {
+            from: user_info.id,
+            to: 1,
+            reason: " Tax for admin",
+            payment: 14.063 + 98.438,
+            user_id: user_info.id
+          },
+          {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+        )
+          break
+        case 2:
+            //upgrade levels
+          await Upgrade.update({
+            level: 3,
+            upgrade: 316.406
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          //upgrade levels transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 316.406,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          //payment to referal
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 63.281
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Referal",
+              payment: 79.105,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 31.641 + 22.484
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 31.641 + 22.484,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 3:
+             //upgrade levels
+             await Upgrade.update({
+              level: 4,
+              upgrade: 711.914
+            }, {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+            )
+            // upradde transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: 1,
+                reason: "Upgraded package",
+                payment: 711.914,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+  
+            //payment to referal
+  
+            await wallet.update(
+              {
+                payment: finfReff.wallet.payment + 142.383
+              }
+              ,
+              {
+                where: {
+                  user_id: finfReff.id
+                }
+              })
+            //payment refferal transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: finfReff.id,
+                reason: "Refferal trasaction",
+                payment: 177.979,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+            // admin wallet
+            await wallet.update(
+              {
+                payment: adminWallet.wallet.payment + 71.191 + 498.940
+              }
+              ,
+              {
+                where: {
+                  user_id: user_info.id
+                }
+              })
+            // admin wallet transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: 1,
+                reason: " Tax for admin",
+                payment: 71.191 + 498.940,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+          break
+        case 4:
+          //upgrade levels
+          await Upgrade.update({
+            level: 5,
+            upgrade: 1601.807
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 1601.807,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
 
-      //     //wallet payment added to refferal
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 25
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     //wallet payment added to refferal transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 31.250,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     //wallet payment added to admin
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 12.50
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     //admin commision cutt
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Tax to admin",
-      //         payment: 12.50,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     break
-      //   case 1:
-      //     //upgrade level
-      //     await Upgrade.update({
-      //       level: 2,
-      //       upgrade: 281.250
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     //upgrade level transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 281.250,
-      //         user_id: user_info.id
-      //       },
-      //       {
-      //         where:
-      //         {
-      //           user_id: user_info.id
-      //         }
-      //       }
-      //     )
+          //payment to referal
 
-      //     //wallet payment added to refferal
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 56.250
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     //wallet payment added to refferal transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: finfReff.id,
-      //         reason: "Refferal",
-      //         payment: 70.313,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     //wallet payment added to admin
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 28.125
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     //admin commision cutt
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Tax to admin",
-      //         payment: 28.125,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     break
-      //   case 2:
-      //     await Upgrade.update({
-      //       level: 3,
-      //       upgrade: 632.813
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 126.562
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 63.281
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 3:
-      //     await Upgrade.update({
-      //       level: 4,
-      //       upgrade: 1423.82
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 284.76
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 142.38
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 4:
-      //     await Upgrade.update({
-      //       level: 5,
-      //       upgrade: 3203.61
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 640.72
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 320.36
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 5:
-      //     await Upgrade.update({
-      //       level: 6,
-      //       upgrade: 7208.13
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 1441.64
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 720.81
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 6:
-      //     await Upgrade.update({
-      //       level: 7,
-      //       upgrade: 16218.29
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 3243.65
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 1621.82
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 7:
-      //     await Upgrade.update({
-      //       level: 8,
-      //       upgrade: 36491.15
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 7298.23
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 3649.11
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   default:
-      //     // Handle the default case if needed
-      //     break;
-      // }
-      res.json('koi bi ni hay bhai tere agay');
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 320.361
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 400.452,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 160.181 + 1121.265
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 160.181 + 1121.265,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 5:
+           //upgrade levels
+           await Upgrade.update({
+            level: 6,
+            upgrade: 3604.065
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 3604.065,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 7205.813
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 901.016,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 360.406 + 2522.845
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 360.406 + 2522.845,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 6:
+          //upgrade levels
+          await Upgrade.update({
+            level: 7,
+            upgrade: 8109.065
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 8109.065,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 5676.402
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 2027.287,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 810.915 + 11352.80
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 810.915 + 11352.80,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 7:
+          //upgrade levels
+          await Upgrade.update({
+            level: 8,
+            upgrade: 18245.579
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 18245.579,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 3649.116
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 4561.395,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 1824.558 + 12771.905
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 1824.558 + 12771.905,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        default:
+          // Handle the default case if needed
+          break;
+      }
+      res.json('No placement!..');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -6282,352 +7623,686 @@ const Upgrades = async (req, res) => {
 
     //user ka level
     if (Placement_check.length === 0) {
-      // switch (Selected.Upgrade.level) {
-      //   case 0:
-      //     //upgrade level
-      //     await Upgrade.update({
-      //       level: 1,
-      //       upgrade: 125
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     //upgrade level transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 125,
-      //         user_id: user_info.id
-      //       },
-      //       {
-      //         where:
-      //         {
-      //           user_id: user_info.id
-      //         }
-      //       }
-      //     )
+      switch (Selected.Upgrade.level) {
+        case 0:
+          //upgrade levels
+          await Upgrade.update({
+            level: 1,
+            upgrade: 250
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          //upgrade levels transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 250,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          //payment to referal
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 50
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Referal",
+              payment: 62.500,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 25.00 + 175.00
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 25.00 + 175.00,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 1:
+        //upgrade levels
+        await Upgrade.update({
+          level: 2,
+          upgrade: 281.250
+        }, {
+          where:
+          {
+            user_id: user_info.id
+          }
+        }
+        )
+        //upgrade levels transaction
+        await Transaction.update(
+          {
+            from: user_info.id,
+            to: 1,
+            reason: "Upgraded package",
+            payment: 281.250,
+            user_id: user_info.id
+          },
+          {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+        )
+        //payment to referal
+        await wallet.update(
+          {
+            payment: finfReff.wallet.payment + 112.500
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        //payment refferal transaction
+        await Transaction.update(
+          {
+            from: user_info.id,
+            to: finfReff.id,
+            reason: "Referal",
+            payment: 140.625,
+            user_id: user_info.id
+          },
+          {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+        )
+        // admin wallet
+        await wallet.update(
+          {
+            payment: adminWallet.wallet.payment + 56.250 + 393.750
+          }
+          ,
+          {
+            where: {
+              user_id: user_info.id
+            }
+          })
+        // admin wallet transaction
+        await Transaction.update(
+          {
+            from: user_info.id,
+            to: 1,
+            reason: " Tax for admin",
+            payment: 56.250 + 393.750,
+            user_id: user_info.id
+          },
+          {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+        )
+          break
+        case 2:
+            //upgrade levels
+          await Upgrade.update({
+            level: 3,
+            upgrade: 632.813
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          //upgrade levels transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 632.813,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          //payment to referal
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 253.125
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Referal",
+              payment: 361.409,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 126.563 + 885.338
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 126.563 + 885.338,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 3:
+             //upgrade levels
+             await Upgrade.update({
+              level: 4,
+              upgrade: 1423.828
+            }, {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+            )
+            // upradde transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: 1,
+                reason: "Upgraded package",
+                payment: 1423.828,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+  
+            //payment to referal
+  
+            await wallet.update(
+              {
+                payment: finfReff.wallet.payment + 569.531
+              }
+              ,
+              {
+                where: {
+                  user_id: finfReff.id
+                }
+              })
+            //payment refferal transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: finfReff.id,
+                reason: "Refferal trasaction",
+                payment: 711.914,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+            // admin wallet
+            await wallet.update(
+              {
+                payment: adminWallet.wallet.payment + 284.766 + 1993.359
+              }
+              ,
+              {
+                where: {
+                  user_id: user_info.id
+                }
+              })
+            // admin wallet transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: 1,
+                reason: " Tax for admin",
+                payment: 284.766 + 1993.359,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+          break
+        case 4:
+          //upgrade levels
+          await Upgrade.update({
+            level: 5,
+            upgrade: 3203.613
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 3203.613,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
 
-      //     //wallet payment added to refferal
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 25
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     //wallet payment added to refferal transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 31.250,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     //wallet payment added to admin
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 12.50
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     //admin commision cutt
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Tax to admin",
-      //         payment: 12.50,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     break
-      //   case 1:
-      //     //upgrade level
-      //     await Upgrade.update({
-      //       level: 2,
-      //       upgrade: 281.250
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     //upgrade level transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 281.250,
-      //         user_id: user_info.id
-      //       },
-      //       {
-      //         where:
-      //         {
-      //           user_id: user_info.id
-      //         }
-      //       }
-      //     )
+          //payment to referal
 
-      //     //wallet payment added to refferal
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 56.250
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     //wallet payment added to refferal transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: finfReff.id,
-      //         reason: "Refferal",
-      //         payment: 70.313,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     //wallet payment added to admin
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 28.125
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     //admin commision cutt
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Tax to admin",
-      //         payment: 28.125,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     break
-      //   case 2:
-      //     await Upgrade.update({
-      //       level: 3,
-      //       upgrade: 632.813
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 126.562
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 63.281
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 3:
-      //     await Upgrade.update({
-      //       level: 4,
-      //       upgrade: 1423.82
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 284.76
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 142.38
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 4:
-      //     await Upgrade.update({
-      //       level: 5,
-      //       upgrade: 3203.61
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 640.72
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 320.36
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 5:
-      //     await Upgrade.update({
-      //       level: 6,
-      //       upgrade: 7208.13
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 1441.64
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 720.81
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 6:
-      //     await Upgrade.update({
-      //       level: 7,
-      //       upgrade: 16218.29
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 3243.65
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 1621.82
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 7:
-      //     await Upgrade.update({
-      //       level: 8,
-      //       upgrade: 36491.15
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 7298.23
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 3649.11
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   default:
-      //     // Handle the default case if needed
-      //     break;
-      // }
-      res.json('koi bi ni hay bhai tere agay');
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 1281.445
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 1601.807,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 640.723 + 4485.059
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 640.723 + 4485.059,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 5:
+           //upgrade levels
+           await Upgrade.update({
+            level: 6,
+            upgrade: 7208.130
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 7208.130,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 2883.252
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 3604.065,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 1441.626 + 10091.382
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 1441.626 + 10091.382,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 6:
+          //upgrade levels
+          await Upgrade.update({
+            level: 7,
+            upgrade: 16218.292
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 16218.292,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 6487.317
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 8109.146,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 3243.658 + 22705.609
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 3243.658 + 22705.609,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 7:
+          //upgrade levels
+          await Upgrade.update({
+            level: 8,
+            upgrade: 36491.158
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 36491.158,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 14596.463
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 18245.579,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 7298.232 + 51087.621
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 7298.232 + 51087.621,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        default:
+          // Handle the default case if needed
+          break;
+      }
+      res.json('No placement!..');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -7535,352 +9210,686 @@ const Upgrades = async (req, res) => {
 
     //user ka level
     if (Placement_check.length === 0) {
-      // switch (Selected.Upgrade.level) {
-      //   case 0:
-      //     //upgrade level
-      //     await Upgrade.update({
-      //       level: 1,
-      //       upgrade: 125
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     //upgrade level transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 125,
-      //         user_id: user_info.id
-      //       },
-      //       {
-      //         where:
-      //         {
-      //           user_id: user_info.id
-      //         }
-      //       }
-      //     )
+      switch (Selected.Upgrade.level) {
+        case 0:
+          //upgrade levels
+          await Upgrade.update({
+            level: 1,
+            upgrade: 437.500
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          //upgrade levels transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 437.500,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          //payment to referal
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 87.500
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Referal",
+              payment: 109.375,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 43.750  + 306.250
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 43.750  + 306.250,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 1:
+        //upgrade levels
+        await Upgrade.update({
+          level: 2,
+          upgrade: 984.375
+        }, {
+          where:
+          {
+            user_id: user_info.id
+          }
+        }
+        )
+        //upgrade levels transaction
+        await Transaction.update(
+          {
+            from: user_info.id,
+            to: 1,
+            reason: "Upgraded package",
+            payment: 984.375,
+            user_id: user_info.id
+          },
+          {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+        )
+        //payment to referal
+        await wallet.update(
+          {
+            payment: finfReff.wallet.payment + 196.875
+          }
+          ,
+          {
+            where: {
+              user_id: finfReff.id
+            }
+          })
+        //payment refferal transaction
+        await Transaction.update(
+          {
+            from: user_info.id,
+            to: finfReff.id,
+            reason: "Referal",
+            payment: 246.094,
+            user_id: user_info.id
+          },
+          {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+        )
+        // admin wallet
+        await wallet.update(
+          {
+            payment: adminWallet.wallet.payment + 98.438 + 689.063
+          }
+          ,
+          {
+            where: {
+              user_id: user_info.id
+            }
+          })
+        // admin wallet transaction
+        await Transaction.update(
+          {
+            from: user_info.id,
+            to: 1,
+            reason: " Tax for admin",
+            payment: 98.438 + 689.063,
+            user_id: user_info.id
+          },
+          {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+        )
+          break
+        case 2:
+            //upgrade levels
+          await Upgrade.update({
+            level: 3,
+            upgrade: 2214.844
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          //upgrade levels transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 2214.844,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          //payment to referal
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 442.969
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Referal",
+              payment: 553.711,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 221.484  + 1550.391
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 221.484  + 1550.391,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 3:
+             //upgrade levels
+             await Upgrade.update({
+              level: 4,
+              upgrade: 4983.398
+            }, {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+            )
+            // upradde transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: 1,
+                reason: "Upgraded package",
+                payment: 4983.398,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+  
+            //payment to referal
+  
+            await wallet.update(
+              {
+                payment: finfReff.wallet.payment + 996.680
+              }
+              ,
+              {
+                where: {
+                  user_id: finfReff.id
+                }
+              })
+            //payment refferal transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: finfReff.id,
+                reason: "Refferal trasaction",
+                payment: 1245.850,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+            // admin wallet
+            await wallet.update(
+              {
+                payment: adminWallet.wallet.payment + 498.340 + 3488.379
+              }
+              ,
+              {
+                where: {
+                  user_id: user_info.id
+                }
+              })
+            // admin wallet transaction
+            await Transaction.update(
+              {
+                from: user_info.id,
+                to: 1,
+                reason: " Tax for admin",
+                payment: 498.340 + 3488.379,
+                user_id: user_info.id
+              },
+              {
+                where:
+                {
+                  user_id: user_info.id
+                }
+              }
+            )
+          break
+        case 4:
+          //upgrade levels
+          await Upgrade.update({
+            level: 5,
+            upgrade: 11212.646
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 11212.646,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
 
-      //     //wallet payment added to refferal
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 25
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     //wallet payment added to refferal transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 31.250,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     //wallet payment added to admin
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 12.50
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     //admin commision cutt
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Tax to admin",
-      //         payment: 12.50,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     break
-      //   case 1:
-      //     //upgrade level
-      //     await Upgrade.update({
-      //       level: 2,
-      //       upgrade: 281.250
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     //upgrade level transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Upgraded package",
-      //         payment: 281.250,
-      //         user_id: user_info.id
-      //       },
-      //       {
-      //         where:
-      //         {
-      //           user_id: user_info.id
-      //         }
-      //       }
-      //     )
+          //payment to referal
 
-      //     //wallet payment added to refferal
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 56.250
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     //wallet payment added to refferal transaction
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: finfReff.id,
-      //         reason: "Refferal",
-      //         payment: 70.313,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     //wallet payment added to admin
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 28.125
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     //admin commision cutt
-      //     await Transaction.update(
-      //       {
-      //         from: user_info.id,
-      //         to: 1,
-      //         reason: "Tax to admin",
-      //         payment: 28.125,
-      //         user_id: user_info.id
-      //       },
-      //       {}
-      //     )
-      //     break
-      //   case 2:
-      //     await Upgrade.update({
-      //       level: 3,
-      //       upgrade: 632.813
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 126.562
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 63.281
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 3:
-      //     await Upgrade.update({
-      //       level: 4,
-      //       upgrade: 1423.82
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 284.76
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 142.38
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 4:
-      //     await Upgrade.update({
-      //       level: 5,
-      //       upgrade: 3203.61
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 640.72
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 320.36
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 5:
-      //     await Upgrade.update({
-      //       level: 6,
-      //       upgrade: 7208.13
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 1441.64
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 720.81
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 6:
-      //     await Upgrade.update({
-      //       level: 7,
-      //       upgrade: 16218.29
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 3243.65
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 1621.82
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   case 7:
-      //     await Upgrade.update({
-      //       level: 8,
-      //       upgrade: 36491.15
-      //     }, {
-      //       where:
-      //       {
-      //         user_id: user_info.id
-      //       }
-      //     }
-      //     )
-      //     await wallet.update(
-      //       {
-      //         payment: finfReff.wallet.payment + 7298.23
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: finfReff.id
-      //         }
-      //       })
-      //     await wallet.update(
-      //       {
-      //         payment: adminWallet.wallet.payment + 3649.11
-      //       }
-      //       ,
-      //       {
-      //         where: {
-      //           user_id: 1
-      //         }
-      //       })
-      //     break
-      //   default:
-      //     // Handle the default case if needed
-      //     break;
-      // }
-      res.json('koi bi ni hay bhai tere agay');
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 2242.529
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 2803.162,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 1121.265 + 7084.853
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 1121.265 + 7084.853,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 5:
+           //upgrade levels
+           await Upgrade.update({
+            level: 6,
+            upgrade: 25228.455
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 25228.455,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 5045.691
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 6307.114,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 2522.845 + 17659.918
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 2522.845 + 17659.918,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 6:
+          //upgrade levels
+          await Upgrade.update({
+            level: 7,
+            upgrade: 56764.023
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 56764.023,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 11352.805
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 14191.006,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 5676.402  + 39734.816
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 5676.402  + 39734.816,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        case 7:
+          //upgrade levels
+          await Upgrade.update({
+            level: 8,
+            upgrade: 127719.051
+          }, {
+            where:
+            {
+              user_id: user_info.id
+            }
+          }
+          )
+          // upradde transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: "Upgraded package",
+              payment: 127719.051,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+
+          //payment to referal
+
+          await wallet.update(
+            {
+              payment: finfReff.wallet.payment + 25543.810
+            }
+            ,
+            {
+              where: {
+                user_id: finfReff.id
+              }
+            })
+          //payment refferal transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: finfReff.id,
+              reason: "Refferal trasaction",
+              payment: 31929.763,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          // admin wallet
+          await wallet.update(
+            {
+              payment: adminWallet.wallet.payment + 12771.905 + 89403.336
+            }
+            ,
+            {
+              where: {
+                user_id: user_info.id
+              }
+            })
+          // admin wallet transaction
+          await Transaction.update(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: " Tax for admin",
+              payment: 12771.905 + 89403.336,
+              user_id: user_info.id
+            },
+            {
+              where:
+              {
+                user_id: user_info.id
+              }
+            }
+          )
+          break
+        default:
+          // Handle the default case if needed
+          break;
+      }
+      res.json('No placement!..');
     }
     else {
       switch (Selected.Upgrade.level) {
