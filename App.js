@@ -28,7 +28,8 @@ App.post('/refferals',ctrl.refferals)
 App.post('/upgrade',ctrl.Upgrades)
 App.post('/purchase_package',ctrl.placementInvest)
 
-App.post('/levels',ctrl.levelFromTable)
+App.get('/Pakage_info',ctrl.Pakage_info)
+
 
 App.post('/ShowReffTrend',ctrl.ShowReff)
 App.get('/trenduser/:userId',ctrl.getUserByTrend)
