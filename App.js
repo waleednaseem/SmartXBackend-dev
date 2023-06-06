@@ -21,7 +21,7 @@ App.use(bodyparser.json())
 App.get('/admin', ctrl.ADMIN)
 App.post('/register', ctrl.Register)
 App.post('/login', ctrl.Login)
-App.post('/profile', ctrl.makeProfile)
+// App.post('/profile', ctrl.makeProfile)
 // App.get('/userDetail',ctrl.userDetail)
 App.post('/refferals',ctrl.refferals)
 
@@ -45,6 +45,7 @@ App.get('/wallet',ctrl.wallets)
 // small api for find pakages and transaction 
 App.get('/finduserdetail', ctrl.FIndUserDetail)
 App.get('/finduserpakage', ctrl.FindUserPakage)
+App.get('/find_Direct_Reff_Transactions', ctrl.find_Direct_Reff_Transactions)
 
 //decode
 App.post('/decode', ctrl.decode)

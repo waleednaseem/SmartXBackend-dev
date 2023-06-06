@@ -83,7 +83,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    level: {
+    refferal: {
       type: DataTypes.INTEGER,
       allowNull: true
     },

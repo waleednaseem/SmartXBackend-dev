@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Upgrade.init({
     upgrade: DataTypes.INTEGER,
+    pkg_price: DataTypes.INTEGER,
     level: DataTypes.INTEGER,
     user_id: DataTypes.INTEGER,
     profile_id: DataTypes.INTEGER,

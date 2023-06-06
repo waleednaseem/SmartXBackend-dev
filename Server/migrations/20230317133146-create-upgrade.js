@@ -15,6 +15,9 @@ module.exports = {
       upgrade: {
         type: Sequelize.INTEGER
       },
+      pkg_price: {
+        type: Sequelize.INTEGER
+      },
       user_id: {
         type: Sequelize.INTEGER
       },

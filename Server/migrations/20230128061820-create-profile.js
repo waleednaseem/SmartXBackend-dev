@@ -25,7 +25,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull:true
       },
-      level: {
+      refferal: {
         type: Sequelize.INTEGER,
         allowNull:true
       },
