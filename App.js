@@ -21,31 +21,29 @@ App.use(bodyparser.json())
 App.get('/admin', ctrl.ADMIN)
 App.post('/register', ctrl.Register)
 App.post('/login', ctrl.Login)
-// App.post('/profile', ctrl.makeProfile)
-// App.get('/userDetail',ctrl.userDetail)
-App.post('/refferals',ctrl.refferals)
+App.post('/refferals', Authentication, ctrl.refferals)
 
-App.post('/upgrade',ctrl.Upgrades)
-App.post('/purchase_package',ctrl.placementInvest)
+App.post('/upgrade', Authentication, ctrl.Upgrades)
+App.post('/purchase_package', Authentication, ctrl.placementInvest)
 
-App.get('/Pakage_info',ctrl.Pakage_info)
+App.get('/Pakage_info', Authentication, ctrl.Pakage_info)
 
 
-App.post('/ShowReffTrend',ctrl.ShowReff)
-App.get('/trenduser/:userId',ctrl.getUserByTrend)
+App.post('/ShowReffTrend', Authentication, ctrl.ShowReff)
+App.get('/trenduser/:userId', Authentication, ctrl.getUserByTrend)
 
 
 //payments
 
-App.get('/wallet',ctrl.wallets)
-// App.post('/upgrade',ctrl.Placements)
+App.get('/wallet', Authentication, ctrl.wallets)
+// App.post('/upgrade',Authentication,ctrl.Placements)
 
 //payments end 
 
 // small api for find pakages and transaction 
-App.get('/finduserdetail', ctrl.FIndUserDetail)
-App.get('/finduserpakage', ctrl.FindUserPakage)
-App.get('/find_Direct_Reff_Transactions', ctrl.find_Direct_Reff_Transactions)
+App.get('/finduserdetail', Authentication, ctrl.FIndUserDetail)
+App.get('/finduserpakage', Authentication, ctrl.FindUserPakage)
+App.get('/find_Direct_Reff_Transactions', Authentication, ctrl.find_Direct_Reff_Transactions)
 
 //decode
 App.post('/decode', ctrl.decode)

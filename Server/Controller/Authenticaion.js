@@ -91,17 +91,18 @@ const FIndUserDetail = async (req, res) => {
 };
 
 const Register = async (req, res) => {
-  const password = req.body.password;
+  const { username, password, refferal } = req.body
+
   const hashedPassword = jwt.sign({ password }, "teriMaaKiChot");
-  const USER = await User.findOne({ where: { username: req.body.username } });
+  const USER = await User.findOne({ where: { username: username } });
 
   if (!USER) {
     const userInfo = await User.create({
-      username: req.body.username,
+      username: username,
       password: hashedPassword,
     });
     await Refferal.create({
-      refferal: req.body.refferal,
+      refferal: refferal,
       user_id: userInfo.id,
     });
     await wallet.create({
@@ -115,30 +116,36 @@ const Register = async (req, res) => {
 };
 
 const Login = async (req, res) => {
+  const { username, password } = req.body;
+
+
   const user = await User.findOne({
     where: {
-      username: req.body.username,
+      username: username
     },
   });
+  const hashPassword = await jwt_decode(user.password);
 
-  if (!user) {
+  if (hashPassword.password == password) {
+    const payload = {
+      id: user.id,
+    };
+
+    const token = jwt.sign(payload, "teriMaaKiChot");
+
+    if (!token) {
+      return res.status(401).send("Invalid password");
+    }
+
+    try {
+      res.status(200).send({ message: "Logged in successfully", token });
+    } catch (err) {
+      res.status(500).send({ message: "Error creating token" });
+    }
+  } else {
     return res.status(200).send("User not found");
   }
-  const payload = {
-    id: user.id,
-  };
-  // const validPassword = await bcrypt.compare(req.body.password, user.password)
-  const token = jwt.sign(payload, "teriMaaKiChot");
 
-  if (!token) {
-    return res.status(401).send("Invalid password");
-  }
-
-  try {
-    res.status(200).send({ message: "Logged in successfully", token });
-  } catch (err) {
-    res.status(500).send({ message: "Error creating token" });
-  }
 };
 
 // const makeProfile = async (req, res) => {
@@ -1113,33 +1120,10 @@ const refferals = async (req, res) => {
   });
   const CountLevel = [];
 
-  // countLevels(user, 1);
-  // res.json({ CountLevel: CountLevel });
-
-  // res
-  //   .status(200)
-  //   .send([
-  //     { first: user.left_placement.user_id },
-  //     { second: user.left_placement.ReffUsers.left_placement.user_id },
-  //     {
-  //       third:
-  //         user.left_placement.ReffUsers.left_placement.ReffUsers.left_placement
-  //           .user_id,
-  //     },
-  //     {
-  //       forth:
-  //         user.left_placement.ReffUsers.left_placement.ReffUsers.left_placement
-  //           .ReffUsers.left_placement.user_id,
-  //     },
-  //     // {
-  //     //   fifth:
-  //     //     user.left_placement.ReffUsers.left_placement.ReffUsers.left_placement
-  //     //       .ReffUsers.left_placement.ReffUsers.left_placement.user_id,
-  //     // },
-  //   ]);
 };
 
 const Upgrades = async (req, res) => {
+  const { pkg } = req.body
   const Upgrades1 = 10;
   const Upgrades2 = 20;
   const Upgrades3 = 50;
@@ -1150,18 +1134,18 @@ const Upgrades = async (req, res) => {
   const userx = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(userx);
   const Selected = await Profile.findOne({
-    where: { user_id: user_info.id },
+    where: { user_id: user_info.id, pkg: pkg },
     include: { model: Upgrade }
   });
-  const finfReff = await Profile.findOne({
-    where: { user_id: refferal },
+
+  const findReff = await Profile.findOne({
+    where: { user_id: Selected.refferal },
     include: { model: wallet }
   });
   const adminWallet = await Profile.findOne({
     where: { user_id: 1 },
     include: { model: wallet }
   });
-
 
   //placement start
   let placements = [];
@@ -1185,7 +1169,6 @@ const Upgrades = async (req, res) => {
   );
 
   if (placement) {
-    // if (placement) {
     placements.push(placement);
   }
 
@@ -1211,8 +1194,7 @@ const Upgrades = async (req, res) => {
       placements.push(placement);
     }
   }
-  // res.json(adminWallet.wallet.payment )
-  // return false
+
   if (Selected.pkg == Upgrades4) {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
@@ -1230,7 +1212,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -1253,19 +1236,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 25
+              payment: findReff.wallet.payment + 25
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Upgraded package",
               payment: 31.250,
               user_id: user_info.id
@@ -1314,7 +1297,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -1339,19 +1323,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 56.250
+              payment: findReff.wallet.payment + 56.250
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 70.313,
               user_id: user_info.id
@@ -1399,7 +1383,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -1424,19 +1409,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 126.563
+              payment: findReff.wallet.payment + 126.563
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 158.203,
               user_id: user_info.id
@@ -1484,7 +1469,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -1509,19 +1495,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 284.766
+              payment: findReff.wallet.payment + 284.766
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 355.957,
               user_id: user_info.id
@@ -1569,7 +1555,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -1594,19 +1581,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 640.723
+              payment: findReff.wallet.payment + 640.723
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 800.903,
               user_id: user_info.id
@@ -1654,7 +1641,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -1679,19 +1667,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 1441.626
+              payment: findReff.wallet.payment + 1441.626
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 1802.032,
               user_id: user_info.id
@@ -1739,7 +1727,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -1764,19 +1753,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 3243.658
+              payment: findReff.wallet.payment + 3243.658
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 4054.573,
               user_id: user_info.id
@@ -1824,7 +1813,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -1849,19 +1839,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 7298.232
+              payment: findReff.wallet.payment + 7298.232
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 9122.789,
               user_id: user_info.id
@@ -1905,7 +1895,7 @@ const Upgrades = async (req, res) => {
           // Handle the default case if needed
           break;
       }
-      res.json('No placement!..');
+      res.status(200).json('Purchased successfully!');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -1917,7 +1907,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -1940,19 +1931,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 25
+              payment: findReff.wallet.payment + 25
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Upgraded package",
               payment: 31.250,
               user_id: user_info.id
@@ -2027,7 +2018,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -2052,19 +2044,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 56.250
+              payment: findReff.wallet.payment + 56.250
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 70.313,
               user_id: user_info.id
@@ -2139,7 +2131,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -2164,19 +2157,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 126.563
+              payment: findReff.wallet.payment + 126.563
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 158.203,
               user_id: user_info.id
@@ -2251,7 +2244,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -2276,19 +2270,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 284.766
+              payment: findReff.wallet.payment + 284.766
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 355.957,
               user_id: user_info.id
@@ -2363,7 +2357,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -2388,19 +2383,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 640.723
+              payment: findReff.wallet.payment + 640.723
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 800.903,
               user_id: user_info.id
@@ -2475,7 +2470,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -2500,19 +2496,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 1441.626
+              payment: findReff.wallet.payment + 1441.626
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 1802.032,
               user_id: user_info.id
@@ -2587,7 +2583,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -2612,19 +2609,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 3243.658
+              payment: findReff.wallet.payment + 3243.658
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 4054.573,
               user_id: user_info.id
@@ -2699,7 +2696,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -2724,19 +2722,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 7298.232
+              payment: findReff.wallet.payment + 7298.232
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 9122.789,
               user_id: user_info.id
@@ -2826,7 +2824,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -2849,19 +2848,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 2.5
+              payment: findReff.wallet.payment + 2.5
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 3.125,
               user_id: user_info.id
@@ -2900,6 +2899,7 @@ const Upgrades = async (req, res) => {
               }
             }
           )
+
           break
         case 1:
           //upgrade levels
@@ -2909,7 +2909,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -2932,19 +2933,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 12.656
+              payment: findReff.wallet.payment + 12.656
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 15.820,
               user_id: user_info.id
@@ -2992,7 +2993,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -3015,19 +3017,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 12.656
+              payment: findReff.wallet.payment + 12.656
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 15.820,
               user_id: user_info.id
@@ -3075,7 +3077,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -3100,19 +3103,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 82.47
+              payment: findReff.wallet.payment + 82.47
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 35.596,
               user_id: user_info.id
@@ -3160,7 +3163,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -3185,19 +3189,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 64.072
+              payment: findReff.wallet.payment + 64.072
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 80.090,
               user_id: user_info.id
@@ -3245,7 +3249,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -3270,19 +3275,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 144.163
+              payment: findReff.wallet.payment + 144.163
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 180.203,
               user_id: user_info.id
@@ -3330,7 +3335,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -3355,19 +3361,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 324.366
+              payment: findReff.wallet.payment + 324.366
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 405.457,
               user_id: user_info.id
@@ -3415,7 +3421,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -3440,19 +3447,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 729.823
+              payment: findReff.wallet.payment + 729.823
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 912.279,
               user_id: user_info.id
@@ -3496,7 +3503,7 @@ const Upgrades = async (req, res) => {
           // Handle the default case if needed
           break;
       }
-      res.json('No placement!..');
+      res.status(200).json('Purchased successfully!');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -3508,7 +3515,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -3531,19 +3539,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 2.5
+              payment: findReff.wallet.payment + 2.5
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 3.125,
               user_id: user_info.id
@@ -3618,7 +3626,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -3641,19 +3650,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 12.656
+              payment: findReff.wallet.payment + 12.656
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 15.820,
               user_id: user_info.id
@@ -3728,7 +3737,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -3751,19 +3761,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 12.656
+              payment: findReff.wallet.payment + 12.656
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 15.820,
               user_id: user_info.id
@@ -3838,7 +3848,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -3863,19 +3874,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 82.47
+              payment: findReff.wallet.payment + 82.47
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 35.596,
               user_id: user_info.id
@@ -3950,7 +3961,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -3975,19 +3987,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 64.072
+              payment: findReff.wallet.payment + 64.072
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 80.090,
               user_id: user_info.id
@@ -4062,7 +4074,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -4087,19 +4100,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 144.163
+              payment: findReff.wallet.payment + 144.163
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 180.203,
               user_id: user_info.id
@@ -4174,7 +4187,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -4199,19 +4213,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 324.366
+              payment: findReff.wallet.payment + 324.366
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 405.457,
               user_id: user_info.id
@@ -4286,7 +4300,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -4311,19 +4326,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 729.823
+              payment: findReff.wallet.payment + 729.823
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 912.279,
               user_id: user_info.id
@@ -4413,7 +4428,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -4436,19 +4452,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 5.0
+              payment: findReff.wallet.payment + 5.0
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 6.250,
               user_id: user_info.id
@@ -4496,7 +4512,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -4519,19 +4536,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 11.250
+              payment: findReff.wallet.payment + 11.250
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 14.063,
               user_id: user_info.id
@@ -4579,7 +4596,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -4602,19 +4620,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 25.313
+              payment: findReff.wallet.payment + 25.313
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 31.641,
               user_id: user_info.id
@@ -4662,7 +4680,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -4687,19 +4706,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 56.953
+              payment: findReff.wallet.payment + 56.953
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 71.191,
               user_id: user_info.id
@@ -4747,7 +4766,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -4772,19 +4792,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 128.145
+              payment: findReff.wallet.payment + 128.145
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 160.181,
               user_id: user_info.id
@@ -4832,7 +4852,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -4857,19 +4878,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 288.325
+              payment: findReff.wallet.payment + 288.325
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 360.406,
               user_id: user_info.id
@@ -4917,7 +4938,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -4942,19 +4964,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 648.732
+              payment: findReff.wallet.payment + 648.732
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 810.915,
               user_id: user_info.id
@@ -5002,7 +5024,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -5027,19 +5050,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 1459.646
+              payment: findReff.wallet.payment + 1459.646
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 1824.558,
               user_id: user_info.id
@@ -5083,7 +5106,7 @@ const Upgrades = async (req, res) => {
           // Handle the default case if needed
           break;
       }
-      res.json('No placement!..');
+      res.status(200).json('Purchased successfully!');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -5095,7 +5118,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -5118,19 +5142,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 5.0
+              payment: findReff.wallet.payment + 5.0
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 6.250,
               user_id: user_info.id
@@ -5205,7 +5229,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -5228,19 +5253,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 11.250
+              payment: findReff.wallet.payment + 11.250
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 14.063,
               user_id: user_info.id
@@ -5315,7 +5340,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -5338,19 +5364,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 25.313
+              payment: findReff.wallet.payment + 25.313
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 31.641,
               user_id: user_info.id
@@ -5425,7 +5451,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -5450,19 +5477,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 56.953
+              payment: findReff.wallet.payment + 56.953
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 71.191,
               user_id: user_info.id
@@ -5537,7 +5564,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -5562,19 +5590,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 128.145
+              payment: findReff.wallet.payment + 128.145
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 160.181,
               user_id: user_info.id
@@ -5649,7 +5677,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -5674,19 +5703,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 288.325
+              payment: findReff.wallet.payment + 288.325
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 360.406,
               user_id: user_info.id
@@ -5761,7 +5790,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -5786,19 +5816,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 648.732
+              payment: findReff.wallet.payment + 648.732
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 810.915,
               user_id: user_info.id
@@ -5873,7 +5903,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -5898,19 +5929,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 1459.646
+              payment: findReff.wallet.payment + 1459.646
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 1824.558,
               user_id: user_info.id
@@ -6000,7 +6031,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -6023,19 +6055,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 12.500
+              payment: findReff.wallet.payment + 12.500
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 15.625,
               user_id: user_info.id
@@ -6083,7 +6115,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -6106,19 +6139,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 28.125
+              payment: findReff.wallet.payment + 28.125
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 35.156,
               user_id: user_info.id
@@ -6166,7 +6199,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -6189,19 +6223,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 63.281
+              payment: findReff.wallet.payment + 63.281
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 79.105,
               user_id: user_info.id
@@ -6249,7 +6283,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -6274,19 +6309,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 142.383
+              payment: findReff.wallet.payment + 142.383
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 177.979,
               user_id: user_info.id
@@ -6334,7 +6369,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -6359,19 +6395,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 320.361
+              payment: findReff.wallet.payment + 320.361
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 400.452,
               user_id: user_info.id
@@ -6419,7 +6455,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -6444,19 +6481,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 7205.813
+              payment: findReff.wallet.payment + 7205.813
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 901.016,
               user_id: user_info.id
@@ -6504,7 +6541,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -6529,19 +6567,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 5676.402
+              payment: findReff.wallet.payment + 5676.402
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 2027.287,
               user_id: user_info.id
@@ -6589,7 +6627,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -6614,19 +6653,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 3649.116
+              payment: findReff.wallet.payment + 3649.116
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 4561.395,
               user_id: user_info.id
@@ -6670,7 +6709,7 @@ const Upgrades = async (req, res) => {
           // Handle the default case if needed
           break;
       }
-      res.json('No placement!..');
+      res.status(200).json('Purchased successfully!');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -6682,7 +6721,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -6705,19 +6745,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 12.500
+              payment: findReff.wallet.payment + 12.500
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 15.625,
               user_id: user_info.id
@@ -6792,7 +6832,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -6815,19 +6856,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 28.125
+              payment: findReff.wallet.payment + 28.125
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 35.156,
               user_id: user_info.id
@@ -6902,7 +6943,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -6925,19 +6967,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 63.281
+              payment: findReff.wallet.payment + 63.281
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 79.105,
               user_id: user_info.id
@@ -7012,7 +7054,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -7037,19 +7080,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 142.383
+              payment: findReff.wallet.payment + 142.383
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 177.979,
               user_id: user_info.id
@@ -7124,7 +7167,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -7149,19 +7193,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 320.361
+              payment: findReff.wallet.payment + 320.361
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 400.452,
               user_id: user_info.id
@@ -7236,7 +7280,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -7261,19 +7306,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 7205.813
+              payment: findReff.wallet.payment + 7205.813
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 901.016,
               user_id: user_info.id
@@ -7348,7 +7393,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -7373,19 +7419,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 5676.402
+              payment: findReff.wallet.payment + 5676.402
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 2027.287,
               user_id: user_info.id
@@ -7460,7 +7506,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -7485,19 +7532,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 3649.116
+              payment: findReff.wallet.payment + 3649.116
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 4561.395,
               user_id: user_info.id
@@ -7587,7 +7634,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -7610,19 +7658,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 50
+              payment: findReff.wallet.payment + 50
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 62.500,
               user_id: user_info.id
@@ -7670,7 +7718,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -7693,19 +7742,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 112.500
+              payment: findReff.wallet.payment + 112.500
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 140.625,
               user_id: user_info.id
@@ -7753,7 +7802,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -7776,19 +7826,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 253.125
+              payment: findReff.wallet.payment + 253.125
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 361.409,
               user_id: user_info.id
@@ -7836,7 +7886,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -7861,19 +7912,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 569.531
+              payment: findReff.wallet.payment + 569.531
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 711.914,
               user_id: user_info.id
@@ -7921,7 +7972,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -7946,19 +7998,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 1281.445
+              payment: findReff.wallet.payment + 1281.445
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 1601.807,
               user_id: user_info.id
@@ -8006,7 +8058,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -8031,19 +8084,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 2883.252
+              payment: findReff.wallet.payment + 2883.252
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 3604.065,
               user_id: user_info.id
@@ -8091,7 +8144,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -8116,19 +8170,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 6487.317
+              payment: findReff.wallet.payment + 6487.317
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 8109.146,
               user_id: user_info.id
@@ -8176,7 +8230,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -8201,19 +8256,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 14596.463
+              payment: findReff.wallet.payment + 14596.463
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 18245.579,
               user_id: user_info.id
@@ -8257,7 +8312,7 @@ const Upgrades = async (req, res) => {
           // Handle the default case if needed
           break;
       }
-      res.json('No placement!..');
+      res.status(200).json('Purchased successfully!');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -8269,7 +8324,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -8292,19 +8348,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 50
+              payment: findReff.wallet.payment + 50
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 62.500,
               user_id: user_info.id
@@ -8379,7 +8435,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -8402,19 +8459,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 112.500
+              payment: findReff.wallet.payment + 112.500
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 140.625,
               user_id: user_info.id
@@ -8489,7 +8546,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -8512,19 +8570,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 253.125
+              payment: findReff.wallet.payment + 253.125
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 361.409,
               user_id: user_info.id
@@ -8599,7 +8657,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -8624,19 +8683,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 569.531
+              payment: findReff.wallet.payment + 569.531
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 711.914,
               user_id: user_info.id
@@ -8711,7 +8770,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -8736,19 +8796,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 1281.445
+              payment: findReff.wallet.payment + 1281.445
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 1601.807,
               user_id: user_info.id
@@ -8823,7 +8883,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -8848,19 +8909,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 2883.252
+              payment: findReff.wallet.payment + 2883.252
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 3604.065,
               user_id: user_info.id
@@ -8935,7 +8996,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -8960,19 +9022,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 6487.317
+              payment: findReff.wallet.payment + 6487.317
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 8109.146,
               user_id: user_info.id
@@ -9047,7 +9109,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -9072,19 +9135,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 14596.463
+              payment: findReff.wallet.payment + 14596.463
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 18245.579,
               user_id: user_info.id
@@ -9174,7 +9237,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -9197,19 +9261,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 87.500
+              payment: findReff.wallet.payment + 87.500
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 109.375,
               user_id: user_info.id
@@ -9257,7 +9321,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -9280,19 +9345,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 196.875
+              payment: findReff.wallet.payment + 196.875
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 246.094,
               user_id: user_info.id
@@ -9340,7 +9405,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -9363,19 +9429,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 442.969
+              payment: findReff.wallet.payment + 442.969
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 553.711,
               user_id: user_info.id
@@ -9423,7 +9489,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -9448,19 +9515,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 996.680
+              payment: findReff.wallet.payment + 996.680
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 1245.850,
               user_id: user_info.id
@@ -9508,7 +9575,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -9533,19 +9601,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 2242.529
+              payment: findReff.wallet.payment + 2242.529
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 2803.162,
               user_id: user_info.id
@@ -9593,7 +9661,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -9618,19 +9687,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 5045.691
+              payment: findReff.wallet.payment + 5045.691
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 6307.114,
               user_id: user_info.id
@@ -9678,7 +9747,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -9703,19 +9773,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 11352.805
+              payment: findReff.wallet.payment + 11352.805
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 14191.006,
               user_id: user_info.id
@@ -9763,7 +9833,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -9788,19 +9859,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 25543.810
+              payment: findReff.wallet.payment + 25543.810
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 31929.763,
               user_id: user_info.id
@@ -9844,7 +9915,7 @@ const Upgrades = async (req, res) => {
           // Handle the default case if needed
           break;
       }
-      res.json('No placement!..');
+      res.status(200).json('Purchased successfully!');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -9856,7 +9927,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -9879,19 +9951,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 87.500
+              payment: findReff.wallet.payment + 87.500
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 109.375,
               user_id: user_info.id
@@ -9966,7 +10038,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -9989,19 +10062,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 196.875
+              payment: findReff.wallet.payment + 196.875
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 246.094,
               user_id: user_info.id
@@ -10076,7 +10149,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -10099,19 +10173,19 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 442.969
+              payment: findReff.wallet.payment + 442.969
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Referal",
               payment: 553.711,
               user_id: user_info.id
@@ -10186,7 +10260,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -10211,19 +10286,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 996.680
+              payment: findReff.wallet.payment + 996.680
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 1245.850,
               user_id: user_info.id
@@ -10298,7 +10373,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -10323,19 +10399,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 2242.529
+              payment: findReff.wallet.payment + 2242.529
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 2803.162,
               user_id: user_info.id
@@ -10410,7 +10486,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -10435,19 +10512,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 5045.691
+              payment: findReff.wallet.payment + 5045.691
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 6307.114,
               user_id: user_info.id
@@ -10522,7 +10599,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -10547,19 +10625,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 11352.805
+              payment: findReff.wallet.payment + 11352.805
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 14191.006,
               user_id: user_info.id
@@ -10634,7 +10712,8 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id
+              user_id: user_info.id,
+              pkg_price: pkg
             }
           }
           )
@@ -10659,19 +10738,19 @@ const Upgrades = async (req, res) => {
 
           await wallet.update(
             {
-              payment: finfReff.wallet.payment + 25543.810
+              payment: findReff.wallet.payment + 25543.810
             }
             ,
             {
               where: {
-                user_id: finfReff.id
+                user_id: findReff.id
               }
             })
           //payment refferal transaction
           await Transaction.update(
             {
               from: user_info.id,
-              to: finfReff.id,
+              to: findReff.id,
               reason: "Refferal trasaction",
               payment: 31929.763,
               user_id: user_info.id
@@ -10746,16 +10825,17 @@ const Upgrades = async (req, res) => {
     }
   }
 
-  // res.json({ placements, Placement_Upgrade, Placement_check })
-  //placement end
 };
 
-const placementInvest = async (req, res) => {
-  const { levels, pkg } = req.body;
+const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
-  const userx = req.headers.authorization.split(" ")[1];
-  const user_info = jwt_decode(userx);
-
+  const findRight = await Profile.findOne({
+    where: {
+      left: { [Sequelize.Op.ne]: null },
+      right: null,
+      pkg: pkg,
+    },
+  });
   let ReffkWallets1
 
   ReffkWallets1 = await Refferal.findOne({
@@ -10769,23 +10849,117 @@ const placementInvest = async (req, res) => {
       },
     },
   });
+  const percentage10 = (pkg * 10) / 100;
+  const percentage45 = (pkg * 45) / 100;
+  const percentage90 = (pkg * 90) / 100;
 
-
-
-  if (pkg == pakage_prices1) {
-    const findRight = await Profile.findOne({
-      where: {
-        left: { [Sequelize.Op.ne]: null },
-        right: null,
-        pkg: pakage_prices1,
+  if (findRight) {
+    // xx-------------------xx------------------------------xx---------------------xxx
+    const Reff = await Refferal.findOne({
+      where: { user_id: user_info.id },
+      include: {
+        model: User,
+        as: 'directReffUser',
+        include: {
+          model: wallet,
+          as: 'reff',
+        },
       },
     });
+    const usermake = await Profile.create({
+      refferal: Reff.refferal,
+      pkg: pkg,
+      user_id: user_info.id,
+    });
 
-    const percentage10 = (pakage_prices1 * 10) / 100;
-    const percentage45 = (pakage_prices1 * 45) / 100;
-    const percentage90 = (pakage_prices1 * 90) / 100;
+    await Profile.update(
+      {
+        right: user_info.id,
+      },
+      {
+        where: {
+          id: findRight.id,
+        },
+      }
+    );
+    await Upgrade.create({
+      user_id: user_info.id,
+      profile_id: usermake.id,
+      upgrade: 0,
+      pkg_price: pkg,
+      level: 0
+    });
 
-    if (findRight) {
+    await Pakage.create({
+      user_id: user_info.id,
+      pkg_price: pkg,
+      pkg_name: pkg_name,
+    });
+
+    const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
+
+    const placementWallet = await wallet.findOne({
+      where: { user_id: findRight.user_id },
+    })
+
+    if (Reff.refferal == 1) {
+      await wallet.update(
+        { payment: adminkWallets1.payment + pkg },
+        { where: { user_id: adminkWallets1.user_id } }
+      );
+      await Transaction.create({
+        from: user_info.id,
+        to: 1,
+        reason: "commision with tax for admin",
+        payment: pkg,
+        user_id: 1,
+      });
+    } else {
+
+      await wallet.update(
+        { payment: adminkWallets1.payment + percentage10 },
+        { where: { user_id: adminkWallets1.user_id } }
+      ); // 10% for admin
+      await wallet.update(
+        { payment: Reff.directReffUser.reff.payment + percentage45 },
+        { where: { user_id: ReffkWallets1.user_id } }
+      ); // 45% for direct refferal
+      await wallet.update(
+        { payment: placementWallet.payment + percentage45 },
+        { where: { user_id: findRight.user_id } }
+      ); // 45% for placement
+
+      await Transaction.create({
+        from: user_info.id,
+        to: 1,
+        reason: "tax for admin",
+        payment: percentage10,
+        user_id: 1,
+      });
+
+      await Transaction.create({
+        from: "meta mask",
+        to: user_info.id,
+        reason: "you purchased pakage",
+        payment: percentage90,
+        user_id: user_info.id,
+      });
+    }
+    // await wallet.create({
+    //   payment: 0,
+    //   user_id: user_info.id,
+    // });
+    res.status(200).json({ msg: `from Right of ${pkg}`, findRight });
+
+    // xx-------------------xx------------------------------xx---------------------xxx
+  } else {
+    const findLeft = await Profile.findOne({
+      where: {
+        left: null,
+        pkg: pkg,
+      },
+    });
+    if (findLeft) {
       // xx-------------------xx------------------------------xx---------------------xxx
       const Reff = await Refferal.findOne({
         where: { user_id: user_info.id },
@@ -10799,63 +10973,53 @@ const placementInvest = async (req, res) => {
         },
       });
       const usermake = await Profile.create({
-        email: req.body.email,
-        phone: req.body.phone,
         refferal: Reff.refferal,
-        pkg: pakage_prices1,
+        pkg: pkg,
         user_id: user_info.id,
       });
 
       await Profile.update(
         {
-          right: user_info.id,
+          left: user_info.id,
         },
         {
           where: {
-            id: findRight.id,
+            id: findLeft.id,
           },
         }
       );
       await Upgrade.create({
         user_id: user_info.id,
-        profile_id: user_info.id,
+        profile_id: usermake.id,
         upgrade: 0,
-        pkg_price: pakage_prices1
+        pkg_price: pkg,
+        level: 0
       });
-
-
-      const DirectReff = await Profile.findOne({
-        where: { id: req.body.refferal },
-      });
-
-      const admin = await wallet.findOne({ where: { user_id: 1 } });
 
       await Pakage.create({
         user_id: user_info.id,
-        pkg_price: pakage_prices1,
-        pkg_name: req.body.pkg_name,
+        pkg_price: pkg,
+        pkg_name: pkg_name,
       });
-
       const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
 
       const placementWallet = await wallet.findOne({
-        where: { user_id: findRight.id },
+        where: { user_id: findLeft.user_id },
       })
 
-      if (req.body.refferal == 1) {
+      if (Reff.refferal == 1) {
         await wallet.update(
-          { payment: adminkWallets1.payment + pakage_prices1 },
+          { payment: adminkWallets1.payment + pkg },
           { where: { user_id: adminkWallets1.user_id } }
         );
         await Transaction.create({
           from: user_info.id,
           to: 1,
-          reason: "commision with tax for admin",
-          payment: pakage_prices1,
+          reason: "commision and tax for admin",
+          payment: pkg,
           user_id: 1,
-        });
+        })
       } else {
-
         await wallet.update(
           { payment: adminkWallets1.payment + percentage10 },
           { where: { user_id: adminkWallets1.user_id } }
@@ -10866,7 +11030,7 @@ const placementInvest = async (req, res) => {
         ); // 45% for direct refferal
         await wallet.update(
           { payment: placementWallet.payment + percentage45 },
-          { where: { user_id: findRight.id } }
+          { where: { user_id: findLeft.user_id } }
         ); // 45% for placement
 
         await Transaction.create({
@@ -10885,219 +11049,10 @@ const placementInvest = async (req, res) => {
           user_id: user_info.id,
         });
       }
-      // await wallet.create({
-      //   payment: 0,
-      //   user_id: user_info.id,
-      // });
-      res.status(200).json({ msg: `from Right of ${pkg}`, findRight });
 
+      res.json({ msg: `from Left of ${pkg}`, findLeft });
       // xx-------------------xx------------------------------xx---------------------xxx
     } else {
-      const findLeft = await Profile.findOne({
-        where: {
-          left: null,
-          pkg: pakage_prices1,
-        },
-      });
-      if (findLeft) {
-        // xx-------------------xx------------------------------xx---------------------xxx
-        const Reff = await Refferal.findOne({
-          where: { user_id: user_info.id },
-          include: {
-            model: User,
-            as: 'directReffUser',
-            include: {
-              model: wallet,
-              as: 'reff',
-            },
-          },
-        });
-        const usermake = await Profile.create({
-          email: req.body.email,
-          phone: req.body.phone,
-          refferal: Reff.refferal,
-          pkg: pakage_prices1,
-          user_id: user_info.id,
-        });
-
-        await Profile.update(
-          {
-            left: user_info.id,
-          },
-          {
-            where: {
-              id: findLeft.id,
-            },
-          }
-        );
-        await Upgrade.create({
-          user_id: user_info.id,
-          profile_id: user_info.id,
-          upgrade: 0,
-          pkg_price: pkg
-        });
-
-
-        const DirectReff = await Profile.findOne({
-          where: { id: req.body.refferal },
-        });
-
-        await Pakage.create({
-          user_id: user_info.id,
-          pkg_price: pakage_prices1,
-          pkg_name: req.body.pkg_name,
-        });
-        const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-        const ReffkWallets1 = await wallet.findOne({
-          where: { user_id: req.body.refferal },
-        });
-        const placementWallet = await wallet.findOne({
-          where: { user_id: findLeft.id },
-        })
-
-        if (req.body.refferal == 1) {
-          await wallet.update(
-            { payment: adminkWallets1.payment + pakage_prices1 },
-            { where: { user_id: adminkWallets1.user_id } }
-          );
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "commision and tax for admin",
-            payment: pakage_prices1,
-            user_id: 1,
-          })
-        } else {
-          await wallet.update(
-            { payment: adminkWallets1.payment + percentage10 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await wallet.update(
-            { payment: Reff.directReffUser.reff.payment + percentage45 },
-            { where: { user_id: ReffkWallets1.user_id } }
-          ); // 45% for direct refferal
-          await wallet.update(
-            { payment: placementWallet.payment + percentage45 },
-            { where: { user_id: findLeft.id } }
-          ); // 45% for placement
-
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "tax for admin",
-            payment: percentage10,
-            user_id: 1,
-          });
-
-          await Transaction.create({
-            from: "meta mask",
-            to: user_info.id,
-            reason: "you purchased pakage",
-            payment: percentage90,
-            user_id: user_info.id,
-          });
-        }
-        // await wallet.create({
-        //   payment: 0,
-        //   user_id: user_info.id,
-        // });
-        res.json({ msg: `from Left of ${pkg}`, findLeft });
-        // xx-------------------xx------------------------------xx---------------------xxx
-      } else {
-        const Reff = await Refferal.findOne({
-          where: { user_id: user_info.id },
-          include: {
-            model: User,
-            as: 'directReffUser',
-            include: {
-              model: wallet,
-              as: 'reff',
-            },
-          },
-        });
-        const usermake = await Profile.create({
-          email: req.body.email,
-          phone: req.body.phone,
-          refferal: Reff.refferal,
-          pkg: pakage_prices1,
-          user_id: user_info.id,
-        });
-        await Pakage.create({
-          user_id: user_info.id,
-          pkg_price: req.body.pkg_price,
-          pkg_name: req.body.pkg_name,
-        });
-        await Upgrade.create({
-          user_id: user_info.id,
-          profile_id: user_info.id,
-          upgrade: 0,
-          pkg_price: pkg
-        });
-        const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-        const ReffkWallets1 = await wallet.findOne({
-          where: { user_id: req.body.refferal },
-        });
-
-        const percentage55 = (pakage_prices1 * 55) / 100;
-        const percentage45 = (pakage_prices1 * 45) / 100;
-
-        if (req.body.refferal == 1) {
-          await wallet.update(
-            { payment: adminkWallets1.payment + pakage_prices1 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "commision with tax for admin",
-            payment: pakage_prices1,
-            user_id: 1,
-          });
-          // res.status(200).json({ msg: "done" });
-        } else {
-          await wallet.update(
-            { payment: adminkWallets1.payment + percentage55 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await wallet.update(
-            { payment: Reff.directReffUser.reff.payment + percentage45 },
-            { where: { user_id: ReffkWallets1.user_id } }
-          ); // 90% for user
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "tax for admin",
-            payment: percentage55,
-            user_id: 1,
-          });
-
-          await Transaction.create({
-            from: "meta mask",
-            to: user_info.id,
-            reason: "you purchased pakage",
-            payment: percentage45,
-            user_id: user_info.id,
-          });
-        }
-
-        res.status(200).json({ msg: "no space found", usermake });
-      }
-    }
-  } else if (pkg == pakage_prices2) {
-    const findRight = await Profile.findOne({
-      where: {
-        left: { [Sequelize.Op.ne]: null },
-        right: null,
-        pkg: pakage_prices2,
-      },
-    });
-
-    const percentage10 = (pakage_prices2 * 10) / 100;
-    const percentage45 = (pakage_prices2 * 45) / 100;
-    const percentage90 = (pakage_prices2 * 90) / 100;
-
-    if (findRight) {
-      // xx-------------------xx------------------------------xx---------------------xxx
       const Reff = await Refferal.findOne({
         where: { user_id: user_info.id },
         include: {
@@ -11110,81 +11065,54 @@ const placementInvest = async (req, res) => {
         },
       });
       const usermake = await Profile.create({
-        email: req.body.email,
-        phone: req.body.phone,
         refferal: Reff.refferal,
-        pkg: pakage_prices2,
+        pkg: pkg,
         user_id: user_info.id,
       });
-
-      await Profile.update(
-        {
-          right: user_info.id,
-        },
-        {
-          where: {
-            id: findRight.id,
-          },
-        }
-      );
-      await Upgrade.create({
-        user_id: user_info.id,
-        profile_id: user_info.id,
-        upgrade: 0,
-        pkg_price: pakage_prices2
-      });
-
-
-      const DirectReff = await Profile.findOne({
-        where: { id: req.body.refferal },
-      });
-
-      const admin = await wallet.findOne({ where: { user_id: 1 } });
-
       await Pakage.create({
         user_id: user_info.id,
-        pkg_price: pakage_prices2,
-        pkg_name: req.body.pkg_name,
+        pkg_price: pkg,
+        pkg_name: pkg_name,
       });
-
+      await Upgrade.create({
+        user_id: user_info.id,
+        profile_id: usermake.id,
+        upgrade: 0,
+        pkg_price: pkg,
+        level: 0
+      });
       const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
 
+      const percentage55 = (pkg * 55) / 100;
+      const percentage45 = (pkg * 45) / 100;
 
-
-      if (req.body.refferal == 1) {
+      if (Reff.refferal == 1) {
         await wallet.update(
-          { payment: adminkWallets1.payment + pakage_prices2 },
+          { payment: adminkWallets1.payment + pkg },
           { where: { user_id: adminkWallets1.user_id } }
-        );
+        ); // 10% for admin
         await Transaction.create({
           from: user_info.id,
           to: 1,
           reason: "commision with tax for admin",
-          payment: pakage_prices2,
+          payment: pkg,
           user_id: 1,
         });
+        // res.status(200).json({ msg: "done" });
       } else {
-        const placementWallet = await wallet.findOne({
-          where: { user_id: findRight.id },
-        })
         await wallet.update(
-          { payment: adminkWallets1.payment + percentage10 },
+          { payment: adminkWallets1.payment + percentage55 },
           { where: { user_id: adminkWallets1.user_id } }
         ); // 10% for admin
         await wallet.update(
           { payment: Reff.directReffUser.reff.payment + percentage45 },
           { where: { user_id: ReffkWallets1.user_id } }
-        ); // 45% for direct refferal
-        await wallet.update(
-          { payment: placementWallet.payment + percentage45 },
-          { where: { user_id: findRight.id } }
-        ); // 45% for placement
-
+        ); // 90% for user
         await Transaction.create({
           from: user_info.id,
           to: 1,
           reason: "tax for admin",
-          payment: percentage10,
+          payment: percentage55,
           user_id: 1,
         });
 
@@ -11192,1490 +11120,392 @@ const placementInvest = async (req, res) => {
           from: "meta mask",
           to: user_info.id,
           reason: "you purchased pakage",
-          payment: percentage90,
+          payment: percentage45,
           user_id: user_info.id,
         });
       }
-      // await wallet.create({
-      //   payment: 0,
-      //   user_id: user_info.id,
-      // });
-      res.status(200).json({ msg: `from Right of ${pkg}`, findRight });
 
-      // xx-------------------xx------------------------------xx---------------------xxx
-    } else {
-      const findLeft = await Profile.findOne({
-        where: {
-          left: null,
-          pkg: pakage_prices2,
-        },
-      });
-      if (findLeft) {
-        // xx-------------------xx------------------------------xx---------------------xxx
-        const Reff = await Refferal.findOne({
-          where: { user_id: user_info.id },
-          include: {
-            model: User,
-            as: 'directReffUser',
-            include: {
-              model: wallet,
-              as: 'reff',
-            },
-          },
-        });
-        const usermake = await Profile.create({
-          email: req.body.email,
-          phone: req.body.phone,
-          refferal: Reff.refferal,
-          pkg: pakage_prices2,
-          user_id: user_info.id,
-        });
-
-        await Profile.update(
-          {
-            left: user_info.id,
-          },
-          {
-            where: {
-              id: findLeft.id,
-            },
-          }
-        );
-        await Upgrade.create({
-          user_id: user_info.id,
-          profile_id: user_info.id,
-          upgrade: 0,
-          pkg_price: pkg
-        });
-
-        const DirectReff = await Profile.findOne({
-          where: { id: req.body.refferal },
-        });
-
-        await Pakage.create({
-          user_id: user_info.id,
-          pkg_price: pakage_prices2,
-          pkg_name: req.body.pkg_name,
-        });
-        const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-        const ReffkWallets1 = await wallet.findOne({
-          where: { user_id: req.body.refferal },
-        });
-
-
-        if (req.body.refferal == 1) {
-          await wallet.update(
-            { payment: adminkWallets1.payment + pakage_prices2 },
-            { where: { user_id: adminkWallets1.user_id } }
-          );
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "commision and tax for admin",
-            payment: pakage_prices2,
-            user_id: 1,
-          })
-        } else {
-          const placementWallet = await wallet.findOne({
-            where: { user_id: findLeft.id },
-          })
-          await wallet.update(
-            { payment: adminkWallets1.payment + percentage10 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await wallet.update(
-            { payment: Reff.directReffUser.reff.payment + percentage45 },
-            { where: { user_id: ReffkWallets1.user_id } }
-          ); // 45% for direct refferal
-          await wallet.update(
-            { payment: placementWallet.payment + percentage45 },
-            { where: { user_id: findLeft.id } }
-          ); // 45% for placement
-
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "tax for admin",
-            payment: percentage10,
-            user_id: 1,
-          });
-
-          await Transaction.create({
-            from: "meta mask",
-            to: user_info.id,
-            reason: "you purchased pakage",
-            payment: percentage90,
-            user_id: user_info.id,
-          });
-        }
-        // await wallet.create({
-        //   payment: 0,
-        //   user_id: user_info.id,
-        // });
-        res.json({ msg: `from Left of ${pkg}`, findLeft });
-        // xx-------------------xx------------------------------xx---------------------xxx
-      } else {
-        const Reff = await Refferal.findOne({
-          where: { user_id: user_info.id },
-          include: {
-            model: User,
-            as: 'directReffUser',
-            include: {
-              model: wallet,
-              as: 'reff',
-            },
-          },
-        });
-        const usermake = await Profile.create({
-          email: req.body.email,
-          phone: req.body.phone,
-          refferal: Reff.refferal,
-          pkg: pakage_prices2,
-          user_id: user_info.id,
-        });
-        await Pakage.create({
-          user_id: user_info.id,
-          pkg_price: req.body.pkg_price,
-          pkg_name: req.body.pkg_name,
-        });
-        await Upgrade.create({
-          user_id: user_info.id,
-          profile_id: user_info.id,
-          upgrade: 0,
-          pkg_price: pkg
-        });
-
-        // await wallet.create({
-        //   payment: 0,
-        //   user_id: user_info.id,
-        // });
-
-
-        const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-        const ReffkWallets1 = await wallet.findOne({
-          where: { user_id: req.body.refferal },
-        });
-
-        const percentage55 = (pakage_prices2 * 55) / 100;
-        const percentage45 = (pakage_prices2 * 45) / 100;
-
-        if (req.body.refferal == 1) {
-          await wallet.update(
-            { payment: adminkWallets1.payment + pakage_prices2 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "commision with tax for admin",
-            payment: pakage_prices2,
-            user_id: 1,
-          });
-          // res.status(200).json({ msg: "done" });
-        } else {
-          await wallet.update(
-            { payment: adminkWallets1.payment + percentage55 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await wallet.update(
-            { payment: Reff.directReffUser.reff.payment + percentage45 },
-            { where: { user_id: ReffkWallets1.user_id } }
-          ); // 90% for user
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "tax for admin",
-            payment: percentage55,
-            user_id: 1,
-          });
-
-          await Transaction.create({
-            from: "meta mask",
-            to: user_info.id,
-            reason: "you purchased pakage",
-            payment: percentage45,
-            user_id: user_info.id,
-          });
-        }
-
-        res.status(200).json({ msg: "no space found", usermake });
-      }
-    }
-  } else if (pkg == pakage_prices3) {
-    const findRight = await Profile.findOne({
-      where: {
-        left: { [Sequelize.Op.ne]: null },
-        right: null,
-        pkg: pakage_prices3,
-      },
-    });
-
-    const percentage10 = (pakage_prices3 * 10) / 100;
-    const percentage45 = (pakage_prices3 * 45) / 100;
-    const percentage90 = (pakage_prices3 * 90) / 100;
-
-    if (findRight) {
-      // xx-------------------xx------------------------------xx---------------------xxx
-      const Reff = await Refferal.findOne({
-        where: { user_id: user_info.id },
-        include: {
-          model: User,
-          as: 'directReffUser',
-          include: {
-            model: wallet,
-            as: 'reff',
-          },
-        },
-      });
-      const usermake = await Profile.create({
-        email: req.body.email,
-        phone: req.body.phone,
-        refferal: Reff.refferal,
-        pkg: pakage_prices3,
-        user_id: user_info.id,
-      });
-
-      await Profile.update(
-        {
-          right: user_info.id,
-        },
-        {
-          where: {
-            id: findRight.id,
-          },
-        }
-      );
-      await Upgrade.create({
-        user_id: user_info.id,
-        profile_id: user_info.id,
-        upgrade: 0,
-        pkg_price: pakage_prices3
-      });
-
-      const DirectReff = await Profile.findOne({
-        where: { id: req.body.refferal },
-      });
-
-      const admin = await wallet.findOne({ where: { user_id: 1 } });
-
-      await Pakage.create({
-        user_id: user_info.id,
-        pkg_price: pakage_prices3,
-        pkg_name: req.body.pkg_name,
-      });
-
-      const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-
-      const placementWallet = await wallet.findOne({
-        where: { user_id: findRight.id },
-      })
-
-      if (req.body.refferal == 1) {
-        await wallet.update(
-          { payment: adminkWallets1.payment + pakage_prices3 },
-          { where: { user_id: adminkWallets1.user_id } }
-        );
-        await Transaction.create({
-          from: user_info.id,
-          to: 1,
-          reason: "commision with tax for admin",
-          payment: pakage_prices3,
-          user_id: 1,
-        });
-      } else {
-
-        await wallet.update(
-          { payment: adminkWallets1.payment + percentage10 },
-          { where: { user_id: adminkWallets1.user_id } }
-        ); // 10% for admin
-        await wallet.update(
-          { payment: Reff.directReffUser.reff.payment + percentage45 },
-          { where: { user_id: ReffkWallets1.user_id } }
-        ); // 45% for direct refferal
-        await wallet.update(
-          { payment: placementWallet.payment + percentage45 },
-          { where: { user_id: findRight.id } }
-        ); // 45% for placement
-
-        await Transaction.create({
-          from: user_info.id,
-          to: 1,
-          reason: "tax for admin",
-          payment: percentage10,
-          user_id: 1,
-        });
-
-        await Transaction.create({
-          from: "meta mask",
-          to: user_info.id,
-          reason: "you purchased pakage",
-          payment: percentage90,
-          user_id: user_info.id,
-        });
-      }
-      // await wallet.create({
-      //   payment: 0,
-      //   user_id: user_info.id,
-      // });
-      res.status(200).json({ msg: `from Right of ${pkg}`, findRight });
-      // res.status(200).json({ placementWallet});
-
-      // xx-------------------xx------------------------------xx---------------------xxx
-    } else {
-      const findLeft = await Profile.findOne({
-        where: {
-          left: null,
-          pkg: pakage_prices3,
-        },
-      });
-      if (findLeft) {
-        // xx-------------------xx------------------------------xx---------------------xxx
-        const Reff = await Refferal.findOne({
-          where: { user_id: user_info.id },
-          include: {
-            model: User,
-            as: 'directReffUser',
-            include: {
-              model: wallet,
-              as: 'reff',
-            },
-          },
-        });
-        const usermake = await Profile.create({
-          email: req.body.email,
-          phone: req.body.phone,
-          refferal: Reff.refferal,
-          pkg: pakage_prices3,
-          user_id: user_info.id,
-        });
-
-        await Profile.update(
-          {
-            left: user_info.id,
-          },
-          {
-            where: {
-              id: findLeft.id,
-            },
-          }
-        );
-        await Upgrade.create({
-          user_id: user_info.id,
-          profile_id: user_info.id,
-          upgrade: 0,
-          pkg_price: pkg
-        });
-
-        const DirectReff = await Profile.findOne({
-          where: { id: req.body.refferal },
-        });
-
-        await Pakage.create({
-          user_id: user_info.id,
-          pkg_price: pakage_prices3,
-          pkg_name: req.body.pkg_name,
-        });
-        const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-        const ReffkWallets1 = await wallet.findOne({
-          where: { user_id: req.body.refferal },
-        });
-        const placementWallet = await wallet.findOne({
-          where: { user_id: findLeft.id },
-        })
-
-        if (req.body.refferal == 1) {
-          await wallet.update(
-            { payment: adminkWallets1.payment + pakage_prices3 },
-            { where: { user_id: adminkWallets1.user_id } }
-          );
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "commision and tax for admin",
-            payment: pakage_prices3,
-            user_id: 1,
-          })
-        } else {
-          await wallet.update(
-            { payment: adminkWallets1.payment + percentage10 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await wallet.update(
-            { payment: Reff.directReffUser.reff.payment + percentage45 },
-            { where: { user_id: ReffkWallets1.user_id } }
-          ); // 45% for direct refferal
-          await wallet.update(
-            { payment: placementWallet.payment + percentage45 },
-            { where: { user_id: findLeft.id } }
-          ); // 45% for placement
-
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "tax for admin",
-            payment: percentage10,
-            user_id: 1,
-          });
-
-          await Transaction.create({
-            from: "meta mask",
-            to: user_info.id,
-            reason: "you purchased pakage",
-            payment: percentage90,
-            user_id: user_info.id,
-          });
-        }
-        // await wallet.create({
-        //   payment: 0,
-        //   user_id: user_info.id,
-        // });
-        res.json({ msg: `from Left of ${pkg}`, findLeft });
-        // res.json({ placementWallet });
-        // xx-------------------xx------------------------------xx---------------------xxx
-      } else {
-        const Reff = await Refferal.findOne({
-          where: { user_id: user_info.id },
-          include: {
-            model: User,
-            as: 'directReffUser',
-            include: {
-              model: wallet,
-              as: 'reff',
-            },
-          },
-        });
-        const usermake = await Profile.create({
-          email: req.body.email,
-          phone: req.body.phone,
-          refferal: Reff.refferal,
-          pkg: pakage_prices3,
-          user_id: user_info.id,
-        });
-        await Pakage.create({
-          user_id: user_info.id,
-          pkg_price: req.body.pkg_price,
-          pkg_name: req.body.pkg_name,
-        });
-        await Upgrade.create({
-          user_id: user_info.id,
-          profile_id: user_info.id,
-          upgrade: 0,
-          pkg_price: pkg
-        });
-
-        // await wallet.create({
-        //   payment: 0,
-        //   user_id: user_info.id,
-        // });
-
-        const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-        const ReffkWallets1 = await wallet.findOne({
-          where: { user_id: req.body.refferal },
-        });
-
-        const percentage55 = (pakage_prices3 * 55) / 100;
-        const percentage45 = (pakage_prices3 * 45) / 100;
-
-        if (req.body.refferal == 1) {
-          await wallet.update(
-            { payment: adminkWallets1.payment + pakage_prices3 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "commision with tax for admin",
-            payment: pakage_prices3,
-            user_id: 1,
-          });
-          // res.status(200).json({ msg: "done" });
-        } else {
-          await wallet.update(
-            { payment: adminkWallets1.payment + percentage55 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await wallet.update(
-            { payment: Reff.directReffUser.reff.payment + percentage45 },
-            { where: { user_id: ReffkWallets1.user_id } }
-          ); // 90% for user
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "tax for admin",
-            payment: percentage55,
-            user_id: 1,
-          });
-
-          await Transaction.create({
-            from: "meta mask",
-            to: user_info.id,
-            reason: "you purchased pakage",
-            payment: percentage45,
-            user_id: user_info.id,
-          });
-        }
-
-        res.status(200).json({ msg: "no space found", usermake });
-      }
-    }
-  } else if (pkg == pakage_prices4) {
-    const findRight = await Profile.findOne({
-      where: {
-        left: { [Sequelize.Op.ne]: null },
-        right: null,
-        pkg: pakage_prices4,
-      },
-    });
-
-    const percentage10 = (pakage_prices4 * 10) / 100;
-    const percentage45 = (pakage_prices4 * 45) / 100;
-    const percentage90 = (pakage_prices4 * 90) / 100;
-
-    if (findRight) {
-      // xx-------------------xx------------------------------xx---------------------xxx
-      const Reff = await Refferal.findOne({
-        where: { user_id: user_info.id },
-        include: {
-          model: User,
-          as: 'directReffUser',
-          include: {
-            model: wallet,
-            as: 'reff',
-          },
-        },
-      });
-      const usermake = await Profile.create({
-        email: req.body.email,
-        phone: req.body.phone,
-        refferal: Reff.refferal,
-        pkg: pakage_prices4,
-        user_id: user_info.id,
-      });
-
-      await Profile.update(
-        {
-          right: user_info.id,
-        },
-        {
-          where: {
-            id: findRight.id,
-          },
-        }
-      );
-      await Upgrade.create({
-        user_id: user_info.id,
-        profile_id: user_info.id,
-        upgrade: 0,
-        pkg_price: pakage_prices4
-      });
-
-      const DirectReff = await Profile.findOne({
-        where: { id: req.body.refferal },
-      });
-
-      const admin = await wallet.findOne({ where: { user_id: 1 } });
-
-      await Pakage.create({
-        user_id: user_info.id,
-        pkg_price: pakage_prices4,
-        pkg_name: req.body.pkg_name,
-      });
-
-      const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-
-      const placementWallet = await wallet.findOne({
-        where: { user_id: findRight.id },
-      })
-
-      if (req.body.refferal == 1) {
-        await wallet.update(
-          { payment: adminkWallets1.payment + pakage_prices4 },
-          { where: { user_id: adminkWallets1.user_id } }
-        );
-        await Transaction.create({
-          from: user_info.id,
-          to: 1,
-          reason: "commision with tax for admin",
-          payment: pakage_prices4,
-          user_id: 1,
-        });
-      } else {
-
-        await wallet.update(
-          { payment: adminkWallets1.payment + percentage10 },
-          { where: { user_id: adminkWallets1.user_id } }
-        ); // 10% for admin
-        await wallet.update(
-          { payment: Reff.directReffUser.reff.payment + percentage45 },
-          { where: { user_id: ReffkWallets1.user_id } }
-        ); // 45% for direct refferal
-        await wallet.update(
-          { payment: placementWallet.payment + percentage45 },
-          { where: { user_id: findRight.id } }
-        ); // 45% for placement
-
-        await Transaction.create({
-          from: user_info.id,
-          to: 1,
-          reason: "tax for admin",
-          payment: percentage10,
-          user_id: 1,
-        });
-
-        await Transaction.create({
-          from: "meta mask",
-          to: user_info.id,
-          reason: "you purchased pakage",
-          payment: percentage90,
-          user_id: user_info.id,
-        });
-      }
-      // await wallet.create({
-      //   payment: 0,
-      //   user_id: user_info.id,
-      // });
-      res.status(200).json({ msg: `from Right of ${pkg}`, findRight });
-
-      // xx-------------------xx------------------------------xx---------------------xxx
-    } else {
-      const findLeft = await Profile.findOne({
-        where: {
-          left: null,
-          pkg: pakage_prices4,
-        },
-      });
-      if (findLeft) {
-        // xx-------------------xx------------------------------xx---------------------xxx
-        const Reff = await Refferal.findOne({
-          where: { user_id: user_info.id },
-          include: {
-            model: User,
-            as: 'directReffUser',
-            include: {
-              model: wallet,
-              as: 'reff',
-            },
-          },
-        });
-        const usermake = await Profile.create({
-          email: req.body.email,
-          phone: req.body.phone,
-          refferal: Reff.refferal,
-          pkg: pakage_prices4,
-          user_id: user_info.id,
-        });
-
-        await Profile.update(
-          {
-            left: user_info.id,
-          },
-          {
-            where: {
-              id: findLeft.id,
-            },
-          }
-        );
-        await Upgrade.create({
-          user_id: user_info.id,
-          profile_id: user_info.id,
-          upgrade: 0,
-          pkg_price: pkg
-        });
-
-        const DirectReff = await Profile.findOne({
-          where: { id: req.body.refferal },
-        });
-
-        await Pakage.create({
-          user_id: user_info.id,
-          pkg_price: pakage_prices4,
-          pkg_name: req.body.pkg_name,
-        });
-        const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-        const ReffkWallets1 = await wallet.findOne({
-          where: { user_id: req.body.refferal },
-        });
-        const placementWallet = await wallet.findOne({
-          where: { user_id: findLeft.id },
-        })
-
-        if (req.body.refferal == 1) {
-          await wallet.update(
-            { payment: adminkWallets1.payment + pakage_prices4 },
-            { where: { user_id: adminkWallets1.user_id } }
-          );
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "commision and tax for admin",
-            payment: pakage_prices4,
-            user_id: 1,
-          })
-        } else {
-          await wallet.update(
-            { payment: adminkWallets1.payment + percentage10 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await wallet.update(
-            { payment: Reff.directReffUser.reff.payment + percentage45 },
-            { where: { user_id: ReffkWallets1.user_id } }
-          ); // 45% for direct refferal
-          await wallet.update(
-            { payment: placementWallet.payment + percentage45 },
-            { where: { user_id: findLeft.id } }
-          ); // 45% for placement
-
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "tax for admin",
-            payment: percentage10,
-            user_id: 1,
-          });
-
-          await Transaction.create({
-            from: "meta mask",
-            to: user_info.id,
-            reason: "you purchased pakage",
-            payment: percentage90,
-            user_id: user_info.id,
-          });
-        }
-        // await wallet.create({
-        //   payment: 0,
-        //   user_id: user_info.id,
-        // });
-        res.json({ msg: `from Left of ${pkg}`, findLeft });
-        // xx-------------------xx------------------------------xx---------------------xxx
-      } else {
-        const Reff = await Refferal.findOne({
-          where: { user_id: user_info.id },
-          include: {
-            model: User,
-            as: 'directReffUser',
-            include: {
-              model: wallet,
-              as: 'reff',
-            },
-          },
-        });
-        const usermake = await Profile.create({
-          email: req.body.email,
-          phone: req.body.phone,
-          refferal: Reff.refferal,
-          pkg: pakage_prices4,
-          user_id: user_info.id,
-        });
-        await Pakage.create({
-          user_id: user_info.id,
-          pkg_price: req.body.pkg_price,
-          pkg_name: req.body.pkg_name,
-        });
-        await Upgrade.create({
-          user_id: user_info.id,
-          profile_id: user_info.id,
-          upgrade: 0,
-          pkg_price: pkg
-        });
-
-        // await wallet.create({
-        //   payment: 0,
-        //   user_id: user_info.id,
-        // });
-
-        const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-        const ReffkWallets1 = await wallet.findOne({
-          where: { user_id: req.body.refferal },
-        });
-
-        const percentage55 = (pakage_prices4 * 55) / 100;
-        const percentage45 = (pakage_prices4 * 45) / 100;
-
-        if (req.body.refferal == 1) {
-          await wallet.update(
-            { payment: adminkWallets1.payment + pakage_prices4 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "commision with tax for admin",
-            payment: pakage_prices4,
-            user_id: 1,
-          });
-          // res.status(200).json({ msg: "done" });
-        } else {
-          await wallet.update(
-            { payment: adminkWallets1.payment + percentage55 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await wallet.update(
-            { payment: Reff.directReffUser.reff.payment + percentage45 },
-            { where: { user_id: ReffkWallets1.user_id } }
-          ); // 90% for user
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "tax for admin",
-            payment: percentage55,
-            user_id: 1,
-          });
-
-          await Transaction.create({
-            from: "meta mask",
-            to: user_info.id,
-            reason: "you purchased pakage",
-            payment: percentage45,
-            user_id: user_info.id,
-          });
-        }
-
-        res.status(200).json({ msg: "no space found", usermake });
-      }
-    }
-  } else if (pkg == pakage_prices5) {
-    const findRight = await Profile.findOne({
-      where: {
-        left: { [Sequelize.Op.ne]: null },
-        right: null,
-        pkg: pakage_prices5,
-      },
-    });
-
-    const percentage10 = (pakage_prices5 * 10) / 100;
-    const percentage45 = (pakage_prices5 * 45) / 100;
-    const percentage90 = (pakage_prices5 * 90) / 100;
-
-    if (findRight) {
-      // xx-------------------xx------------------------------xx---------------------xxx
-      const Reff = await Refferal.findOne({
-        where: { user_id: user_info.id },
-        include: {
-          model: User,
-          as: 'directReffUser',
-          include: {
-            model: wallet,
-            as: 'reff',
-          },
-        },
-      });
-      const usermake = await Profile.create({
-        email: req.body.email,
-        phone: req.body.phone,
-        refferal: Reff.refferal,
-        pkg: pakage_prices5,
-        user_id: user_info.id,
-      });
-
-      await Profile.update(
-        {
-          right: user_info.id,
-        },
-        {
-          where: {
-            id: findRight.id,
-          },
-        }
-      );
-      await Upgrade.create({
-        user_id: user_info.id,
-        profile_id: user_info.id,
-        upgrade: 0,
-        pkg_price: pakage_prices5
-      });
-      const DirectReff = await Profile.findOne({
-        where: { id: req.body.refferal },
-      });
-
-      const admin = await wallet.findOne({ where: { user_id: 1 } });
-
-      await Pakage.create({
-        user_id: user_info.id,
-        pkg_price: pakage_prices5,
-        pkg_name: req.body.pkg_name,
-      });
-
-      const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-
-      const placementWallet = await wallet.findOne({
-        where: { user_id: findRight.id },
-      })
-
-      if (req.body.refferal == 1) {
-        await wallet.update(
-          { payment: adminkWallets1.payment + pakage_prices5 },
-          { where: { user_id: adminkWallets1.user_id } }
-        );
-        await Transaction.create({
-          from: user_info.id,
-          to: 1,
-          reason: "commision with tax for admin",
-          payment: pakage_prices5,
-          user_id: 1,
-        });
-      } else {
-
-        await wallet.update(
-          { payment: adminkWallets1.payment + percentage10 },
-          { where: { user_id: adminkWallets1.user_id } }
-        ); // 10% for admin
-        await wallet.update(
-          { payment: Reff.directReffUser.reff.payment + percentage45 },
-          { where: { user_id: ReffkWallets1.user_id } }
-        ); // 45% for direct refferal
-        await wallet.update(
-          { payment: placementWallet.payment + percentage45 },
-          { where: { user_id: findRight.id } }
-        ); // 45% for placement
-
-        await Transaction.create({
-          from: user_info.id,
-          to: 1,
-          reason: "tax for admin",
-          payment: percentage10,
-          user_id: 1,
-        });
-
-        await Transaction.create({
-          from: "meta mask",
-          to: user_info.id,
-          reason: "you purchased pakage",
-          payment: percentage90,
-          user_id: user_info.id,
-        });
-      }
-      // await wallet.create({
-      //   payment: 0,
-      //   user_id: user_info.id,
-      // });
-      res.status(200).json({ msg: `from Right of ${pkg}`, findRight });
-
-      // xx-------------------xx------------------------------xx---------------------xxx
-    } else {
-      const findLeft = await Profile.findOne({
-        where: {
-          left: null,
-          pkg: pakage_prices5,
-        },
-      });
-      if (findLeft) {
-        // xx-------------------xx------------------------------xx---------------------xxx
-        const Reff = await Refferal.findOne({
-          where: { user_id: user_info.id },
-          include: {
-            model: User,
-            as: 'directReffUser',
-            include: {
-              model: wallet,
-              as: 'reff',
-            },
-          },
-        });
-        const usermake = await Profile.create({
-          email: req.body.email,
-          phone: req.body.phone,
-          refferal: Reff.refferal,
-          pkg: pakage_prices5,
-          user_id: user_info.id,
-        });
-
-        await Profile.update(
-          {
-            left: user_info.id,
-          },
-          {
-            where: {
-              id: findLeft.id,
-            },
-          }
-        );
-        await Upgrade.create({
-          user_id: user_info.id,
-          profile_id: user_info.id,
-          upgrade: 0,
-          pkg_price: pkg
-        });
-
-        const DirectReff = await Profile.findOne({
-          where: { id: req.body.refferal },
-        });
-
-        await Pakage.create({
-          user_id: user_info.id,
-          pkg_price: pakage_prices5,
-          pkg_name: req.body.pkg_name,
-        });
-        const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-        const ReffkWallets1 = await wallet.findOne({
-          where: { user_id: req.body.refferal },
-        });
-        const placementWallet = await wallet.findOne({
-          where: { user_id: findLeft.id },
-        })
-
-        if (req.body.refferal == 1) {
-          await wallet.update(
-            { payment: adminkWallets1.payment + pakage_prices5 },
-            { where: { user_id: adminkWallets1.user_id } }
-          );
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "commision and tax for admin",
-            payment: pakage_prices5,
-            user_id: 1,
-          })
-        } else {
-          await wallet.update(
-            { payment: adminkWallets1.payment + percentage10 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await wallet.update(
-            { payment: Reff.directReffUser.reff.payment + percentage45 },
-            { where: { user_id: ReffkWallets1.user_id } }
-          ); // 45% for direct refferal
-          await wallet.update(
-            { payment: placementWallet.payment + percentage45 },
-            { where: { user_id: findLeft.id } }
-          ); // 45% for placement
-
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "tax for admin",
-            payment: percentage10,
-            user_id: 1,
-          });
-
-          await Transaction.create({
-            from: "meta mask",
-            to: user_info.id,
-            reason: "you purchased pakage",
-            payment: percentage90,
-            user_id: user_info.id,
-          });
-        }
-        // await wallet.create({
-        //   payment: 0,
-        //   user_id: user_info.id,
-        // });
-        res.json({ msg: `from Left of ${pkg}`, findLeft });
-        // xx-------------------xx------------------------------xx---------------------xxx
-      } else {
-        const Reff = await Refferal.findOne({
-          where: { user_id: user_info.id },
-          include: {
-            model: User,
-            as: 'directReffUser',
-            include: {
-              model: wallet,
-              as: 'reff',
-            },
-          },
-        });
-        const usermake = await Profile.create({
-          email: req.body.email,
-          phone: req.body.phone,
-          refferal: Reff.refferal,
-          pkg: pakage_prices5,
-          user_id: user_info.id,
-        });
-        await Pakage.create({
-          user_id: user_info.id,
-          pkg_price: req.body.pkg_price,
-          pkg_name: req.body.pkg_name,
-        });
-        await Upgrade.create({
-          user_id: user_info.id,
-          profile_id: user_info.id,
-          upgrade: 0,
-          pkg_price: pkg
-        });
-
-        // await wallet.create({
-        //   payment: 0,
-        //   user_id: user_info.id,
-        // });
-
-        const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-        const ReffkWallets1 = await wallet.findOne({
-          where: { user_id: req.body.refferal },
-        });
-
-        const percentage55 = (pakage_prices5 * 55) / 100;
-        const percentage45 = (pakage_prices5 * 45) / 100;
-
-        if (req.body.refferal == 1) {
-          await wallet.update(
-            { payment: adminkWallets1.payment + pakage_prices5 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "commision with tax for admin",
-            payment: pakage_prices5,
-            user_id: 1,
-          });
-          // res.status(200).json({ msg: "done" });
-        } else {
-          await wallet.update(
-            { payment: adminkWallets1.payment + percentage55 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await wallet.update(
-            { payment: Reff.directReffUser.reff.payment + percentage45 },
-            { where: { user_id: ReffkWallets1.user_id } }
-          ); // 90% for user
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "tax for admin",
-            payment: percentage55,
-            user_id: 1,
-          });
-
-          await Transaction.create({
-            from: "meta mask",
-            to: user_info.id,
-            reason: "you purchased pakage",
-            payment: percentage45,
-            user_id: user_info.id,
-          });
-        }
-
-        res.status(200).json({ msg: "no space found", usermake });
-      }
-    }
-  } else if (pkg == pakage_prices6) {
-    const findRight = await Profile.findOne({
-      where: {
-        left: { [Sequelize.Op.ne]: null },
-        right: null,
-        pkg: pakage_prices6,
-      },
-    });
-
-    const percentage10 = (pakage_prices6 * 10) / 100;
-    const percentage45 = (pakage_prices6 * 45) / 100;
-    const percentage90 = (pakage_prices6 * 90) / 100;
-
-    if (findRight) {
-      // xx-------------------xx------------------------------xx---------------------xxx
-      const Reff = await Refferal.findOne({
-        where: { user_id: user_info.id },
-        include: {
-          model: User,
-          as: 'directReffUser',
-          include: {
-            model: wallet,
-            as: 'reff',
-          },
-        },
-      });
-      const usermake = await Profile.create({
-        email: req.body.email,
-        phone: req.body.phone,
-        refferal: Reff.refferal,
-        pkg: pakage_prices6,
-        user_id: user_info.id,
-      });
-
-      await Profile.update(
-        {
-          right: user_info.id,
-        },
-        {
-          where: {
-            id: findRight.id,
-          },
-        }
-      );
-      await Upgrade.create({
-        user_id: user_info.id,
-        profile_id: user_info.id,
-        upgrade: 0,
-        pkg_price: pakage_prices6
-      });
-
-      const DirectReff = await Profile.findOne({
-        where: { id: req.body.refferal },
-      });
-
-      const admin = await wallet.findOne({ where: { user_id: 1 } });
-
-      await Pakage.create({
-        user_id: user_info.id,
-        pkg_price: pakage_prices6,
-        pkg_name: req.body.pkg_name,
-      });
-
-      const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-
-      const placementWallet = await wallet.findOne({
-        where: { user_id: findRight.id },
-      })
-
-      if (req.body.refferal == 1) {
-        await wallet.update(
-          { payment: adminkWallets1.payment + pakage_prices6 },
-          { where: { user_id: adminkWallets1.user_id } }
-        );
-        await Transaction.create({
-          from: user_info.id,
-          to: 1,
-          reason: "commision with tax for admin",
-          payment: pakage_prices6,
-          user_id: 1,
-        });
-      } else {
-
-        await wallet.update(
-          { payment: adminkWallets1.payment + percentage10 },
-          { where: { user_id: adminkWallets1.user_id } }
-        ); // 10% for admin
-        await wallet.update(
-          { payment: Reff.directReffUser.reff.payment + percentage45 },
-          { where: { user_id: ReffkWallets1.user_id } }
-        ); // 45% for direct refferal
-        await wallet.update(
-          { payment: placementWallet.payment + percentage45 },
-          { where: { user_id: findRight.id } }
-        ); // 45% for placement
-
-        await Transaction.create({
-          from: user_info.id,
-          to: 1,
-          reason: "tax for admin",
-          payment: percentage10,
-          user_id: 1,
-        });
-
-        await Transaction.create({
-          from: "meta mask",
-          to: user_info.id,
-          reason: "you purchased pakage",
-          payment: percentage90,
-          user_id: user_info.id,
-        });
-      }
-      // await wallet.create({
-      //   payment: 0,
-      //   user_id: user_info.id,
-      // });
-      res.status(200).json({ msg: `from Right of ${pkg}`, findRight });
-
-      // xx-------------------xx------------------------------xx---------------------xxx
-    } else {
-      const findLeft = await Profile.findOne({
-        where: {
-          left: null,
-          pkg: pakage_prices6,
-        },
-      });
-      if (findLeft) {
-        // xx-------------------xx------------------------------xx---------------------xxx
-        const Reff = await Refferal.findOne({
-          where: { user_id: user_info.id },
-          include: {
-            model: User,
-            as: 'directReffUser',
-            include: {
-              model: wallet,
-              as: 'reff',
-            },
-          },
-        });
-        const usermake = await Profile.create({
-          email: req.body.email,
-          phone: req.body.phone,
-          refferal: Reff.refferal,
-          pkg: pakage_prices6,
-          user_id: user_info.id,
-        });
-
-        await Profile.update(
-          {
-            left: user_info.id,
-          },
-          {
-            where: {
-              id: findLeft.id,
-            },
-          }
-        );
-        await Upgrade.create({
-          user_id: user_info.id,
-          profile_id: user_info.id,
-          upgrade: 0,
-          pkg_price: pkg
-        });
-
-        const DirectReff = await Profile.findOne({
-          where: { id: req.body.refferal },
-        });
-
-        await Pakage.create({
-          user_id: user_info.id,
-          pkg_price: pakage_prices6,
-          pkg_name: req.body.pkg_name,
-        });
-        const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-        const ReffkWallets1 = await wallet.findOne({
-          where: { user_id: req.body.refferal },
-        });
-        const placementWallet = await wallet.findOne({
-          where: { user_id: findLeft.id },
-        })
-
-        if (req.body.refferal == 1) {
-          await wallet.update(
-            { payment: adminkWallets1.payment + pakage_prices6 },
-            { where: { user_id: adminkWallets1.user_id } }
-          );
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "commision and tax for admin",
-            payment: pakage_prices6,
-            user_id: 1,
-          })
-        } else {
-          await wallet.update(
-            { payment: adminkWallets1.payment + percentage10 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await wallet.update(
-            { payment: Reff.directReffUser.reff.payment + percentage45 },
-            { where: { user_id: ReffkWallets1.user_id } }
-          ); // 45% for direct refferal
-          await wallet.update(
-            { payment: placementWallet.payment + percentage45 },
-            { where: { user_id: findLeft.id } }
-          ); // 45% for placement
-
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "tax for admin",
-            payment: percentage10,
-            user_id: 1,
-          });
-
-          await Transaction.create({
-            from: "meta mask",
-            to: user_info.id,
-            reason: "you purchased pakage",
-            payment: percentage90,
-            user_id: user_info.id,
-          });
-        }
-        // await wallet.create({
-        //   payment: 0,
-        //   user_id: user_info.id,
-        // });
-        res.json({ msg: `from Left of ${pkg}`, findLeft });
-        // xx-------------------xx------------------------------xx---------------------xxx
-      } else {
-        const Reff = await Refferal.findOne({
-          where: { user_id: user_info.id },
-          include: {
-            model: User,
-            as: 'directReffUser',
-            include: {
-              model: wallet,
-              as: 'reff',
-            },
-          },
-        });
-        const usermake = await Profile.create({
-          email: req.body.email,
-          phone: req.body.phone,
-          refferal: Reff.refferal,
-          pkg: pakage_prices6,
-          user_id: user_info.id,
-        });
-        await Pakage.create({
-          user_id: user_info.id,
-          pkg_price: req.body.pkg_price,
-          pkg_name: req.body.pkg_name,
-        });
-        await Upgrade.create({
-          user_id: user_info.id,
-          profile_id: user_info.id,
-          upgrade: 0,
-          pkg_price: pkg
-        });
-
-        // await wallet.create({
-        //   payment: 0,
-        //   user_id: user_info.id,
-        // });
-
-
-        const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-        const ReffkWallets1 = await wallet.findOne({
-          where: { user_id: req.body.refferal },
-        });
-
-        const percentage55 = (pakage_prices6 * 55) / 100;
-        const percentage45 = (pakage_prices6 * 45) / 100;
-
-        if (req.body.refferal == 1) {
-          await wallet.update(
-            { payment: adminkWallets1.payment + pakage_prices6 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "commision with tax for admin",
-            payment: pakage_prices6,
-            user_id: 1,
-          });
-          // res.status(200).json({ msg: "done" });
-        } else {
-          await wallet.update(
-            { payment: adminkWallets1.payment + percentage55 },
-            { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
-          await wallet.update(
-            { payment: Reff.directReffUser.reff.payment + percentage45 },
-            { where: { user_id: ReffkWallets1.user_id } }
-          ); // 90% for user
-          await Transaction.create({
-            from: user_info.id,
-            to: 1,
-            reason: "tax for admin",
-            payment: percentage55,
-            user_id: 1,
-          });
-
-          await Transaction.create({
-            from: "meta mask",
-            to: user_info.id,
-            reason: "you purchased pakage",
-            payment: percentage45,
-            user_id: user_info.id,
-          });
-        }
-
-        res.status(200).json({ msg: "no space found", usermake });
-      }
+      res.status(200).json({ msg: "no space found", usermake });
     }
   }
 
+}
+const placementInvest = async (req, res) => {
+  const { pkg, pkg_name } = req.body;
+
+  const userx = req.headers.authorization.split(" ")[1];
+  const user_info = jwt_decode(userx);
+
+  if (pkg == pakage_prices1) {
+    purchase_PKG(pakage_prices1, user_info, pkg_name, res)
+  } else if (pkg == pakage_prices2) {
+    purchase_PKG(pakage_prices2, user_info, pkg_name, res)
+  } else if (pkg == pakage_prices3) {
+    purchase_PKG(pakage_prices3, user_info, pkg_name, res)
+  } else if (pkg == pakage_prices4) {
+    purchase_PKG(pakage_prices4, user_info, pkg_name, res)
+  } else if (pkg == pakage_prices5) {
+    purchase_PKG(pakage_prices5, user_info, pkg_name, res)
+  } else if (pkg == pakage_prices6) {
+    purchase_PKG(pakage_prices6, user_info, pkg_name, res)
+  }
 };
 
 const Pakage_info = async (req, res) => {
+
+  const { pkg } = req.body
   const userx = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(userx);
-  const findUpdate = await Upgrade.findAll({
-    where: { user_id: user_info.id },
-    attributes: ['pkg_price']
+  const findUpdate = await Upgrade.findOne({
+    where: { user_id: user_info.id, pkg_price: pkg },
+    attributes: ['pkg_price', 'level', 'pkg_price']
   })
+  let NextPackage
 
-  res.json(findUpdate)
+  if(findUpdate.pkg_price == 10){
+    switch (true) {
+      case (findUpdate.level == 0):
+        NextPackage = 12.5;
+        break;
+      case (findUpdate.level == 1):
+        NextPackage = 28.125;
+        break;
+      case (findUpdate.level == 2):
+        NextPackage = 63.281;
+        break;
+      case (findUpdate.level == 3):
+        NextPackage = 142.383;
+        break;
+      case (findUpdate.level == 4):
+        NextPackage = 320.361;
+        break;
+      case (findUpdate.level == 5):
+        NextPackage = 720.813;
+        break;
+      case (findUpdate.level == 6):
+        NextPackage = 1621.829;
+        break;
+      case (findUpdate.level == 7):
+        NextPackage = 3649.116;
+        break;
+      default:
+        NextPackage = 12.5;
+        break;
+    }
+  }else if(findUpdate.pkg_price == 20){
+    switch (true) {
+      case (findUpdate.level == 0):
+        NextPackage = 25;
+        break;
+      case (findUpdate.level == 1):
+        NextPackage = 56.250;
+        break;
+      case (findUpdate.level == 2):
+        NextPackage = 126.563;
+        break;
+      case (findUpdate.level == 3):
+        NextPackage = 284.766;
+        break;
+      case (findUpdate.level == 4):
+        NextPackage = 640.723;
+        break;
+      case (findUpdate.level == 5):
+        NextPackage = 1441.626;
+        break;
+      case (findUpdate.level == 6):
+        NextPackage = 3243.658;
+        break;
+      case (findUpdate.level == 7):
+        NextPackage = 7298.232;
+        break;
+      default:
+        NextPackage = 25;
+        break;
+    }
+  }else if(findUpdate.pkg_price == 50){
+    switch (true) {
+      case (findUpdate.level == 0):
+        NextPackage = 62.500;
+        break;
+      case (findUpdate.level == 1):
+        NextPackage = 140.625;
+        break;
+      case (findUpdate.level == 2):
+        NextPackage = 316.406;
+        break;
+      case (findUpdate.level == 3):
+        NextPackage = 711.914;
+        break;
+      case (findUpdate.level == 4):
+        NextPackage = 1601.807;
+        break;
+      case (findUpdate.level == 5):
+        NextPackage = 3604.065;
+        break;
+      case (findUpdate.level == 6):
+        NextPackage = 8109.065;
+        break;
+      case (findUpdate.level == 7):
+        NextPackage = 18245.579;
+        break;
+      default:
+        NextPackage = 62.500;
+        break;
+    }
+  }else if(findUpdate.pkg_price == 100){
+    switch (true) {
+      case (findUpdate.level == 0):
+        NextPackage = 125;
+        break;
+      case (findUpdate.level == 1):
+        NextPackage = 281.250;
+        break;
+      case (findUpdate.level == 2):
+        NextPackage = 632.813;
+        break;
+      case (findUpdate.level == 3):
+        NextPackage = 1423.828;
+        break;
+      case (findUpdate.level == 4):
+        NextPackage = 3203.613;
+        break;
+      case (findUpdate.level == 5):
+        NextPackage = 7208.130;
+        break;
+      case (findUpdate.level == 6):
+        NextPackage = 16218.292;
+        break;
+      case (findUpdate.level == 7):
+        NextPackage = 36491.158;
+        break;
+      default:
+        NextPackage = 125;
+        break;
+    }
+  }else if(findUpdate.pkg_price == 200){
+    switch (true) {
+      case (findUpdate.level == 0):
+        NextPackage = 250;
+        break;
+      case (findUpdate.level == 1):
+        NextPackage = 281.250;
+        break;
+      case (findUpdate.level == 2):
+        NextPackage = 632.813;
+        break;
+      case (findUpdate.level == 3):
+        NextPackage = 1423.828;
+        break;
+      case (findUpdate.level == 4):
+        NextPackage = 3203.613;
+        break;
+      case (findUpdate.level == 5):
+        NextPackage = 7208.130;
+        break;
+      case (findUpdate.level == 6):
+        NextPackage = 16218.292;
+        break;
+      case (findUpdate.level == 7):
+        NextPackage = 36491.158;
+        break;
+      default:
+        NextPackage = 250;
+        break;
+    }
+  }else if(findUpdate.pkg_price == 320){
+    switch (true) {
+      case (findUpdate.level == 0):
+        NextPackage =437.500;
+        break;
+      case (findUpdate.level == 1):
+        NextPackage = 984.375;
+        break;
+      case (findUpdate.level == 2):
+        NextPackage = 2214.844;
+        break;
+      case (findUpdate.level == 3):
+        NextPackage = 4983.398;
+        break;
+      case (findUpdate.level == 4):
+        NextPackage = 11212.646;
+        break;
+      case (findUpdate.level == 5):
+        NextPackage = 25228.455;
+        break;
+      case (findUpdate.level == 6):
+        NextPackage = 56764.023;
+        break;
+      case (findUpdate.level == 7):
+        NextPackage = 127719.051;
+        break;
+      default:
+        NextPackage =437.500;
+        break;
+    }
+  }
+
+  // switch (findUpdate.pkg_price) {
+  //   case 10:
+  //     switch (findUpdate.level) {
+  //       case 0:
+  //         NextPackage = 12.5;
+  //         break;
+  //       case 1:
+  //         NextPackage = 28.125;
+  //         break;
+  //       case 2:
+  //         NextPackage = 63.281;
+  //         break;
+  //       case 3:
+  //         NextPackage = 142.383;
+  //         break;
+  //       case 4:
+  //         NextPackage = 320.361;
+  //         break;
+  //       case 5:
+  //         NextPackage = 720.813;
+  //         break;
+  //       case 6:
+  //         NextPackage = 1621.829;
+  //         break;
+  //       case 7:
+  //         NextPackage = 3649.116;
+  //         break;
+  //       default:
+  //         NextPackage = 12.5;
+  //         break;
+  //     }
+  //     break;
+  //   case 20:
+  //     switch (findUpdate.level) {
+  //       case 0:
+  //         NextPackage = 25;
+  //         break;
+  //       case 1:
+  //         NextPackage = 56.250;
+  //         break;
+  //       case 2:
+  //         NextPackage = 126.563;
+  //         break;
+  //       case 3:
+  //         NextPackage = 284.766;
+  //         break;
+  //       case 4:
+  //         NextPackage = 640.723;
+  //         break;
+  //       case 5:
+  //         NextPackage = 1441.626;
+  //         break;
+  //       case 6:
+  //         NextPackage = 3243.658;
+  //         break;
+  //       case 7:
+  //         NextPackage = 7298.232;
+  //         break;
+  //       default:
+  //         NextPackage = 25;
+  //         break;
+  //     }
+  //     break;
+  //   case 50:
+  //     switch (findUpdate.level) {
+  //       case 0:
+  //         NextPackage = 62.500;
+  //         break;
+  //       case 1:
+  //         NextPackage = 140.625;
+  //         break;
+  //       case 2:
+  //         NextPackage = 316.406;
+  //         break;
+  //       case 3:
+  //         NextPackage = 711.914;
+  //         break;
+  //       case 4:
+  //         NextPackage = 1601.807;
+  //         break;
+  //       case 5:
+  //         NextPackage = 3604.065;
+  //         break;
+  //       case 6:
+  //         NextPackage = 8109.065;
+  //         break;
+  //       case 7:
+  //         NextPackage = 18245.579;
+  //         break;
+  //       default:
+  //         NextPackage = 62.500;
+  //         break;
+  //     }
+  //     break;
+  //   case 200:
+  //     switch (findUpdate.level) {
+  //       case 0:
+  //         NextPackage = 250;
+  //         break;
+  //       case 1:
+  //         NextPackage = 281.250;
+  //         break;
+  //       case 2:
+  //         NextPackage = 632.813;
+  //         break;
+  //       case 3:
+  //         NextPackage = 1423.828;
+  //         break;
+  //       case 4:
+  //         NextPackage = 3203.613;
+  //         break;
+  //       case 5:
+  //         NextPackage = 7208.130;
+  //         break;
+  //       case 6:
+  //         NextPackage = 16218.292;
+  //         break;
+  //       case 7:
+  //         NextPackage = 36491.158;
+  //         break;
+  //       default:
+  //         NextPackage = 250;
+  //         break;
+  //     }
+  //     break;
+  //   case 350:
+  //     switch (findUpdate.level) {
+  //       case 0:
+  //         NextPackage = 437.500;
+  //         break;
+  //       case 1:
+  //         NextPackage = 984.375;
+  //         break;
+  //       case 2:
+  //         NextPackage = 2214.844;
+  //         break;
+  //       case 3:
+  //         NextPackage = 4983.398;
+  //         break;
+  //       case 4:
+  //         NextPackage = 11212.646;
+  //         break;
+  //       case 5:
+  //         NextPackage = 25228.455;
+  //         break;
+  //       case 6:
+  //         NextPackage = 56764.023;
+  //         break;
+  //       case 7:
+  //         NextPackage = 127719.051;
+  //         break;
+  //       default:
+  //         NextPackage = 437.500;
+  //         break;
+  //     }
+  //     break;
+  //   default:
+  //     NextPackage = 12.5;
+  //     break;
+  // }
+
+  res.json({ findUpdate, NextPackage })
 }
 // ----------------- TREND START
 const ShowReff = async (req, res) => {
@@ -12786,8 +11616,6 @@ const Placements = async (req, res) => {
   });
 };
 
-
-
 const FindUserPakage = async (req, res) => {
   const user = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(user);
@@ -12815,7 +11643,7 @@ const find_Direct_Reff_Transactions = async (req, res) => {
     where: {
       refferal: user_info.id
     },
-    attributes:['refferal','pkg','user_id','createdAt']
+    attributes: ['refferal', 'pkg', 'user_id', 'createdAt']
   })
   res.json(findTransaction)
 }

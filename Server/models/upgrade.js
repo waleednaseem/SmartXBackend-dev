@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Upgrade.belongsTo(models.Profile,{
         foreignKey:'user_id',
-        id:'id'
+        id:'id',
       })
     }
   }
