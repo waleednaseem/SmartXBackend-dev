@@ -1140,8 +1140,6 @@ const refferals = async (req, res) => {
 };
 
 const Upgrades = async (req, res) => {
-  const { levels, refferal } = req.body;
-
   const Upgrades1 = 10;
   const Upgrades2 = 20;
   const Upgrades3 = 50;
