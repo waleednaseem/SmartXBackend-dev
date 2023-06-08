@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     level: DataTypes.INTEGER,
     user_id: DataTypes.INTEGER,
     profile_id: DataTypes.INTEGER,
+    package: DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'Upgrade',

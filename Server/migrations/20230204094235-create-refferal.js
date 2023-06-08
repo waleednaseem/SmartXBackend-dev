@@ -10,7 +10,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       refferal: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false,
       },
       user_id: {
         type: Sequelize.INTEGER

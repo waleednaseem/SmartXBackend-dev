@@ -10882,12 +10882,14 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         },
       }
     );
-    await Upgrade.create({
-      user_id: user_info.id,
+    await Upgrade.Update({
       profile_id: usermake.id,
       upgrade: 0,
+      level: 0,
+      package:true
+    },{
+      user_id: user_info.id,
       pkg_price: pkg,
-      level: 0
     });
 
     await Pakage.create({
@@ -10988,12 +10990,14 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           },
         }
       );
-      await Upgrade.create({
-        user_id: user_info.id,
+      await Upgrade.update({
         profile_id: usermake.id,
         upgrade: 0,
+        level: 0,
+        package:true
+      },{
+        user_id: user_info.id,
         pkg_price: pkg,
-        level: 0
       });
 
       await Pakage.create({
@@ -11074,12 +11078,14 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         pkg_price: pkg,
         pkg_name: pkg_name,
       });
-      await Upgrade.create({
-        user_id: user_info.id,
+      await Upgrade.update({
         profile_id: usermake.id,
         upgrade: 0,
+        level: 0,
+        package:true
+      },{
+        user_id: user_info.id,
         pkg_price: pkg,
-        level: 0
       });
       const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
 
@@ -11344,167 +11350,6 @@ const Pakage_info = async (req, res) => {
     }
   }
 
-  // switch (findUpdate.pkg_price) {
-  //   case 10:
-  //     switch (findUpdate.level) {
-  //       case 0:
-  //         NextPackage = 12.5;
-  //         break;
-  //       case 1:
-  //         NextPackage = 28.125;
-  //         break;
-  //       case 2:
-  //         NextPackage = 63.281;
-  //         break;
-  //       case 3:
-  //         NextPackage = 142.383;
-  //         break;
-  //       case 4:
-  //         NextPackage = 320.361;
-  //         break;
-  //       case 5:
-  //         NextPackage = 720.813;
-  //         break;
-  //       case 6:
-  //         NextPackage = 1621.829;
-  //         break;
-  //       case 7:
-  //         NextPackage = 3649.116;
-  //         break;
-  //       default:
-  //         NextPackage = 12.5;
-  //         break;
-  //     }
-  //     break;
-  //   case 20:
-  //     switch (findUpdate.level) {
-  //       case 0:
-  //         NextPackage = 25;
-  //         break;
-  //       case 1:
-  //         NextPackage = 56.250;
-  //         break;
-  //       case 2:
-  //         NextPackage = 126.563;
-  //         break;
-  //       case 3:
-  //         NextPackage = 284.766;
-  //         break;
-  //       case 4:
-  //         NextPackage = 640.723;
-  //         break;
-  //       case 5:
-  //         NextPackage = 1441.626;
-  //         break;
-  //       case 6:
-  //         NextPackage = 3243.658;
-  //         break;
-  //       case 7:
-  //         NextPackage = 7298.232;
-  //         break;
-  //       default:
-  //         NextPackage = 25;
-  //         break;
-  //     }
-  //     break;
-  //   case 50:
-  //     switch (findUpdate.level) {
-  //       case 0:
-  //         NextPackage = 62.500;
-  //         break;
-  //       case 1:
-  //         NextPackage = 140.625;
-  //         break;
-  //       case 2:
-  //         NextPackage = 316.406;
-  //         break;
-  //       case 3:
-  //         NextPackage = 711.914;
-  //         break;
-  //       case 4:
-  //         NextPackage = 1601.807;
-  //         break;
-  //       case 5:
-  //         NextPackage = 3604.065;
-  //         break;
-  //       case 6:
-  //         NextPackage = 8109.065;
-  //         break;
-  //       case 7:
-  //         NextPackage = 18245.579;
-  //         break;
-  //       default:
-  //         NextPackage = 62.500;
-  //         break;
-  //     }
-  //     break;
-  //   case 200:
-  //     switch (findUpdate.level) {
-  //       case 0:
-  //         NextPackage = 250;
-  //         break;
-  //       case 1:
-  //         NextPackage = 281.250;
-  //         break;
-  //       case 2:
-  //         NextPackage = 632.813;
-  //         break;
-  //       case 3:
-  //         NextPackage = 1423.828;
-  //         break;
-  //       case 4:
-  //         NextPackage = 3203.613;
-  //         break;
-  //       case 5:
-  //         NextPackage = 7208.130;
-  //         break;
-  //       case 6:
-  //         NextPackage = 16218.292;
-  //         break;
-  //       case 7:
-  //         NextPackage = 36491.158;
-  //         break;
-  //       default:
-  //         NextPackage = 250;
-  //         break;
-  //     }
-  //     break;
-  //   case 350:
-  //     switch (findUpdate.level) {
-  //       case 0:
-  //         NextPackage = 437.500;
-  //         break;
-  //       case 1:
-  //         NextPackage = 984.375;
-  //         break;
-  //       case 2:
-  //         NextPackage = 2214.844;
-  //         break;
-  //       case 3:
-  //         NextPackage = 4983.398;
-  //         break;
-  //       case 4:
-  //         NextPackage = 11212.646;
-  //         break;
-  //       case 5:
-  //         NextPackage = 25228.455;
-  //         break;
-  //       case 6:
-  //         NextPackage = 56764.023;
-  //         break;
-  //       case 7:
-  //         NextPackage = 127719.051;
-  //         break;
-  //       default:
-  //         NextPackage = 437.500;
-  //         break;
-  //     }
-  //     break;
-  //   default:
-  //     NextPackage = 12.5;
-  //     break;
-  // }
-
   res.json({ findUpdate, NextPackage })
 }
 // ----------------- TREND START
@@ -11619,13 +11464,68 @@ const Placements = async (req, res) => {
 const FindUserPakage = async (req, res) => {
   const user = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(user);
-  const refferal = await Refferal.findAll({
-    where: { refferal: user_info.id },
-    include: [
-      { model: Profile, as: "ReffUsers", include: [{ model: Pakage }] },
-    ],
+  let pkg_check ="all found"
+  
+  
+  const findPkg= await Upgrade.findOne({where:{user_id:user_info.id}})
+
+  if(!findPkg){
+    pkg_check=await Upgrade.bulkcreate([
+      {
+        user_id: user_info.id,
+        profile_id: 0,
+        upgrade: 0,
+        pkg_price: pakage_prices1,
+        level: 0,
+        package: false
+      },
+      {
+        user_id: user_info.id,
+        profile_id: 0,
+        upgrade: 0,
+        pkg_price: pakage_prices2,
+        level: 0,
+        package: false
+      },
+      {
+        user_id: user_info.id,
+        profile_id: 0,
+        upgrade: 0,
+        pkg_price: pakage_prices3,
+        level: 0,
+        package: false
+      },
+      {
+        user_id: user_info.id,
+        profile_id: 0,
+        upgrade: 0,
+        pkg_price: pakage_prices4,
+        level: 0,
+        package: false
+      },
+      {
+        user_id: user_info.id,
+        profile_id: 0,
+        upgrade: 0,
+        pkg_price: pakage_prices5,
+        level: 0,
+        package: false
+      },
+      {
+        user_id: user_info.id,
+        profile_id: 0,
+        upgrade: 0,
+        pkg_price: pakage_prices6,
+        level: 0,
+        package: false
+      }
+    ])
+  }
+  const packages = await Upgrade.findAll({
+    where: { user_id: user_info.id }
   });
-  res.status(200).send(refferal);
+
+  res.status(200).send({packages,pkg_check});
 };
 
 const findTransac = async (req, res) => {
