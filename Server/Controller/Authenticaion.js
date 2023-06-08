@@ -10886,10 +10886,12 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
       profile_id: usermake.id,
       upgrade: 0,
       level: 0,
-      package:true
-    },{
-      user_id: user_info.id,
-      pkg_price: pkg,
+      package: true
+    }, {
+      where: {
+        user_id: user_info.id,
+        pkg_price: pkg,
+      }
     });
 
     await Pakage.create({
@@ -10994,10 +10996,12 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         profile_id: usermake.id,
         upgrade: 0,
         level: 0,
-        package:true
-      },{
-        user_id: user_info.id,
-        pkg_price: pkg,
+        package: true
+      }, {
+        where: {
+          user_id: user_info.id,
+          pkg_price: pkg,
+        }
       });
 
       await Pakage.create({
@@ -11082,10 +11086,12 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         profile_id: usermake.id,
         upgrade: 0,
         level: 0,
-        package:true
-      },{
-        user_id: user_info.id,
-        pkg_price: pkg,
+        package: true
+      }, {
+        where: {
+          user_id: user_info.id,
+          pkg_price: pkg,
+        }
       });
       const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
 
@@ -11168,7 +11174,7 @@ const Pakage_info = async (req, res) => {
   })
   let NextPackage
 
-  if(findUpdate.pkg_price == 10){
+  if (findUpdate.pkg_price == 10) {
     switch (true) {
       case (findUpdate.level == 0):
         NextPackage = 12.5;
@@ -11198,7 +11204,7 @@ const Pakage_info = async (req, res) => {
         NextPackage = 12.5;
         break;
     }
-  }else if(findUpdate.pkg_price == 20){
+  } else if (findUpdate.pkg_price == 20) {
     switch (true) {
       case (findUpdate.level == 0):
         NextPackage = 25;
@@ -11228,7 +11234,7 @@ const Pakage_info = async (req, res) => {
         NextPackage = 25;
         break;
     }
-  }else if(findUpdate.pkg_price == 50){
+  } else if (findUpdate.pkg_price == 50) {
     switch (true) {
       case (findUpdate.level == 0):
         NextPackage = 62.500;
@@ -11258,7 +11264,7 @@ const Pakage_info = async (req, res) => {
         NextPackage = 62.500;
         break;
     }
-  }else if(findUpdate.pkg_price == 100){
+  } else if (findUpdate.pkg_price == 100) {
     switch (true) {
       case (findUpdate.level == 0):
         NextPackage = 125;
@@ -11288,7 +11294,7 @@ const Pakage_info = async (req, res) => {
         NextPackage = 125;
         break;
     }
-  }else if(findUpdate.pkg_price == 200){
+  } else if (findUpdate.pkg_price == 200) {
     switch (true) {
       case (findUpdate.level == 0):
         NextPackage = 250;
@@ -11318,10 +11324,10 @@ const Pakage_info = async (req, res) => {
         NextPackage = 250;
         break;
     }
-  }else if(findUpdate.pkg_price == 320){
+  } else if (findUpdate.pkg_price == 320) {
     switch (true) {
       case (findUpdate.level == 0):
-        NextPackage =437.500;
+        NextPackage = 437.500;
         break;
       case (findUpdate.level == 1):
         NextPackage = 984.375;
@@ -11345,7 +11351,7 @@ const Pakage_info = async (req, res) => {
         NextPackage = 127719.051;
         break;
       default:
-        NextPackage =437.500;
+        NextPackage = 437.500;
         break;
     }
   }
@@ -11464,13 +11470,13 @@ const Placements = async (req, res) => {
 const FindUserPakage = async (req, res) => {
   const user = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(user);
-  let pkg_check ="all found"
-  
-  
-  const findPkg= await Upgrade.findOne({where:{user_id:user_info.id}})
+  let pkg_check = "all found"
 
-  if(!findPkg){
-    pkg_check=await Upgrade.bulkcreate([
+
+  const findPkg = await Upgrade.findOne({ where: { user_id: user_info.id } })
+
+  if (!findPkg) {
+    pkg_check = await Upgrade.bulkCreate([
       {
         user_id: user_info.id,
         profile_id: 0,
@@ -11525,7 +11531,7 @@ const FindUserPakage = async (req, res) => {
     where: { user_id: user_info.id }
   });
 
-  res.status(200).send({packages,pkg_check});
+  res.status(200).send({ packages, pkg_check });
 };
 
 const findTransac = async (req, res) => {
