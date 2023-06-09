@@ -1269,7 +1269,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -1355,7 +1355,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -1441,7 +1441,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -1527,7 +1527,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -1613,7 +1613,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -1699,7 +1699,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -1785,7 +1785,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -1871,7 +1871,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -1990,7 +1990,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -2103,7 +2103,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -2216,7 +2216,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -2329,7 +2329,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -2442,7 +2442,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -2555,7 +2555,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -2668,7 +2668,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -2781,7 +2781,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -2880,7 +2880,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -2965,7 +2965,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -3049,7 +3049,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -3135,7 +3135,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -3221,7 +3221,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -3307,7 +3307,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -3393,7 +3393,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -3479,7 +3479,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -3598,7 +3598,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -3709,7 +3709,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -3820,7 +3820,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -3933,7 +3933,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -4046,7 +4046,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -4159,7 +4159,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -4272,7 +4272,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -4385,7 +4385,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -4484,7 +4484,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -4568,7 +4568,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -4652,7 +4652,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -4738,7 +4738,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -4824,7 +4824,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -4910,7 +4910,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -4996,7 +4996,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -5082,7 +5082,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -5201,7 +5201,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -5312,7 +5312,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -5423,7 +5423,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -5536,7 +5536,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -5649,7 +5649,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -5762,7 +5762,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -5875,7 +5875,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -5988,7 +5988,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -6087,7 +6087,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -6171,7 +6171,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -6255,7 +6255,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -6341,7 +6341,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -6427,7 +6427,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -6513,7 +6513,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -6599,7 +6599,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -6685,7 +6685,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -6804,7 +6804,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -6915,7 +6915,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -7026,7 +7026,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -7139,7 +7139,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -7252,7 +7252,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -7365,7 +7365,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -7478,7 +7478,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -7591,7 +7591,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -7690,7 +7690,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -7774,7 +7774,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -7858,7 +7858,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -7944,7 +7944,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -8030,7 +8030,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -8116,7 +8116,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -8202,7 +8202,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -8288,7 +8288,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -8407,7 +8407,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -8518,7 +8518,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -8629,7 +8629,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -8742,7 +8742,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -8855,7 +8855,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -8968,7 +8968,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -9081,7 +9081,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -9194,7 +9194,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -9293,7 +9293,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -9377,7 +9377,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -9461,7 +9461,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -9547,7 +9547,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -9633,7 +9633,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -9719,7 +9719,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -9805,7 +9805,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -9891,7 +9891,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -10010,7 +10010,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -10121,7 +10121,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -10232,7 +10232,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -10345,7 +10345,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -10458,7 +10458,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -10571,7 +10571,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -10684,7 +10684,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -10797,7 +10797,7 @@ const Upgrades = async (req, res) => {
             ,
             {
               where: {
-                user_id: user_info.id
+                user_id: 1
               }
             })
           // admin wallet transaction
@@ -10867,7 +10867,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
       },
     });
     const usermake = await Profile.create({
-      refferal: Reff.refferal,
+      refferal: Reff.directReffUser.id,
       pkg: pkg,
       user_id: user_info.id,
     });
@@ -10906,7 +10906,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
       where: { user_id: findRight.user_id },
     })
 
-    if (Reff.refferal == 1) {
+    if (Reff.directReffUser.id == 1) {
       await wallet.update(
         { payment: adminkWallets1.payment + pkg },
         { where: { user_id: adminkWallets1.user_id } }
@@ -10977,7 +10977,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         },
       });
       const usermake = await Profile.create({
-        refferal: Reff.refferal,
+        refferal: Reff.directReffUser.id,
         pkg: pkg,
         user_id: user_info.id,
       });
@@ -11015,7 +11015,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         where: { user_id: findLeft.user_id },
       })
 
-      if (Reff.refferal == 1) {
+      if (Reff.directReffUser.id == 1) {
         await wallet.update(
           { payment: adminkWallets1.payment + pkg },
           { where: { user_id: adminkWallets1.user_id } }
@@ -11073,7 +11073,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         },
       });
       const usermake = await Profile.create({
-        refferal: Reff.refferal,
+        refferal: Reff.directReffUser.id,
         pkg: pkg,
         user_id: user_info.id,
       });
@@ -11098,7 +11098,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
       const percentage55 = (pkg * 55) / 100;
       const percentage45 = (pkg * 45) / 100;
 
-      if (Reff.refferal == 1) {
+      if (Reff.directReffUser.id == 1) {
         await wallet.update(
           { payment: adminkWallets1.payment + pkg },
           { where: { user_id: adminkWallets1.user_id } }
@@ -11142,6 +11142,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
   }
 
 }
+
 const placementInvest = async (req, res) => {
   const { pkg, pkg_name } = req.body;
 
@@ -11324,7 +11325,7 @@ const Pakage_info = async (req, res) => {
         NextPackage = 250;
         break;
     }
-  } else if (findUpdate.pkg_price == 320) {
+  } else if (findUpdate.pkg_price == 350) {
     switch (true) {
       case (findUpdate.level == 0):
         NextPackage = 437.500;
