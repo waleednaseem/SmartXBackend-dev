@@ -1199,7 +1199,7 @@ const Upgrades = async (req, res) => {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
     }
-    Placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level >= Selected.Upgrade.level);
+    Placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
 
     //user ka level
     if (Placement_check.length === 0) {
@@ -1895,7 +1895,7 @@ const Upgrades = async (req, res) => {
           // Handle the default case if needed
           break;
       }
-      res.status(200).json('Purchased successfully!');
+      res.status(200).json('Updated successfully!');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -2811,7 +2811,7 @@ const Upgrades = async (req, res) => {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
     }
-    Placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level >= Selected.Upgrade.level);
+    Placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
 
     //user ka level
     if (Placement_check.length === 0) {
@@ -3503,7 +3503,7 @@ const Upgrades = async (req, res) => {
           // Handle the default case if needed
           break;
       }
-      res.status(200).json('Purchased successfully!');
+      res.status(200).json('Updated successfully!');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -4415,7 +4415,7 @@ const Upgrades = async (req, res) => {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
     }
-    Placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level >= Selected.Upgrade.level);
+    Placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
 
     //user ka level
     if (Placement_check.length === 0) {
@@ -5106,7 +5106,7 @@ const Upgrades = async (req, res) => {
           // Handle the default case if needed
           break;
       }
-      res.status(200).json('Purchased successfully!');
+      res.status(200).json('Updated successfully!');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -6018,7 +6018,7 @@ const Upgrades = async (req, res) => {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
     }
-    Placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level >= Selected.Upgrade.level);
+    Placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
 
     //user ka level
     if (Placement_check.length === 0) {
@@ -6709,7 +6709,7 @@ const Upgrades = async (req, res) => {
           // Handle the default case if needed
           break;
       }
-      res.status(200).json('Purchased successfully!');
+      res.status(200).json('Updated successfully!');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -7621,7 +7621,7 @@ const Upgrades = async (req, res) => {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
     }
-    Placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level >= Selected.Upgrade.level);
+    Placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
 
     //user ka level
     if (Placement_check.length === 0) {
@@ -8312,7 +8312,7 @@ const Upgrades = async (req, res) => {
           // Handle the default case if needed
           break;
       }
-      res.status(200).json('Purchased successfully!');
+      res.status(200).json('Updated successfully!');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -9224,7 +9224,7 @@ const Upgrades = async (req, res) => {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
     }
-    Placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level >= Selected.Upgrade.level);
+    Placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
 
     //user ka level
     if (Placement_check.length === 0) {
@@ -9915,7 +9915,7 @@ const Upgrades = async (req, res) => {
           // Handle the default case if needed
           break;
       }
-      res.status(200).json('Purchased successfully!');
+      res.status(200).json('Updated successfully!');
     }
     else {
       switch (Selected.Upgrade.level) {
