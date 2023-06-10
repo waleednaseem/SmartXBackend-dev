@@ -411,6 +411,11 @@ const Upgrades = async (req, res) => {
     }
   }
 
+  const transactionUpgradeToAdmin = "Upgraded tax for admin"
+  const transactionFromReff = "Your Refferal Upgraded a Package"
+  const transactionUpgraded = "Package Upgraded"
+  const AllTaxAdmin = "All Tax's to Admin"
+
   if (Selected.pkg == Upgrades4) {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
@@ -421,6 +426,7 @@ const Upgrades = async (req, res) => {
     if (Placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
         case 0:
+
           //upgrade levels
           await Upgrade.update({
             level: 1,
@@ -433,16 +439,28 @@ const Upgrades = async (req, res) => {
             }
           }
           )
+
           //upgrade levels transaction
           await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: "Upgraded package",
-              payment: 125,
-              user_id: user_info.id
-            })
-          //payment to referal
+          {
+            from: user_info.id,
+            to: 1,
+            reason: transactionUpgradeToAdmin,
+            payment: 125,
+            user_id: 1
+          })
+          //upgrade levels transaction
+          await Transaction.create(
+          {
+            from: user_info.id,
+            to: user_info.id,
+            reason: transactionUpgradeToAdmin,
+            payment: 125,
+            user_id: user_info.id
+          })
+
+
+            //payment to referal
           await wallet.update(
             {
               payment: findReff.wallet.payment + 25
@@ -452,15 +470,16 @@ const Upgrades = async (req, res) => {
               where: {
                 user_id: findReff.id
               }
-            })
+          })
+
           //payment refferal transaction
           await Transaction.create(
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Upgraded package",
+              reason: transactionFromReff,
               payment: 31.250,
-              user_id: user_info.id
+              user_id: findReff.id
             })
 
           // admin wallet
@@ -473,16 +492,18 @@ const Upgrades = async (req, res) => {
               where: {
                 user_id: 1
               }
-            })
+            }
+          )
           // admin wallet transaction
           await Transaction.create(
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: AllTaxAdmin,
               payment: 12.50 + 87.5,
-              user_id: user_info.id
+              user_id: 1
             })
+          
           break
         case 1:
           //upgrade levels
@@ -502,7 +523,16 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: transactionUpgraded,
+              payment: 281.250,
+              user_id: 1
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: transactionUpgraded,
               payment: 281.250,
               user_id: user_info.id
             })
@@ -524,9 +554,9 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: transactionFromReff,
               payment: 70.313,
-              user_id: user_info.id
+              user_id: findReff.id
             })
           // admin wallet
           await wallet.update(
@@ -544,7 +574,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: AllTaxAdmin,
               payment: 28.125 + 196.875,
               user_id: user_info.id
             })
@@ -567,7 +597,16 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: transactionUpgraded,
+              payment: 632.813,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: transactionUpgraded,
               payment: 632.813,
               user_id: user_info.id
             })
@@ -589,7 +628,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: transactionFromReff,
               payment: 158.203,
               user_id: user_info.id
             })
@@ -609,7 +648,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: AllTaxAdmin,
               payment: 63.281 + 442.969,
               user_id: user_info.id
             })
@@ -632,7 +671,17 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: transactionUpgraded,
+              payment: 1423.828,
+              user_id: user_info.id
+            }
+          )
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: transactionUpgraded,
               payment: 1423.828,
               user_id: user_info.id
             }
@@ -655,7 +704,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: transactionFromReff,
               payment: 355.957,
               user_id: user_info.id
             })
@@ -675,7 +724,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: AllTaxAdmin,
               payment: 142.383 + 996.680,
               user_id: user_info.id
             })
@@ -702,6 +751,15 @@ const Upgrades = async (req, res) => {
               payment: 3203.613,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: transactionUpgraded,
+              payment: 3203.613,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -720,7 +778,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: transactionFromReff,
               payment: 800.903,
               user_id: user_info.id
             })
@@ -740,7 +798,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: AllTaxAdmin,
               payment: 320.361 + 2242.529,
               user_id: user_info.id
             })
@@ -763,7 +821,16 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: transactionUpgraded,
+              payment: 7208.130,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: transactionUpgraded,
               payment: 7208.130,
               user_id: user_info.id
             })
@@ -785,7 +852,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: transactionFromReff,
               payment: 1802.032,
               user_id: user_info.id
             })
@@ -805,7 +872,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: AllTaxAdmin,
               payment: 720.813 + 5045.691,
               user_id: user_info.id
             })
@@ -828,7 +895,16 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: transactionUpgraded,
+              payment: 16218.292,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: transactionUpgraded,
               payment: 16218.292,
               user_id: user_info.id
             })
@@ -850,7 +926,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: transactionFromReff,
               payment: 4054.573,
               user_id: user_info.id
             })
@@ -870,7 +946,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: AllTaxAdmin,
               payment: 1621.829 + 11352.805,
               user_id: user_info.id
             })
@@ -893,7 +969,16 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: transactionUpgraded,
+              payment: 36491.158,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: transactionUpgraded,
               payment: 36491.158,
               user_id: user_info.id
             })
@@ -915,7 +1000,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: transactionFromReff,
               payment: 9122.789,
               user_id: user_info.id
             })
@@ -935,7 +1020,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: AllTaxAdmin,
               payment: 3649.116 + 25549.810,
               user_id: user_info.id
             })
@@ -7746,7 +7831,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         },
       }
     );
-    await Upgrade.Update({
+    await Upgrade.update({
       profile_id: usermake.id,
       upgrade: 0,
       level: 0,
@@ -7788,15 +7873,8 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         { payment: adminkWallets1.payment + percentage10 },
         { where: { user_id: adminkWallets1.user_id } }
       ); // 10% for admin
-      await wallet.update(
-        { payment: Reff.directReffUser.reff.payment + percentage45 },
-        { where: { user_id: ReffkWallets1.user_id } }
-      ); // 45% for direct refferal
-      await wallet.update(
-        { payment: placementWallet.payment + percentage45 },
-        { where: { user_id: findRight.user_id } }
-      ); // 45% for placement
 
+      //transactions
       await Transaction.create({
         from: user_info.id,
         to: 1,
@@ -7805,18 +7883,44 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         user_id: 1,
       });
 
+      await wallet.update(
+        { payment: Reff.directReffUser.reff.payment + percentage45 },
+        { where: { user_id: Reff.directReffUser.id } }
+      ); // 45% for direct refferal
+      
+      //transactions
+      await Transaction.create({
+        from: user_info.id,
+        to: Reff.directReffUser.id,
+        reason: "Refferal Fund",
+        payment: percentage45,
+        user_id: Reff.directReffUser.id,
+      });
+
+      await wallet.update(
+        { payment: placementWallet.payment + percentage45 },
+        { where: { user_id: findRight.user_id } }
+      ); // 45% for placement
+
+       //transactions
+      await Transaction.create({
+        from: user_info.id,
+        to: Reff.directReffUser.id,
+        reason: "placement Fund",
+        payment: percentage45,
+        user_id: findRight.user_id,
+      });
+
       await Transaction.create({
         from: "meta mask",
         to: user_info.id,
         reason: "you purchased pakage",
-        payment: percentage90,
+        payment: pkg,
         user_id: user_info.id,
       });
+
     }
-    // await wallet.create({
-    //   payment: 0,
-    //   user_id: user_info.id,
-    // });
+    
     res.status(200).json({ msg: `from Right of ${pkg}`, findRight });
 
     // xx-------------------xx------------------------------xx---------------------xxx
@@ -7896,28 +8000,50 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           { payment: adminkWallets1.payment + percentage10 },
           { where: { user_id: adminkWallets1.user_id } }
         ); // 10% for admin
+
+        //transaction
+        await Transaction.create({
+          from: user_info.id,
+          to: 1,
+          reason: " Tax to admin",
+          payment: percentage10,
+          user_id: 1,
+        });
+
         await wallet.update(
           { payment: Reff.directReffUser.reff.payment + percentage45 },
-          { where: { user_id: ReffkWallets1.user_id } }
+          { where: { user_id: Reff.directReffUser.id } }
         ); // 45% for direct refferal
+
+        //transaction
+        await Transaction.create({
+          from: user_info.id,
+          to: Reff.directReffUser.id,
+          reason: "Refferal Fund",
+          payment: percentage45,
+          user_id: Reff.directReffUser.id,
+        });
+
         await wallet.update(
           { payment: placementWallet.payment + percentage45 },
           { where: { user_id: findLeft.user_id } }
         ); // 45% for placement
 
-        await Transaction.create({
+         //transaction
+         await Transaction.create({
           from: user_info.id,
-          to: 1,
-          reason: "tax for admin",
-          payment: percentage10,
-          user_id: 1,
+          to: findLeft.user_id,
+          reason: "Placement Fund",
+          payment: percentage45,
+          user_id: findLeft.user_id,
         });
+        
 
         await Transaction.create({
           from: "meta mask",
           to: user_info.id,
           reason: "you purchased pakage",
-          payment: percentage90,
+          payment: pkg,
           user_id: user_info.id,
         });
       }
@@ -7966,7 +8092,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         await wallet.update(
           { payment: adminkWallets1.payment + pkg },
           { where: { user_id: adminkWallets1.user_id } }
-        ); // 10% for admin
+        ); 
         await Transaction.create({
           from: user_info.id,
           to: 1,
@@ -7974,29 +8100,31 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           payment: pkg,
           user_id: 1,
         });
-        // res.status(200).json({ msg: "done" });
+        
       } else {
         await wallet.update(
-          { payment: adminkWallets1.payment + percentage55 },
+          { payment: adminkWallets1.payment + percentage10 },
           { where: { user_id: adminkWallets1.user_id } }
         ); // 10% for admin
+
         await wallet.update(
-          { payment: Reff.directReffUser.reff.payment + percentage45 },
-          { where: { user_id: ReffkWallets1.user_id } }
+          { payment: Reff.directReffUser.reff.payment + percentage90 },
+          { where: { user_id: Reff.directReffUser.id } }
         ); // 90% for user
+
         await Transaction.create({
           from: user_info.id,
           to: 1,
           reason: "tax for admin",
-          payment: percentage55,
+          payment: percentage10,
           user_id: 1,
         });
 
         await Transaction.create({
-          from: "meta mask",
+          from: "Meta mask",
           to: user_info.id,
           reason: "you purchased pakage",
-          payment: percentage45,
+          payment: pkg,
           user_id: user_info.id,
         });
       }
@@ -8403,7 +8531,7 @@ const findTransac = async (req, res) => {
   const user = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(user);
   const transaction = await Transaction.findAll({
-    where: { user_id: user_info.id },
+    where: { to: user_info.id },
   });
   res.json(transaction);
 };
