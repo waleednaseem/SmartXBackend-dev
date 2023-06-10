@@ -43,6 +43,7 @@ App.get('/wallet', ctrl.wallets)
 // small api for find pakages and transaction 
 App.get('/finduserdetail', ctrl.FIndUserDetail)
 
+App.get('/findTransac', ctrl.findTransac)
 App.get('/find_Direct_Reff_Transactions', ctrl.find_Direct_Reff_Transactions)
 
 //decode
