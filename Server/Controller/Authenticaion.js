@@ -977,7 +977,7 @@ const Upgrades = async (req, res) => {
           await Transaction.create(
             {
               from: user_info.id,
-              to: 1,
+              to: user_info.id,
               reason: transactionUpgraded,
               payment: 36491.158,
               user_id: user_info.id
@@ -1051,6 +1051,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 125,
+              user_id: user_info.id
+            })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 125,
               user_id: user_info.id
@@ -1134,6 +1143,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 281.250,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 281.250,
               user_id: user_info.id
@@ -1223,6 +1241,15 @@ const Upgrades = async (req, res) => {
               payment: 632.813,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 632.813,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -1304,6 +1331,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 1423.828,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 1423.828,
               user_id: user_info.id
@@ -1393,6 +1429,15 @@ const Upgrades = async (req, res) => {
               payment: 3203.613,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 3203.613,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -1474,6 +1519,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 7208.130,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 7208.130,
               user_id: user_info.id
@@ -1563,6 +1617,15 @@ const Upgrades = async (req, res) => {
               payment: 16218.292,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 16218.292,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -1648,6 +1711,15 @@ const Upgrades = async (req, res) => {
               payment: 36491.158,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 36491.158,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -1715,9 +1787,9 @@ const Upgrades = async (req, res) => {
           // Handle the default case if needed
           break;
       }
-      res.status(200).json('Upgrade successful'); // Send a success response
+      res.status(200).json('Upgraded successfully!'); // Send a success response
     }
-  } else if (Selected.pkg == Upgrades1) {
+  zz} else if (Selected.pkg == Upgrades1) {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
     }
@@ -1744,6 +1816,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 12.5,
+              user_id: user_info.id
+            })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 12.5,
               user_id: user_info.id
@@ -1812,6 +1893,15 @@ const Upgrades = async (req, res) => {
               payment: 28.125,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 28.125,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -1875,6 +1965,15 @@ const Upgrades = async (req, res) => {
               payment: 63.281,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 63.281,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -1934,6 +2033,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 142.383,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 142.383,
               user_id: user_info.id
@@ -2003,6 +2111,15 @@ const Upgrades = async (req, res) => {
               payment: 320.361,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 320.361,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -2064,6 +2181,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 720.813,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 720.813,
               user_id: user_info.id
@@ -2133,6 +2259,15 @@ const Upgrades = async (req, res) => {
               payment: 1621.029,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 1621.029,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -2194,6 +2329,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 3649.116,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 3649.116,
               user_id: user_info.id
@@ -2267,6 +2411,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 12.5,
+              user_id: user_info.id
+            })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 12.5,
               user_id: user_info.id
@@ -2354,6 +2507,15 @@ const Upgrades = async (req, res) => {
               payment: 28.125,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 28.125,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -2437,6 +2599,15 @@ const Upgrades = async (req, res) => {
               payment: 63.281,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 63.281,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -2516,6 +2687,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 142.383,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 142.383,
               user_id: user_info.id
@@ -2605,6 +2785,15 @@ const Upgrades = async (req, res) => {
               payment: 320.361,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 320.361,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -2686,6 +2875,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 720.813,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 720.813,
               user_id: user_info.id
@@ -2775,6 +2973,15 @@ const Upgrades = async (req, res) => {
               payment: 1621.029,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 1621.029,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -2856,6 +3063,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 3649.116,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 3649.116,
               user_id: user_info.id
@@ -2960,6 +3176,15 @@ const Upgrades = async (req, res) => {
               payment: 25,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 25,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -3019,6 +3244,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 56.250,
+              user_id: user_info.id
+            })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 56.250,
               user_id: user_info.id
@@ -3086,6 +3320,15 @@ const Upgrades = async (req, res) => {
               payment: 126.563,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 126.563,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -3145,6 +3388,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 284.766,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 284.766,
               user_id: user_info.id
@@ -3214,6 +3466,15 @@ const Upgrades = async (req, res) => {
               payment: 640.723,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 640.723,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -3275,6 +3536,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 1441.626,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 1441.626,
               user_id: user_info.id
@@ -3344,6 +3614,15 @@ const Upgrades = async (req, res) => {
               payment: 3243.658,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 3243.658,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -3405,6 +3684,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 7298.232,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 7298.232,
               user_id: user_info.id
@@ -3478,6 +3766,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 25,
+              user_id: user_info.id
+            })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 25,
               user_id: user_info.id
@@ -3565,6 +3862,15 @@ const Upgrades = async (req, res) => {
               payment: 56.250,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 56.250,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -3648,6 +3954,15 @@ const Upgrades = async (req, res) => {
               payment: 126.563,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 126.563,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -3727,6 +4042,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 284.766,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 284.766,
               user_id: user_info.id
@@ -3816,6 +4140,15 @@ const Upgrades = async (req, res) => {
               payment: 640.723,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 640.723,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -3897,6 +4230,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 1441.626,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 1441.626,
               user_id: user_info.id
@@ -3986,6 +4328,15 @@ const Upgrades = async (req, res) => {
               payment: 3243.658,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 3243.658,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -4067,6 +4418,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 7298.232,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 7298.232,
               user_id: user_info.id
@@ -4171,6 +4531,15 @@ const Upgrades = async (req, res) => {
               payment: 62.500,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 62.500,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -4230,6 +4599,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 140.625,
+              user_id: user_info.id
+            })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 140.625,
               user_id: user_info.id
@@ -4297,6 +4675,15 @@ const Upgrades = async (req, res) => {
               payment: 316.406,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 316.406,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -4356,6 +4743,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 711.914,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 711.914,
               user_id: user_info.id
@@ -4425,6 +4821,15 @@ const Upgrades = async (req, res) => {
               payment: 1601.807,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 1601.807,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -4486,6 +4891,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 3604.065,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 3604.065,
               user_id: user_info.id
@@ -4555,6 +4969,15 @@ const Upgrades = async (req, res) => {
               payment: 8109.065,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 8109.065,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -4616,6 +5039,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 18245.579,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 18245.579,
               user_id: user_info.id
@@ -4689,6 +5121,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 62.500,
+              user_id: user_info.id
+            })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 62.500,
               user_id: user_info.id
@@ -4776,6 +5217,15 @@ const Upgrades = async (req, res) => {
               payment: 140.625,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 140.625,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -4859,6 +5309,15 @@ const Upgrades = async (req, res) => {
               payment: 316.406,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 316.406,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -4938,6 +5397,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 711.914,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 711.914,
               user_id: user_info.id
@@ -5027,6 +5495,15 @@ const Upgrades = async (req, res) => {
               payment: 1601.807,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 1601.807,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -5108,6 +5585,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 3604.065,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 3604.065,
               user_id: user_info.id
@@ -5197,6 +5683,15 @@ const Upgrades = async (req, res) => {
               payment: 8109.065,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 8109.065,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -5278,6 +5773,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 18245.579,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 18245.579,
               user_id: user_info.id
@@ -5382,6 +5886,15 @@ const Upgrades = async (req, res) => {
               payment: 250,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 250,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -5441,6 +5954,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 281.250,
+              user_id: user_info.id
+            })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 281.250,
               user_id: user_info.id
@@ -5508,6 +6030,15 @@ const Upgrades = async (req, res) => {
               payment: 632.813,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 632.813,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -5567,6 +6098,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 1423.828,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 1423.828,
               user_id: user_info.id
@@ -5636,6 +6176,15 @@ const Upgrades = async (req, res) => {
               payment: 3203.613,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 3203.613,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -5697,6 +6246,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 7208.130,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 7208.130,
               user_id: user_info.id
@@ -5766,6 +6324,15 @@ const Upgrades = async (req, res) => {
               payment: 16218.292,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 16218.292,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -5827,6 +6394,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 36491.158,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 36491.158,
               user_id: user_info.id
@@ -5900,6 +6476,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 250,
+              user_id: user_info.id
+            })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 250,
               user_id: user_info.id
@@ -5987,6 +6572,15 @@ const Upgrades = async (req, res) => {
               payment: 281.250,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 281.250,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -6070,6 +6664,15 @@ const Upgrades = async (req, res) => {
               payment: 632.813,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 632.813,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -6149,6 +6752,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 1423.828,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 1423.828,
               user_id: user_info.id
@@ -6238,6 +6850,15 @@ const Upgrades = async (req, res) => {
               payment: 3203.613,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 3203.613,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -6319,6 +6940,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 7208.130,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 7208.130,
               user_id: user_info.id
@@ -6408,6 +7038,15 @@ const Upgrades = async (req, res) => {
               payment: 16218.292,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 16218.292,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -6489,6 +7128,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 36491.158,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 36491.158,
               user_id: user_info.id
@@ -6593,6 +7241,15 @@ const Upgrades = async (req, res) => {
               payment: 437.500,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 437.500,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -6652,6 +7309,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 984.375,
+              user_id: user_info.id
+            })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 984.375,
               user_id: user_info.id
@@ -6719,6 +7385,15 @@ const Upgrades = async (req, res) => {
               payment: 2214.844,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 2214.844,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -6778,6 +7453,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 4983.398,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 4983.398,
               user_id: user_info.id
@@ -6847,6 +7531,15 @@ const Upgrades = async (req, res) => {
               payment: 11212.646,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 11212.646,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -6908,6 +7601,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 25228.455,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 25228.455,
               user_id: user_info.id
@@ -6977,6 +7679,15 @@ const Upgrades = async (req, res) => {
               payment: 56764.023,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 56764.023,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -7038,6 +7749,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 127719.051,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 127719.051,
               user_id: user_info.id
@@ -7111,6 +7831,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 437.500,
+              user_id: user_info.id
+            })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 437.500,
               user_id: user_info.id
@@ -7198,6 +7927,15 @@ const Upgrades = async (req, res) => {
               payment: 984.375,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 984.375,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -7281,6 +8019,15 @@ const Upgrades = async (req, res) => {
               payment: 2214.844,
               user_id: user_info.id
             })
+          //upgrade levels transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 2214.844,
+              user_id: user_info.id
+            })
           //payment to referal
           await wallet.update(
             {
@@ -7360,6 +8107,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 4983.398,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 4983.398,
               user_id: user_info.id
@@ -7449,6 +8205,15 @@ const Upgrades = async (req, res) => {
               payment: 11212.646,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 11212.646,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -7530,6 +8295,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 25228.455,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 25228.455,
               user_id: user_info.id
@@ -7619,6 +8393,15 @@ const Upgrades = async (req, res) => {
               payment: 56764.023,
               user_id: user_info.id
             })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: "Upgraded package",
+              payment: 56764.023,
+              user_id: user_info.id
+            })
 
           //payment to referal
 
@@ -7700,6 +8483,15 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
+              reason: "Upgraded package",
+              payment: 127719.051,
+              user_id: user_info.id
+            })
+          // upradde transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: user_info.id,
               reason: "Upgraded package",
               payment: 127719.051,
               user_id: user_info.id
