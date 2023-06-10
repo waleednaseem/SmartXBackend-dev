@@ -747,7 +747,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: transactionUpgraded,
               payment: 3203.613,
               user_id: user_info.id
             })
@@ -1029,7 +1029,7 @@ const Upgrades = async (req, res) => {
           // Handle the default case if needed
           break;
       }
-      res.status(200).json('Updated successfully!');
+      res.status(200).json('Upgraded successfully!');
     }
     else {
       switch (Selected.Upgrade.level) {
@@ -7905,7 +7905,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
        //transactions
       await Transaction.create({
         from: user_info.id,
-        to: Reff.directReffUser.id,
+        to: findRight.user_id,
         reason: "placement Fund",
         payment: percentage45,
         user_id: findRight.user_id,
