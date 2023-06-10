@@ -70,6 +70,12 @@ module.exports = (sequelize, DataTypes) => {
         as:'Reff',
         onDelete: 'CASCADE',
       });
+      Profile.belongsTo(models.User, {
+        foreignKey: 'refferal',
+        id: 'id',
+        as:'User',
+        onDelete: 'CASCADE',
+      });
     }
   }
   Profile.init({
