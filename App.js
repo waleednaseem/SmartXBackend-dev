@@ -30,7 +30,7 @@ App.post('/Pakage_info', ctrl.Pakage_info)
 App.get('/finduserpakage', ctrl.FindUserPakage)
 
 App.post('/ShowReffTrend', ctrl.ShowReff)
-App.get('/trenduser/:userId', ctrl.getUserByTrend)
+App.post('/trenduser', ctrl.getUserByTrend)
 
 
 //payments

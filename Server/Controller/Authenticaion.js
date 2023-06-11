@@ -442,25 +442,25 @@ const Upgrades = async (req, res) => {
 
           //upgrade levels transaction
           await Transaction.create(
-          {
-            from: user_info.id,
-            to: 1,
-            reason: transactionUpgradeToAdmin,
-            payment: 125,
-            user_id: 1
-          })
+            {
+              from: user_info.id,
+              to: 1,
+              reason: transactionUpgradeToAdmin,
+              payment: 125,
+              user_id: 1
+            })
           //upgrade levels transaction
           await Transaction.create(
-          {
-            from: user_info.id,
-            to: user_info.id,
-            reason: transactionUpgradeToAdmin,
-            payment: 125,
-            user_id: user_info.id
-          })
+            {
+              from: user_info.id,
+              to: user_info.id,
+              reason: transactionUpgradeToAdmin,
+              payment: 125,
+              user_id: user_info.id
+            })
 
 
-            //payment to referal
+          //payment to referal
           await wallet.update(
             {
               payment: findReff.wallet.payment + 25
@@ -470,7 +470,7 @@ const Upgrades = async (req, res) => {
               where: {
                 user_id: findReff.id
               }
-          })
+            })
 
           //payment refferal transaction
           await Transaction.create(
@@ -503,7 +503,7 @@ const Upgrades = async (req, res) => {
               payment: 12.50 + 87.5,
               user_id: 1
             })
-          
+
           break
         case 1:
           //upgrade levels
@@ -1789,7 +1789,8 @@ const Upgrades = async (req, res) => {
       }
       res.status(200).json('Upgraded successfully!'); // Send a success response
     }
-  zz} else if (Selected.pkg == Upgrades1) {
+    zz
+  } else if (Selected.pkg == Upgrades1) {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
     }
@@ -8569,34 +8570,22 @@ const Upgrades = async (req, res) => {
 };
 
 const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
-
-  const findRight = await Profile.findOne({
-    where: {
-      left: { [Sequelize.Op.ne]: null },
-      right: null,
-      pkg: pkg,
-    },
-  });
   let ReffkWallets1
 
-  ReffkWallets1 = await Refferal.findOne({
-    where: { user_id: user_info.id },
-    include: {
-      model: User,
-      as: 'directReffUser',
-      include: {
-        model: wallet,
-        as: 'reff',
+  const SearchUser = await User.findOne({where:{id:user_info.id}}) 
+  const Real_profile = await Profile.findOne({ where: { user_id: user_info.id } })
+  if (Real_profile) {
+    res.json('Package Found!')
+  } else {
+    const findRight = await Profile.findOne({
+      where: {
+        left: { [Sequelize.Op.ne]: null },
+        right: null,
+        pkg: pkg,
       },
-    },
-  });
-  const percentage10 = (pkg * 10) / 100;
-  const percentage45 = (pkg * 45) / 100;
-  const percentage90 = (pkg * 90) / 100;
+    });
 
-  if (findRight) {
-    // xx-------------------xx------------------------------xx---------------------xxx
-    const Reff = await Refferal.findOne({
+    ReffkWallets1 = await Refferal.findOne({
       where: { user_id: user_info.id },
       include: {
         model: User,
@@ -8607,123 +8596,11 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         },
       },
     });
-    const usermake = await Profile.create({
-      refferal: Reff.directReffUser.id,
-      pkg: pkg,
-      user_id: user_info.id,
-    });
+    const percentage10 = (pkg * 10) / 100;
+    const percentage45 = (pkg * 45) / 100;
+    const percentage90 = (pkg * 90) / 100;
 
-    await Profile.update(
-      {
-        right: user_info.id,
-      },
-      {
-        where: {
-          id: findRight.id,
-        },
-      }
-    );
-    await Upgrade.update({
-      profile_id: usermake.id,
-      upgrade: 0,
-      level: 0,
-      package: true
-    }, {
-      where: {
-        user_id: user_info.id,
-        pkg_price: pkg,
-      }
-    });
-
-    await Pakage.create({
-      user_id: user_info.id,
-      pkg_price: pkg,
-      pkg_name: pkg_name,
-    });
-
-    const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
-
-    const placementWallet = await wallet.findOne({
-      where: { user_id: findRight.user_id },
-    })
-
-    if (Reff.directReffUser.id == 1) {
-      await wallet.update(
-        { payment: adminkWallets1.payment + pkg },
-        { where: { user_id: adminkWallets1.user_id } }
-      );
-      await Transaction.create({
-        from: user_info.id,
-        to: 1,
-        reason: "commision with tax for admin",
-        payment: pkg,
-        user_id: 1,
-      });
-    } else {
-
-      await wallet.update(
-        { payment: adminkWallets1.payment + percentage10 },
-        { where: { user_id: adminkWallets1.user_id } }
-      ); // 10% for admin
-
-      //transactions
-      await Transaction.create({
-        from: user_info.id,
-        to: 1,
-        reason: "tax for admin",
-        payment: percentage10,
-        user_id: 1,
-      });
-
-      await wallet.update(
-        { payment: Reff.directReffUser.reff.payment + percentage45 },
-        { where: { user_id: Reff.directReffUser.id } }
-      ); // 45% for direct refferal
-      
-      //transactions
-      await Transaction.create({
-        from: user_info.id,
-        to: Reff.directReffUser.id,
-        reason: "Refferal Fund",
-        payment: percentage45,
-        user_id: Reff.directReffUser.id,
-      });
-
-      await wallet.update(
-        { payment: placementWallet.payment + percentage45 },
-        { where: { user_id: findRight.user_id } }
-      ); // 45% for placement
-
-       //transactions
-      await Transaction.create({
-        from: user_info.id,
-        to: findRight.user_id,
-        reason: "placement Fund",
-        payment: percentage45,
-        user_id: findRight.user_id,
-      });
-
-      await Transaction.create({
-        from: "meta mask",
-        to: user_info.id,
-        reason: "you purchased pakage",
-        payment: pkg,
-        user_id: user_info.id,
-      });
-
-    }
-    
-    res.status(200).json({ msg: `from Right of ${pkg}`, findRight });
-
-    // xx-------------------xx------------------------------xx---------------------xxx
-  } else {
-    const findLeft = await Profile.findOne({
-      where: {
-        left: null,
-        pkg: pkg,
-      },
-    });
-    if (findLeft) {
+    if (findRight) {
       // xx-------------------xx------------------------------xx---------------------xxx
       const Reff = await Refferal.findOne({
         where: { user_id: user_info.id },
@@ -8740,15 +8617,16 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         refferal: Reff.directReffUser.id,
         pkg: pkg,
         user_id: user_info.id,
+        username: SearchUser.username
       });
 
       await Profile.update(
         {
-          left: user_info.id,
+          right: user_info.id,
         },
         {
           where: {
-            id: findLeft.id,
+            id: findRight.id,
           },
         }
       );
@@ -8769,10 +8647,11 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         pkg_price: pkg,
         pkg_name: pkg_name,
       });
+
       const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
 
       const placementWallet = await wallet.findOne({
-        where: { user_id: findLeft.user_id },
+        where: { user_id: findRight.user_id },
       })
 
       if (Reff.directReffUser.id == 1) {
@@ -8783,21 +8662,29 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         await Transaction.create({
           from: user_info.id,
           to: 1,
-          reason: "commision and tax for admin",
+          reason: "commision with tax for admin",
           payment: pkg,
-          user_id: 1,
-        })
+          user_id: user_info.id,
+        });
+        await Transaction.create({
+          from: user_info.id,
+          to: user_info.id,
+          reason: "commision with tax for admin",
+          payment: pkg,
+          user_id: user_info.id,
+        });
       } else {
+
         await wallet.update(
           { payment: adminkWallets1.payment + percentage10 },
           { where: { user_id: adminkWallets1.user_id } }
         ); // 10% for admin
 
-        //transaction
+        //transactions
         await Transaction.create({
           from: user_info.id,
           to: 1,
-          reason: " Tax to admin",
+          reason: "tax for admin",
           payment: percentage10,
           user_id: 1,
         });
@@ -8807,7 +8694,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           { where: { user_id: Reff.directReffUser.id } }
         ); // 45% for direct refferal
 
-        //transaction
+        //transactions
         await Transaction.create({
           from: user_info.id,
           to: Reff.directReffUser.id,
@@ -8818,18 +8705,17 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
         await wallet.update(
           { payment: placementWallet.payment + percentage45 },
-          { where: { user_id: findLeft.user_id } }
+          { where: { user_id: findRight.user_id } }
         ); // 45% for placement
 
-         //transaction
-         await Transaction.create({
+        //transactions
+        await Transaction.create({
           from: user_info.id,
-          to: findLeft.user_id,
-          reason: "Placement Fund",
+          to: findRight.user_id,
+          reason: "placement Fund",
           payment: percentage45,
-          user_id: findLeft.user_id,
+          user_id: findRight.user_id,
         });
-        
 
         await Transaction.create({
           from: "meta mask",
@@ -8838,93 +8724,223 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           payment: pkg,
           user_id: user_info.id,
         });
+
       }
 
-      res.json({ msg: `from Left of ${pkg}`, findLeft });
+      res.status(200).json({ msg: `from Right of ${pkg}`, findRight });
+
       // xx-------------------xx------------------------------xx---------------------xxx
     } else {
-      const Reff = await Refferal.findOne({
-        where: { user_id: user_info.id },
-        include: {
-          model: User,
-          as: 'directReffUser',
-          include: {
-            model: wallet,
-            as: 'reff',
-          },
+      const findLeft = await Profile.findOne({
+        where: {
+          left: null,
+          pkg: pkg,
         },
       });
-      const usermake = await Profile.create({
-        refferal: Reff.directReffUser.id,
-        pkg: pkg,
-        user_id: user_info.id,
-      });
-      await Pakage.create({
-        user_id: user_info.id,
-        pkg_price: pkg,
-        pkg_name: pkg_name,
-      });
-      await Upgrade.update({
-        profile_id: usermake.id,
-        upgrade: 0,
-        level: 0,
-        package: true
-      }, {
-        where: {
+      if (findLeft) {
+        // xx-------------------xx------------------------------xx---------------------xxx
+        const Reff = await Refferal.findOne({
+          where: { user_id: user_info.id },
+          include: {
+            model: User,
+            as: 'directReffUser',
+            include: {
+              model: wallet,
+              as: 'reff',
+            },
+          },
+        });
+        const usermake = await Profile.create({
+          refferal: Reff.directReffUser.id,
+          pkg: pkg,
+          user_id: user_info.id,
+          username: SearchUser.username
+        });
+
+        await Profile.update(
+          {
+            left: user_info.id,
+          },
+          {
+            where: {
+              id: findLeft.id,
+            },
+          }
+        );
+        await Upgrade.update({
+          profile_id: usermake.id,
+          upgrade: 0,
+          level: 0,
+          package: true
+        }, {
+          where: {
+            user_id: user_info.id,
+            pkg_price: pkg,
+          }
+        });
+
+        await Pakage.create({
           user_id: user_info.id,
           pkg_price: pkg,
+          pkg_name: pkg_name,
+        });
+        const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
+
+        const placementWallet = await wallet.findOne({
+          where: { user_id: findLeft.user_id },
+        })
+
+        if (Reff.directReffUser.id == 1) {
+          await wallet.update(
+            { payment: adminkWallets1.payment + pkg },
+            { where: { user_id: adminkWallets1.user_id } }
+          );
+          await Transaction.create({
+            from: user_info.id,
+            to: 1,
+            reason: "commision and tax for admin",
+            payment: pkg,
+            user_id: 1,
+          })
+        } else {
+          await wallet.update(
+            { payment: adminkWallets1.payment + percentage10 },
+            { where: { user_id: adminkWallets1.user_id } }
+          ); // 10% for admin
+
+          //transaction
+          await Transaction.create({
+            from: user_info.id,
+            to: 1,
+            reason: " Tax to admin",
+            payment: percentage10,
+            user_id: 1,
+          });
+
+          await wallet.update(
+            { payment: Reff.directReffUser.reff.payment + percentage45 },
+            { where: { user_id: Reff.directReffUser.id } }
+          ); // 45% for direct refferal
+
+          //transaction
+          await Transaction.create({
+            from: user_info.id,
+            to: Reff.directReffUser.id,
+            reason: "Refferal Fund",
+            payment: percentage45,
+            user_id: Reff.directReffUser.id,
+          });
+
+          await wallet.update(
+            { payment: placementWallet.payment + percentage45 },
+            { where: { user_id: findLeft.user_id } }
+          ); // 45% for placement
+
+          //transaction
+          await Transaction.create({
+            from: user_info.id,
+            to: findLeft.user_id,
+            reason: "Placement Fund",
+            payment: percentage45,
+            user_id: findLeft.user_id,
+          });
+
+
+          await Transaction.create({
+            from: "meta mask",
+            to: user_info.id,
+            reason: "you purchased pakage",
+            payment: pkg,
+            user_id: user_info.id,
+          });
         }
-      });
-      const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
 
-      const percentage55 = (pkg * 55) / 100;
-      const percentage45 = (pkg * 45) / 100;
-
-      if (Reff.directReffUser.id == 1) {
-        await wallet.update(
-          { payment: adminkWallets1.payment + pkg },
-          { where: { user_id: adminkWallets1.user_id } }
-        ); 
-        await Transaction.create({
-          from: user_info.id,
-          to: 1,
-          reason: "commision with tax for admin",
-          payment: pkg,
-          user_id: 1,
-        });
-        
+        res.json({ msg: `from Left of ${pkg}`, findLeft });
+        // xx-------------------xx------------------------------xx---------------------xxx
       } else {
-        await wallet.update(
-          { payment: adminkWallets1.payment + percentage10 },
-          { where: { user_id: adminkWallets1.user_id } }
-        ); // 10% for admin
-
-        await wallet.update(
-          { payment: Reff.directReffUser.reff.payment + percentage90 },
-          { where: { user_id: Reff.directReffUser.id } }
-        ); // 90% for user
-
-        await Transaction.create({
-          from: user_info.id,
-          to: 1,
-          reason: "tax for admin",
-          payment: percentage10,
-          user_id: 1,
+        const Reff = await Refferal.findOne({
+          where: { user_id: user_info.id },
+          include: {
+            model: User,
+            as: 'directReffUser',
+            include: {
+              model: wallet,
+              as: 'reff',
+            },
+          },
         });
-
-        await Transaction.create({
-          from: "Meta mask",
-          to: user_info.id,
-          reason: "you purchased pakage",
-          payment: pkg,
+        const usermake = await Profile.create({
+          refferal: Reff.directReffUser.id,
+          pkg: pkg,
           user_id: user_info.id,
+          username: SearchUser.username
         });
-      }
+        await Pakage.create({
+          user_id: user_info.id,
+          pkg_price: pkg,
+          pkg_name: pkg_name,
+        });
+        await Upgrade.update({
+          profile_id: usermake.id,
+          upgrade: 0,
+          level: 0,
+          package: true
+        }, {
+          where: {
+            user_id: user_info.id,
+            pkg_price: pkg,
+          }
+        });
+        const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
 
-      res.status(200).json({ msg: "no space found", usermake });
+        const percentage55 = (pkg * 55) / 100;
+        const percentage45 = (pkg * 45) / 100;
+
+        if (Reff.directReffUser.id == 1) {
+          await wallet.update(
+            { payment: adminkWallets1.payment + pkg },
+            { where: { user_id: adminkWallets1.user_id } }
+          );
+          await Transaction.create({
+            from: user_info.id,
+            to: 1,
+            reason: "commision with tax for admin",
+            payment: pkg,
+            user_id: 1,
+          });
+
+        } else {
+          await wallet.update(
+            { payment: adminkWallets1.payment + percentage10 },
+            { where: { user_id: adminkWallets1.user_id } }
+          ); // 10% for admin
+
+          await wallet.update(
+            { payment: Reff.directReffUser.reff.payment + percentage90 },
+            { where: { user_id: Reff.directReffUser.id } }
+          ); // 90% for user
+
+          await Transaction.create({
+            from: user_info.id,
+            to: 1,
+            reason: "tax for admin",
+            payment: percentage10,
+            user_id: 1,
+          });
+
+          await Transaction.create({
+            from: "Meta mask",
+            to: user_info.id,
+            reason: "you purchased pakage",
+            payment: pkg,
+            user_id: user_info.id,
+          });
+        }
+
+        res.status(200).json({ msg: "no space found", usermake });
+      }
     }
   }
-
 }
 
 const placementInvest = async (req, res) => {
@@ -9147,42 +9163,78 @@ const Pakage_info = async (req, res) => {
 const ShowReff = async (req, res) => {
   const userfind = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(userfind);
+  const { pkg } = req.body
 
   const user = await Profile.findOne({
-    where: { user_id: user_info.id },
+    where: { user_id: 2, pkg: pkg },
     // attributes: ["username", "left", "right"],
     include: [
       {
         model: Refferal,
         as: "left_placement",
         attributes: ["refferal", "user_id", "level_id", "placement_id"],
+        include:{
+          model: User,
+          as: 'User',
+          attributes: ['username']
+        }
       },
       {
         model: Refferal,
         as: "right_placement",
         attributes: ["refferal", "user_id", "level_id", "placement_id"],
+        include:{
+          model: User,
+          as: 'User',
+          attributes: ['username']
+        }
       },
+      {
+          model: User,
+          as: 'User',
+          attributes: ['username']
+        }
     ],
   });
   res.status(200).json(user);
 };
 const getUserByTrend = async (req, res) => {
-  const UserID = req.params.userId;
+  const pkg = req.body.pkg;
+  const Users = req.headers.authorization.split(' ')[1]
+  const user_info = jwt_decode(Users)
 
-  const user = await Profile.findByPk(UserID, {
+
+  const user = await Profile.findOne({
+    where: { user_id: user_info.id, pkg: pkg },
+
     include: [
       {
         model: Refferal,
         as: "left_placement",
         attributes: ["refferal", "user_id", "level_id", "placement_id"],
+        include: {
+          model: User,
+          as: 'User',
+          attributes: ['username']
+        }
       },
       {
         model: Refferal,
         as: "right_placement",
         attributes: ["refferal", "user_id", "level_id", "placement_id"],
+        include: {
+          model: User,
+          as: 'User',
+          attributes: ['username']
+        }
       },
+      {
+        model: User,
+        as: 'User',
+        attributes: ['username']
+      }
     ],
-  });
+  })
   res.status(200).json(user);
 };
 // -----------------TREND END
@@ -9335,7 +9387,7 @@ const find_Direct_Reff_Transactions = async (req, res) => {
       refferal: user_info.id
     },
     attributes: ['refferal', 'pkg', 'user_id', 'createdAt'],
-    include:{model:User,as:'User'}
+    include: { model: User, as: 'User' }
   })
   res.json(findTransaction)
 }

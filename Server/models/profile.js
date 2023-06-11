@@ -80,6 +80,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Profile.init({
     email: DataTypes.STRING,
+    username: DataTypes.STRING,
     phone: DataTypes.INTEGER,
     left: {
       type: DataTypes.INTEGER,
