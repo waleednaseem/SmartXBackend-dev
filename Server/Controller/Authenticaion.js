@@ -9200,12 +9200,13 @@ const ShowReff = async (req, res) => {
 };
 const getUserByTrend = async (req, res) => {
   const pkg = req.body.pkg;
+  const UserID = req.body.UserID;
   const Users = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(Users)
 
 
   const user = await Profile.findOne({
-    where: { user_id: user_info.id, pkg: pkg },
+    where: { user_id: UserID, pkg: pkg },
 
     include: [
       {
