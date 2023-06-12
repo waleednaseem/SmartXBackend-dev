@@ -8573,7 +8573,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
   let ReffkWallets1
 
   const SearchUser = await User.findOne({where:{id:user_info.id}}) 
-  const Real_profile = await Profile.findOne({ where: { user_id: user_info.id } })
+  const Real_profile = await Profile.findOne({ where: { user_id: user_info.id,pkg:pkg } })
   if (Real_profile) {
     res.json('Package Found!')
   } else {
@@ -8800,7 +8800,14 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
             to: 1,
             reason: "commision and tax for admin",
             payment: pkg,
-            user_id: 1,
+            user_id: user_info.id,
+          })
+          await Transaction.create({
+            from: user_info.id,
+            to: user_info.id,
+            reason: "commision and tax for admin",
+            payment: pkg,
+            user_id: user_info.id,
           })
         } else {
           await wallet.update(
@@ -8906,8 +8913,15 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
             to: 1,
             reason: "commision with tax for admin",
             payment: pkg,
-            user_id: 1,
+            user_id: user_info.id,
           });
+          await Transaction.create({
+            from: user_info.id,
+            to: user_info.id,
+            reason: "commision and tax for admin",
+            payment: pkg,
+            user_id: user_info.id,
+          })
 
         } else {
           await wallet.update(
