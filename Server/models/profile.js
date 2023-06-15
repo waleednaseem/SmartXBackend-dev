@@ -76,6 +76,12 @@ module.exports = (sequelize, DataTypes) => {
         as:'User',
         onDelete: 'CASCADE',
       });
+      Profile.belongsTo(models.User, {
+        foreignKey: 'user_id',
+        id: 'id',
+        as:'find_Direct_Reff_Transactions',
+        onDelete: 'CASCADE',
+      });
     }
   }
   Profile.init({
