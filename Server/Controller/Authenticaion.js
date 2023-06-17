@@ -8599,10 +8599,10 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         },
       },
     });
-    const percentage10 = (pkg * 10) / 100;
-    const percentage45 = (pkg * 45) / 100;
-    const percentage55 = (pkg * 55) / 100;
-    const percentage90 = (pkg * 90) / 100;
+    const percentage10 = pkg * 0.10;
+    const percentage45 = pkg * 0.45
+    const percentage55 = pkg * 0.55
+    const percentage90 = pkg * 0.90
 
     if (findRight) {
       // xx-------------------xx------------------------------xx---------------------xxx
@@ -8620,25 +8620,9 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           },
         },
       });
-      // const usermake = await Profile.create({
-      //   refferal: Reff.directReffUser.id,
-      //   pkg: pkg,
-      //   user_id: user_info.id,
-      //   username: SearchUser.username
-      // });
-
-      // await Profile.update(
-      //   {
-      //     right: user_info.id,
-      //   },
-      //   {
-      //     where: {
-      //       id: findRight.id,
-      //     },
-      //   }
-      // );
+      
       await Upgrade.update({
-        // profile_id: usermake.id,
+        profile_id: usermake.id,
         upgrade: 0,
         level: 0,
         package: true
@@ -8779,25 +8763,9 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
             },
           },
         });
-        // const usermake = await Profile.create({
-        //   refferal: Reff.directReffUser.id,
-        //   pkg: pkg,
-        //   user_id: user_info.id,
-        //   username: SearchUser.username
-        // });
-
-        // await Profile.update(
-        //   {
-        //     left: user_info.id,
-        //   },
-        //   {
-        //     where: {
-        //       id: findLeft.id,
-        //     },
-        //   }
-        // );
+        
         await Upgrade.update({
-          // profile_id: usermake.id,
+          profile_id: usermake.id,
           upgrade: 0,
           level: 0,
           package: true
@@ -8815,9 +8783,9 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         });
         const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
 
-        // const placementWallet = await wallet.findOne({
-        //   where: { user_id: findLeft.user_id },
-        // })
+        const placementWallet = await wallet.findOne({
+          where: { user_id: findLeft.user_id },
+        })
 
         if (Reff.directReffUser.id == 1) {
           await wallet.update(
@@ -8933,7 +8901,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           refferal: Reff.directReffUser.id,
           pkg: pkg,
           user_id: user_info.id,
-          username: SearchUser.username
+          username: SearchUser.username,
         });
         await Pakage.create({
           user_id: user_info.id,
@@ -8941,7 +8909,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           pkg_name: pkg_name,
         });
         await Upgrade.update({
-          // profile_id: usermake.id,
+          profile_id: usermake.id,
           upgrade: 0,
           level: 0,
           package: true
@@ -8953,8 +8921,8 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         });
         const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
 
-        const percentage55 = (pkg * 55) / 100;
-        const percentage45 = (pkg * 45) / 100;
+        const percentage55 = pkg * 0.55
+        const percentage45 = pkg * 0.45
 
         if (Reff.directReffUser.id == 1) {
           await wallet.update(
@@ -9016,19 +8984,19 @@ const placementInvest = async (req, res) => {
   const userx = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(userx);
 
-  if (pkg == pakage_prices1) {
-    purchase_PKG(pakage_prices1, user_info, pkg_name, res)
-  } else if (pkg == pakage_prices2) {
-    purchase_PKG(pakage_prices2, user_info, pkg_name, res)
-  } else if (pkg == pakage_prices3) {
-    purchase_PKG(pakage_prices3, user_info, pkg_name, res)
-  } else if (pkg == pakage_prices4) {
-    purchase_PKG(pakage_prices4, user_info, pkg_name, res)
-  } else if (pkg == pakage_prices5) {
-    purchase_PKG(pakage_prices5, user_info, pkg_name, res)
-  } else if (pkg == pakage_prices6) {
-    purchase_PKG(pakage_prices6, user_info, pkg_name, res)
-  }
+  purchase_PKG(pkg, user_info, pkg_name, res)
+  // if (pkg == pakage_prices1) {
+  // } else if (pkg == pakage_prices2) {
+  //   purchase_PKG(pakage_prices2, user_info, pkg_name, res)
+  // } else if (pkg == pakage_prices3) {
+  //   purchase_PKG(pakage_prices3, user_info, pkg_name, res)
+  // } else if (pkg == pakage_prices4) {
+  //   purchase_PKG(pakage_prices4, user_info, pkg_name, res)
+  // } else if (pkg == pakage_prices5) {
+  //   purchase_PKG(pakage_prices5, user_info, pkg_name, res)
+  // } else if (pkg == pakage_prices6) {
+  //   purchase_PKG(pakage_prices6, user_info, pkg_name, res)
+  // }
 };
 
 const Pakage_info = async (req, res) => {

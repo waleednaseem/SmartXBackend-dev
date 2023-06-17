@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     from: DataTypes.STRING,
     to: DataTypes.STRING,
     reason: DataTypes.STRING,
-    payment: DataTypes.INTEGER,
+    payment: DataTypes.FLOAT,
     user_id: DataTypes.INTEGER
   }, {
     sequelize,

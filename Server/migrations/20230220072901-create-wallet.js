@@ -10,7 +10,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       payment: {
-        type: Sequelize.INTEGER
+        type: Sequelize.FLOAT
       },
       user_id: {
         type: Sequelize.INTEGER

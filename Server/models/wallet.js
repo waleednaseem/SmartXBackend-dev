@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   wallet.init({
-    payment: DataTypes.INTEGER,
+    payment: DataTypes.FLOAT,
     user_id: DataTypes.INTEGER
   }, {
     sequelize,
