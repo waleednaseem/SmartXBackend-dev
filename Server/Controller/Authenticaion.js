@@ -8620,6 +8620,12 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           },
         },
       });
+      const usermake = await Profile.create({
+        refferal: Reff.directReffUser.id,
+        pkg: pkg,
+        user_id: user_info.id,
+        username: SearchUser.username,
+      });
       
       await Upgrade.update({
         profile_id: usermake.id,
@@ -8763,7 +8769,12 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
             },
           },
         });
-        
+        const usermake = await Profile.create({
+          refferal: Reff.directReffUser.id,
+          pkg: pkg,
+          user_id: user_info.id,
+          username: SearchUser.username,
+        });
         await Upgrade.update({
           profile_id: usermake.id,
           upgrade: 0,
