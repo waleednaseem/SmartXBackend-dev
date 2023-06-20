@@ -31,6 +31,7 @@ App.get('/finduserpakage', ctrl.FindUserPakage)
 
 App.post('/ShowReffTrend', ctrl.ShowReff)
 App.post('/trenduser', ctrl.getUserByTrend)
+App.post('/testTrend', ctrl.testTrend)
 
 
 //payments

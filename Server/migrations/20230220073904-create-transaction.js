@@ -19,7 +19,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       payment: {
-        type: Sequelize.INTEGER
+        type: Sequelize.FLOAT
       },
       user_id: {
         type: Sequelize.INTEGER

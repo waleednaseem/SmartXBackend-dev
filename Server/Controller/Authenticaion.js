@@ -338,6 +338,8 @@ const refferals = async (req, res) => {
 
 };
 
+
+
 const Upgrades = async (req, res) => {
   const { pkg } = req.body
   const Upgrades1 = 10;
@@ -353,6 +355,8 @@ const Upgrades = async (req, res) => {
     where: { user_id: user_info.id, pkg: pkg },
     include: { model: Upgrade }
   });
+
+  const SearchUser = await User.findOne({ where: { id: user_info.id } })
 
   const findReff = await Profile.findOne({
     where: { user_id: Selected.refferal },
@@ -411,10 +415,16 @@ const Upgrades = async (req, res) => {
     }
   }
 
-  const transactionUpgradeToAdmin = "Upgraded tax for admin"
-  const transactionFromReff = "Your Refferal Upgraded a Package"
-  const transactionUpgraded = "Package Upgraded"
-  const AllTaxAdmin = "All Tax's to Admin"
+  const transactionUpgradeToAdmin = `Upgraded tax for admin from ${SearchUser.username}`
+  const transactionFromReff = `Your Refferal  ${SearchUser.username} Upgraded a Package`
+  const transactionUpgraded = `Package Upgraded from ${SearchUser.username}`
+  const AllTaxAdmin = `All Tax's to Admin from ${SearchUser.username}`
+  const Upgrade_pkg = `Upgraded package ${SearchUser.username}`
+  const Reff_pkg = `Referal ${SearchUser.username}`
+  const Taxforadminfrom = `Tax for admin from ${SearchUser.username}`
+  const Reff_transac = `Refferal trasaction from ${SearchUser.username}`
+  const placement_pay = `Placement payment from ${SearchUser.username}`
+  const placement_Transaction = `Placement payment Transaction from ${SearchUser.username}`
 
   if (Selected.pkg == Upgrades4) {
     for (let i = 1; i < placements.length; i += 2) {
@@ -1051,7 +1061,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 125,
               user_id: user_info.id
             })
@@ -1060,7 +1070,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 125,
               user_id: user_info.id
             })
@@ -1080,7 +1090,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 31.250,
               user_id: user_info.id
             })
@@ -1100,7 +1110,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment",
+              reason: placement_pay,
               payment: 93.750,
               user_id: user_info.id
             })
@@ -1120,7 +1130,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 12.50,
               user_id: user_info.id
             })
@@ -1143,7 +1153,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 281.250,
               user_id: user_info.id
             })
@@ -1152,7 +1162,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 281.250,
               user_id: user_info.id
             })
@@ -1174,7 +1184,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 70.313,
               user_id: user_info.id
             })
@@ -1194,7 +1204,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 210.938,
               user_id: user_info.id
             })
@@ -1214,7 +1224,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 28.125,
               user_id: user_info.id
             })
@@ -1237,7 +1247,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 632.813,
               user_id: user_info.id
             })
@@ -1246,7 +1256,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 632.813,
               user_id: user_info.id
             })
@@ -1268,7 +1278,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 158.203,
               user_id: user_info.id
             })
@@ -1288,7 +1298,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 474.609,
               user_id: user_info.id
             })
@@ -1308,7 +1318,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 63.281,
               user_id: user_info.id
             })
@@ -1331,7 +1341,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1423.828,
               user_id: user_info.id
             })
@@ -1340,7 +1350,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1423.828,
               user_id: user_info.id
             })
@@ -1362,7 +1372,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 355.957,
               user_id: user_info.id
             })
@@ -1382,7 +1392,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 1067.871,
               user_id: user_info.id
             })
@@ -1402,7 +1412,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 142.383,
               user_id: user_info.id
             })
@@ -1425,7 +1435,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3203.613,
               user_id: user_info.id
             })
@@ -1434,7 +1444,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3203.613,
               user_id: user_info.id
             })
@@ -1456,7 +1466,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 800.903,
               user_id: user_info.id
             })
@@ -1476,7 +1486,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 2402.710,
               user_id: user_info.id
             })
@@ -1496,7 +1506,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 320.361,
               user_id: user_info.id
             })
@@ -1519,7 +1529,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 7208.130,
               user_id: user_info.id
             })
@@ -1528,7 +1538,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 7208.130,
               user_id: user_info.id
             })
@@ -1550,7 +1560,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 1802.032,
               user_id: user_info.id
             })
@@ -1570,7 +1580,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 5406.097,
               user_id: user_info.id
             })
@@ -1590,7 +1600,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 720.813,
               user_id: user_info.id
             })
@@ -1613,7 +1623,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 16218.292,
               user_id: user_info.id
             })
@@ -1622,7 +1632,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 16218.292,
               user_id: user_info.id
             })
@@ -1644,7 +1654,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 4054.573,
               user_id: user_info.id
             })
@@ -1664,7 +1674,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 12163.719,
               user_id: user_info.id
             })
@@ -1684,7 +1694,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 1621.829,
               user_id: user_info.id
             })
@@ -1707,7 +1717,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 36491.158,
               user_id: user_info.id
             })
@@ -1716,7 +1726,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 36491.158,
               user_id: user_info.id
             })
@@ -1738,7 +1748,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 9122.789,
               user_id: user_info.id
             })
@@ -1758,7 +1768,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 27368.368,
               user_id: user_info.id
             })
@@ -1778,7 +1788,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 3649.116,
               user_id: user_info.id
             })
@@ -1789,7 +1799,6 @@ const Upgrades = async (req, res) => {
       }
       res.status(200).json('Upgraded successfully!'); // Send a success response
     }
-    zz
   } else if (Selected.pkg == Upgrades1) {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
@@ -1817,7 +1826,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 12.5,
               user_id: user_info.id
             })
@@ -1826,7 +1835,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 12.5,
               user_id: user_info.id
             })
@@ -1846,7 +1855,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 3.125,
               user_id: user_info.id
             })
@@ -1866,7 +1875,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 1.250 + 8.75,
               user_id: user_info.id
             })
@@ -1890,7 +1899,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 28.125,
               user_id: user_info.id
             })
@@ -1899,7 +1908,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 28.125,
               user_id: user_info.id
             })
@@ -1919,7 +1928,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 15.820,
               user_id: user_info.id
             })
@@ -1939,7 +1948,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 6.382 + 44.297,
               user_id: user_info.id
             })
@@ -1962,7 +1971,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 63.281,
               user_id: user_info.id
             })
@@ -1971,7 +1980,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 63.281,
               user_id: user_info.id
             })
@@ -1991,7 +2000,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 15.820,
               user_id: user_info.id
             })
@@ -2011,7 +2020,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 6.328 + 44.297,
               user_id: user_info.id
             })
@@ -2034,7 +2043,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 142.383,
               user_id: user_info.id
             })
@@ -2043,7 +2052,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 142.383,
               user_id: user_info.id
             })
@@ -2065,7 +2074,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 35.596,
               user_id: user_info.id
             })
@@ -2085,7 +2094,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 41.238 + 99.668,
               user_id: user_info.id
             })
@@ -2108,7 +2117,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 320.361,
               user_id: user_info.id
             })
@@ -2117,7 +2126,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 320.361,
               user_id: user_info.id
             })
@@ -2139,7 +2148,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 80.090,
               user_id: user_info.id
             })
@@ -2159,7 +2168,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 32.036 + 224.253,
               user_id: user_info.id
             })
@@ -2182,7 +2191,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 720.813,
               user_id: user_info.id
             })
@@ -2191,7 +2200,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 720.813,
               user_id: user_info.id
             })
@@ -2213,7 +2222,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 180.203,
               user_id: user_info.id
             })
@@ -2233,7 +2242,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 72.081 + 504.569,
               user_id: user_info.id
             })
@@ -2256,7 +2265,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1621.029,
               user_id: user_info.id
             })
@@ -2265,7 +2274,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1621.029,
               user_id: user_info.id
             })
@@ -2287,7 +2296,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 405.457,
               user_id: user_info.id
             })
@@ -2307,7 +2316,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 162.183 + 1135.280,
               user_id: user_info.id
             })
@@ -2330,7 +2339,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3649.116,
               user_id: user_info.id
             })
@@ -2339,7 +2348,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3649.116,
               user_id: user_info.id
             })
@@ -2361,7 +2370,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 912.279,
               user_id: user_info.id
             })
@@ -2381,7 +2390,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 364.912 + 2554.381,
               user_id: user_info.id
             })
@@ -2412,7 +2421,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 12.5,
               user_id: user_info.id
             })
@@ -2421,7 +2430,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 12.5,
               user_id: user_info.id
             })
@@ -2441,7 +2450,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 3.125,
               user_id: user_info.id
             })
@@ -2461,7 +2470,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment",
+              reason: placement_pay,
               payment: 9.375,
               user_id: user_info.id
             })
@@ -2481,7 +2490,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 1.250,
               user_id: user_info.id
             })
@@ -2504,7 +2513,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 28.125,
               user_id: user_info.id
             })
@@ -2513,7 +2522,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 28.125,
               user_id: user_info.id
             })
@@ -2533,7 +2542,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 15.820,
               user_id: user_info.id
             })
@@ -2553,7 +2562,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment",
+              reason: placement_pay,
               payment: 47.461,
               user_id: user_info.id
             })
@@ -2573,7 +2582,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 6.382,
               user_id: user_info.id
             })
@@ -2596,7 +2605,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 63.281,
               user_id: user_info.id
             })
@@ -2605,7 +2614,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 63.281,
               user_id: user_info.id
             })
@@ -2625,7 +2634,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 15.820,
               user_id: user_info.id
             })
@@ -2645,7 +2654,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment",
+              reason: placement_pay,
               payment: 47.461,
               user_id: user_info.id
             })
@@ -2665,7 +2674,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 6.328,
               user_id: user_info.id
             })
@@ -2688,7 +2697,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 142.383,
               user_id: user_info.id
             })
@@ -2697,7 +2706,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 142.383,
               user_id: user_info.id
             })
@@ -2719,7 +2728,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 35.596,
               user_id: user_info.id
             })
@@ -2739,7 +2748,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 106.787,
               user_id: user_info.id
             })
@@ -2759,7 +2768,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 41.238,
               user_id: user_info.id
             })
@@ -2782,7 +2791,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 320.361,
               user_id: user_info.id
             })
@@ -2791,7 +2800,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 320.361,
               user_id: user_info.id
             })
@@ -2813,7 +2822,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 80.090,
               user_id: user_info.id
             })
@@ -2833,7 +2842,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 240.271,
               user_id: user_info.id
             })
@@ -2853,7 +2862,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 32.036,
               user_id: user_info.id
             })
@@ -2876,7 +2885,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 720.813,
               user_id: user_info.id
             })
@@ -2885,7 +2894,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 720.813,
               user_id: user_info.id
             })
@@ -2907,7 +2916,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 180.203,
               user_id: user_info.id
             })
@@ -2927,7 +2936,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 540.610,
               user_id: user_info.id
             })
@@ -2947,7 +2956,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 72.081,
               user_id: user_info.id
             })
@@ -2970,7 +2979,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1621.029,
               user_id: user_info.id
             })
@@ -2979,7 +2988,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1621.029,
               user_id: user_info.id
             })
@@ -3001,7 +3010,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 405.457,
               user_id: user_info.id
             })
@@ -3021,7 +3030,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 1216.372,
               user_id: user_info.id
             })
@@ -3041,7 +3050,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 162.183,
               user_id: user_info.id
             })
@@ -3064,7 +3073,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3649.116,
               user_id: user_info.id
             })
@@ -3073,7 +3082,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3649.116,
               user_id: user_info.id
             })
@@ -3095,7 +3104,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 912.279,
               user_id: user_info.id
             })
@@ -3115,7 +3124,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 2736.837,
               user_id: user_info.id
             })
@@ -3135,7 +3144,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 364.912,
               user_id: user_info.id
             })
@@ -3173,7 +3182,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 25,
               user_id: user_info.id
             })
@@ -3182,7 +3191,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 25,
               user_id: user_info.id
             })
@@ -3202,7 +3211,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 6.250,
               user_id: user_info.id
             })
@@ -3222,7 +3231,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 2.500 + 17.500,
               user_id: user_info.id
             })
@@ -3245,7 +3254,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 56.250,
               user_id: user_info.id
             })
@@ -3254,7 +3263,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 56.250,
               user_id: user_info.id
             })
@@ -3274,7 +3283,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 14.063,
               user_id: user_info.id
             })
@@ -3294,7 +3303,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 5.625 + 39.375,
               user_id: user_info.id
             })
@@ -3317,7 +3326,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 126.563,
               user_id: user_info.id
             })
@@ -3326,7 +3335,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 126.563,
               user_id: user_info.id
             })
@@ -3346,7 +3355,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 31.641,
               user_id: user_info.id
             })
@@ -3366,7 +3375,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 12.656 + 88.594,
               user_id: user_info.id
             })
@@ -3389,7 +3398,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 284.766,
               user_id: user_info.id
             })
@@ -3398,7 +3407,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 284.766,
               user_id: user_info.id
             })
@@ -3420,7 +3429,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 71.191,
               user_id: user_info.id
             })
@@ -3440,7 +3449,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 28.477 + 199.336,
               user_id: user_info.id
             })
@@ -3463,7 +3472,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 640.723,
               user_id: user_info.id
             })
@@ -3472,7 +3481,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 640.723,
               user_id: user_info.id
             })
@@ -3494,7 +3503,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 160.181,
               user_id: user_info.id
             })
@@ -3514,7 +3523,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 64.072 + 448.506,
               user_id: user_info.id
             })
@@ -3537,7 +3546,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1441.626,
               user_id: user_info.id
             })
@@ -3546,7 +3555,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1441.626,
               user_id: user_info.id
             })
@@ -3568,7 +3577,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 360.406,
               user_id: user_info.id
             })
@@ -3588,7 +3597,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 144.163 + 1009.138,
               user_id: user_info.id
             })
@@ -3611,7 +3620,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3243.658,
               user_id: user_info.id
             })
@@ -3620,7 +3629,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3243.658,
               user_id: user_info.id
             })
@@ -3642,7 +3651,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 810.915,
               user_id: user_info.id
             })
@@ -3662,7 +3671,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 324.366 + 2270.561,
               user_id: user_info.id
             })
@@ -3685,7 +3694,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 7298.232,
               user_id: user_info.id
             })
@@ -3694,7 +3703,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 7298.232,
               user_id: user_info.id
             })
@@ -3716,7 +3725,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 1824.558,
               user_id: user_info.id
             })
@@ -3736,7 +3745,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 729.823 + 5108.762,
               user_id: user_info.id
             })
@@ -3767,7 +3776,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 25,
               user_id: user_info.id
             })
@@ -3776,7 +3785,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 25,
               user_id: user_info.id
             })
@@ -3796,7 +3805,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 6.250,
               user_id: user_info.id
             })
@@ -3816,7 +3825,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment",
+              reason: placement_pay,
               payment: 18.750,
               user_id: user_info.id
             })
@@ -3836,7 +3845,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 2.500,
               user_id: user_info.id
             })
@@ -3859,7 +3868,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 56.250,
               user_id: user_info.id
             })
@@ -3868,7 +3877,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 56.250,
               user_id: user_info.id
             })
@@ -3888,7 +3897,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 14.063,
               user_id: user_info.id
             })
@@ -3908,7 +3917,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment",
+              reason: placement_pay,
               payment: 42.188,
               user_id: user_info.id
             })
@@ -3928,7 +3937,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 5.625,
               user_id: user_info.id
             })
@@ -3951,7 +3960,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 126.563,
               user_id: user_info.id
             })
@@ -3960,7 +3969,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 126.563,
               user_id: user_info.id
             })
@@ -3980,7 +3989,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 31.641,
               user_id: user_info.id
             })
@@ -4000,7 +4009,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment",
+              reason: placement_pay,
               payment: 94.922,
               user_id: user_info.id
             })
@@ -4020,7 +4029,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 12.656,
               user_id: user_info.id
             })
@@ -4043,7 +4052,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 284.766,
               user_id: user_info.id
             })
@@ -4052,7 +4061,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 284.766,
               user_id: user_info.id
             })
@@ -4074,7 +4083,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 71.191,
               user_id: user_info.id
             })
@@ -4094,7 +4103,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 213.574,
               user_id: user_info.id
             })
@@ -4114,7 +4123,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 28.477,
               user_id: user_info.id
             })
@@ -4137,7 +4146,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 640.723,
               user_id: user_info.id
             })
@@ -4146,7 +4155,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 640.723,
               user_id: user_info.id
             })
@@ -4168,7 +4177,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 160.181,
               user_id: user_info.id
             })
@@ -4188,7 +4197,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 480.542,
               user_id: user_info.id
             })
@@ -4208,7 +4217,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 64.072,
               user_id: user_info.id
             })
@@ -4231,7 +4240,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1441.626,
               user_id: user_info.id
             })
@@ -4240,7 +4249,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1441.626,
               user_id: user_info.id
             })
@@ -4262,7 +4271,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 360.406,
               user_id: user_info.id
             })
@@ -4282,7 +4291,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 1081.219,
               user_id: user_info.id
             })
@@ -4302,7 +4311,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 144.163,
               user_id: user_info.id
             })
@@ -4325,7 +4334,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3243.658,
               user_id: user_info.id
             })
@@ -4334,7 +4343,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3243.658,
               user_id: user_info.id
             })
@@ -4356,7 +4365,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 810.915,
               user_id: user_info.id
             })
@@ -4376,7 +4385,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 2432.744,
               user_id: user_info.id
             })
@@ -4396,7 +4405,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 324.366,
               user_id: user_info.id
             })
@@ -4419,7 +4428,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 7298.232,
               user_id: user_info.id
             })
@@ -4428,7 +4437,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 7298.232,
               user_id: user_info.id
             })
@@ -4450,7 +4459,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 1824.558,
               user_id: user_info.id
             })
@@ -4470,7 +4479,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 5473.674,
               user_id: user_info.id
             })
@@ -4490,7 +4499,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 729.823,
               user_id: user_info.id
             })
@@ -4528,7 +4537,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 62.500,
               user_id: user_info.id
             })
@@ -4537,7 +4546,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 62.500,
               user_id: user_info.id
             })
@@ -4557,7 +4566,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 15.625,
               user_id: user_info.id
             })
@@ -4577,7 +4586,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 6.250 + 43.750,
               user_id: user_info.id
             })
@@ -4600,7 +4609,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 140.625,
               user_id: user_info.id
             })
@@ -4609,7 +4618,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 140.625,
               user_id: user_info.id
             })
@@ -4629,7 +4638,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 35.156,
               user_id: user_info.id
             })
@@ -4649,7 +4658,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 14.063 + 98.438,
               user_id: user_info.id
             })
@@ -4672,7 +4681,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 316.406,
               user_id: user_info.id
             })
@@ -4681,7 +4690,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 316.406,
               user_id: user_info.id
             })
@@ -4701,7 +4710,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 79.105,
               user_id: user_info.id
             })
@@ -4721,7 +4730,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 31.641 + 22.484,
               user_id: user_info.id
             })
@@ -4744,7 +4753,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 711.914,
               user_id: user_info.id
             })
@@ -4753,7 +4762,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 711.914,
               user_id: user_info.id
             })
@@ -4775,7 +4784,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 177.979,
               user_id: user_info.id
             })
@@ -4795,7 +4804,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 71.191 + 498.940,
               user_id: user_info.id
             })
@@ -4818,7 +4827,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1601.807,
               user_id: user_info.id
             })
@@ -4827,7 +4836,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1601.807,
               user_id: user_info.id
             })
@@ -4849,7 +4858,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 400.452,
               user_id: user_info.id
             })
@@ -4869,7 +4878,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 160.181 + 1121.265,
               user_id: user_info.id
             })
@@ -4892,7 +4901,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3604.065,
               user_id: user_info.id
             })
@@ -4901,7 +4910,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3604.065,
               user_id: user_info.id
             })
@@ -4923,7 +4932,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 901.016,
               user_id: user_info.id
             })
@@ -4943,7 +4952,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 360.406 + 2522.845,
               user_id: user_info.id
             })
@@ -4966,7 +4975,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 8109.065,
               user_id: user_info.id
             })
@@ -4975,7 +4984,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 8109.065,
               user_id: user_info.id
             })
@@ -4997,7 +5006,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 2027.287,
               user_id: user_info.id
             })
@@ -5017,7 +5026,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 810.915 + 11352.80,
               user_id: user_info.id
             })
@@ -5040,7 +5049,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 18245.579,
               user_id: user_info.id
             })
@@ -5049,7 +5058,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 18245.579,
               user_id: user_info.id
             })
@@ -5071,7 +5080,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 4561.395,
               user_id: user_info.id
             })
@@ -5091,7 +5100,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 1824.558 + 12771.905,
               user_id: user_info.id
             })
@@ -5122,7 +5131,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 62.500,
               user_id: user_info.id
             })
@@ -5131,7 +5140,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 62.500,
               user_id: user_info.id
             })
@@ -5151,7 +5160,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 15.625,
               user_id: user_info.id
             })
@@ -5171,7 +5180,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment",
+              reason: placement_pay,
               payment: 46.875,
               user_id: user_info.id
             })
@@ -5191,7 +5200,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 6.250,
               user_id: user_info.id
             })
@@ -5214,7 +5223,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 140.625,
               user_id: user_info.id
             })
@@ -5223,7 +5232,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 140.625,
               user_id: user_info.id
             })
@@ -5243,7 +5252,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 35.156,
               user_id: user_info.id
             })
@@ -5263,7 +5272,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment",
+              reason: placement_pay,
               payment: 105.469,
               user_id: user_info.id
             })
@@ -5283,7 +5292,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 14.063,
               user_id: user_info.id
             })
@@ -5306,7 +5315,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 316.406,
               user_id: user_info.id
             })
@@ -5315,7 +5324,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 316.406,
               user_id: user_info.id
             })
@@ -5335,7 +5344,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 79.105,
               user_id: user_info.id
             })
@@ -5355,7 +5364,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment",
+              reason: placement_pay,
               payment: 237.305,
               user_id: user_info.id
             })
@@ -5375,7 +5384,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 31.641,
               user_id: user_info.id
             })
@@ -5398,7 +5407,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 711.914,
               user_id: user_info.id
             })
@@ -5407,7 +5416,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 711.914,
               user_id: user_info.id
             })
@@ -5429,7 +5438,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 177.979,
               user_id: user_info.id
             })
@@ -5449,7 +5458,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 533.936,
               user_id: user_info.id
             })
@@ -5469,7 +5478,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 71.191,
               user_id: user_info.id
             })
@@ -5492,7 +5501,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1601.807,
               user_id: user_info.id
             })
@@ -5501,7 +5510,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1601.807,
               user_id: user_info.id
             })
@@ -5523,7 +5532,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 400.452,
               user_id: user_info.id
             })
@@ -5543,7 +5552,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 1201.355,
               user_id: user_info.id
             })
@@ -5563,7 +5572,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 160.181,
               user_id: user_info.id
             })
@@ -5586,7 +5595,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3604.065,
               user_id: user_info.id
             })
@@ -5595,7 +5604,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3604.065,
               user_id: user_info.id
             })
@@ -5617,7 +5626,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 901.016,
               user_id: user_info.id
             })
@@ -5637,7 +5646,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 2703.049,
               user_id: user_info.id
             })
@@ -5657,7 +5666,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 360.406,
               user_id: user_info.id
             })
@@ -5680,7 +5689,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 8109.065,
               user_id: user_info.id
             })
@@ -5689,7 +5698,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 8109.065,
               user_id: user_info.id
             })
@@ -5711,7 +5720,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 2027.287,
               user_id: user_info.id
             })
@@ -5731,7 +5740,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 6081.860,
               user_id: user_info.id
             })
@@ -5751,7 +5760,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 810.915,
               user_id: user_info.id
             })
@@ -5774,7 +5783,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 18245.579,
               user_id: user_info.id
             })
@@ -5783,7 +5792,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 18245.579,
               user_id: user_info.id
             })
@@ -5805,7 +5814,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 4561.395,
               user_id: user_info.id
             })
@@ -5825,7 +5834,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 13684.184,
               user_id: user_info.id
             })
@@ -5845,7 +5854,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 1824.558,
               user_id: user_info.id
             })
@@ -5883,7 +5892,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 250,
               user_id: user_info.id
             })
@@ -5892,7 +5901,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 250,
               user_id: user_info.id
             })
@@ -5912,7 +5921,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 62.500,
               user_id: user_info.id
             })
@@ -5932,7 +5941,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 25.00 + 175.00,
               user_id: user_info.id
             })
@@ -5955,7 +5964,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 281.250,
               user_id: user_info.id
             })
@@ -5964,7 +5973,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 281.250,
               user_id: user_info.id
             })
@@ -5984,7 +5993,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 140.625,
               user_id: user_info.id
             })
@@ -6004,7 +6013,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 56.250 + 393.750,
               user_id: user_info.id
             })
@@ -6027,7 +6036,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 632.813,
               user_id: user_info.id
             })
@@ -6036,7 +6045,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 632.813,
               user_id: user_info.id
             })
@@ -6056,7 +6065,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 361.409,
               user_id: user_info.id
             })
@@ -6076,7 +6085,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 126.563 + 885.338,
               user_id: user_info.id
             })
@@ -6099,7 +6108,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1423.828,
               user_id: user_info.id
             })
@@ -6108,7 +6117,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1423.828,
               user_id: user_info.id
             })
@@ -6130,7 +6139,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 711.914,
               user_id: user_info.id
             })
@@ -6150,7 +6159,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 284.766 + 1993.359,
               user_id: user_info.id
             })
@@ -6173,7 +6182,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3203.613,
               user_id: user_info.id
             })
@@ -6182,7 +6191,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3203.613,
               user_id: user_info.id
             })
@@ -6204,7 +6213,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 1601.807,
               user_id: user_info.id
             })
@@ -6224,7 +6233,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 640.723 + 4485.059,
               user_id: user_info.id
             })
@@ -6247,7 +6256,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 7208.130,
               user_id: user_info.id
             })
@@ -6256,7 +6265,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 7208.130,
               user_id: user_info.id
             })
@@ -6278,7 +6287,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 3604.065,
               user_id: user_info.id
             })
@@ -6298,7 +6307,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 1441.626 + 10091.382,
               user_id: user_info.id
             })
@@ -6321,7 +6330,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 16218.292,
               user_id: user_info.id
             })
@@ -6330,7 +6339,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 16218.292,
               user_id: user_info.id
             })
@@ -6352,7 +6361,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 8109.146,
               user_id: user_info.id
             })
@@ -6372,7 +6381,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 3243.658 + 22705.609,
               user_id: user_info.id
             })
@@ -6395,7 +6404,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 36491.158,
               user_id: user_info.id
             })
@@ -6404,7 +6413,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 36491.158,
               user_id: user_info.id
             })
@@ -6426,7 +6435,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 18245.579,
               user_id: user_info.id
             })
@@ -6446,7 +6455,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 7298.232 + 51087.621,
               user_id: user_info.id
             })
@@ -6477,7 +6486,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 250,
               user_id: user_info.id
             })
@@ -6486,7 +6495,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 250,
               user_id: user_info.id
             })
@@ -6506,7 +6515,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 62.500,
               user_id: user_info.id
             })
@@ -6526,7 +6535,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment",
+              reason: placement_pay,
               payment: 187.500,
               user_id: user_info.id
             })
@@ -6546,7 +6555,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 25.00,
               user_id: user_info.id
             })
@@ -6569,7 +6578,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 281.250,
               user_id: user_info.id
             })
@@ -6578,7 +6587,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 281.250,
               user_id: user_info.id
             })
@@ -6598,7 +6607,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 140.625,
               user_id: user_info.id
             })
@@ -6618,7 +6627,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment",
+              reason: placement_pay,
               payment: 421.875,
               user_id: user_info.id
             })
@@ -6638,7 +6647,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 56.250,
               user_id: user_info.id
             })
@@ -6661,7 +6670,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 632.813,
               user_id: user_info.id
             })
@@ -6670,7 +6679,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 632.813,
               user_id: user_info.id
             })
@@ -6690,7 +6699,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 361.409,
               user_id: user_info.id
             })
@@ -6710,7 +6719,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment",
+              reason: placement_pay,
               payment: 949.219,
               user_id: user_info.id
             })
@@ -6730,7 +6739,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 126.563,
               user_id: user_info.id
             })
@@ -6753,7 +6762,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1423.828,
               user_id: user_info.id
             })
@@ -6762,7 +6771,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 1423.828,
               user_id: user_info.id
             })
@@ -6784,7 +6793,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 711.914,
               user_id: user_info.id
             })
@@ -6804,7 +6813,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 2135.742,
               user_id: user_info.id
             })
@@ -6824,7 +6833,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 284.766,
               user_id: user_info.id
             })
@@ -6847,7 +6856,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3203.613,
               user_id: user_info.id
             })
@@ -6856,7 +6865,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 3203.613,
               user_id: user_info.id
             })
@@ -6878,7 +6887,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 1601.807,
               user_id: user_info.id
             })
@@ -6898,7 +6907,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 4805.420,
               user_id: user_info.id
             })
@@ -6918,7 +6927,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 640.723,
               user_id: user_info.id
             })
@@ -6941,7 +6950,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 7208.130,
               user_id: user_info.id
             })
@@ -6950,7 +6959,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 7208.130,
               user_id: user_info.id
             })
@@ -6972,7 +6981,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 3604.065,
               user_id: user_info.id
             })
@@ -6992,7 +7001,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 10812.195,
               user_id: user_info.id
             })
@@ -7012,7 +7021,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 1441.626,
               user_id: user_info.id
             })
@@ -7035,7 +7044,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 16218.292,
               user_id: user_info.id
             })
@@ -7044,7 +7053,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 16218.292,
               user_id: user_info.id
             })
@@ -7066,7 +7075,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 8109.146,
               user_id: user_info.id
             })
@@ -7086,7 +7095,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 24327.438,
               user_id: user_info.id
             })
@@ -7106,7 +7115,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 3243.658,
               user_id: user_info.id
             })
@@ -7129,7 +7138,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 36491.158,
               user_id: user_info.id
             })
@@ -7138,7 +7147,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 36491.158,
               user_id: user_info.id
             })
@@ -7160,7 +7169,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 18245.579,
               user_id: user_info.id
             })
@@ -7180,7 +7189,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 54736.736,
               user_id: user_info.id
             })
@@ -7200,7 +7209,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 7298.232,
               user_id: user_info.id
             })
@@ -7238,7 +7247,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 437.500,
               user_id: user_info.id
             })
@@ -7247,7 +7256,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 437.500,
               user_id: user_info.id
             })
@@ -7267,7 +7276,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 109.375,
               user_id: user_info.id
             })
@@ -7287,7 +7296,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 43.750 + 306.250,
               user_id: user_info.id
             })
@@ -7310,7 +7319,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 984.375,
               user_id: user_info.id
             })
@@ -7319,7 +7328,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 984.375,
               user_id: user_info.id
             })
@@ -7339,7 +7348,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 246.094,
               user_id: user_info.id
             })
@@ -7359,7 +7368,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 98.438 + 689.063,
               user_id: user_info.id
             })
@@ -7382,7 +7391,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 2214.844,
               user_id: user_info.id
             })
@@ -7391,7 +7400,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 2214.844,
               user_id: user_info.id
             })
@@ -7411,7 +7420,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 553.711,
               user_id: user_info.id
             })
@@ -7431,7 +7440,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 221.484 + 1550.391,
               user_id: user_info.id
             })
@@ -7454,7 +7463,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 4983.398,
               user_id: user_info.id
             })
@@ -7463,7 +7472,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 4983.398,
               user_id: user_info.id
             })
@@ -7485,7 +7494,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 1245.850,
               user_id: user_info.id
             })
@@ -7505,7 +7514,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 498.340 + 3488.379,
               user_id: user_info.id
             })
@@ -7528,7 +7537,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 11212.646,
               user_id: user_info.id
             })
@@ -7537,7 +7546,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 11212.646,
               user_id: user_info.id
             })
@@ -7559,7 +7568,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 2803.162,
               user_id: user_info.id
             })
@@ -7579,7 +7588,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 1121.265 + 7084.853,
               user_id: user_info.id
             })
@@ -7602,7 +7611,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 25228.455,
               user_id: user_info.id
             })
@@ -7611,7 +7620,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 25228.455,
               user_id: user_info.id
             })
@@ -7633,7 +7642,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 6307.114,
               user_id: user_info.id
             })
@@ -7653,7 +7662,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 2522.845 + 17659.918,
               user_id: user_info.id
             })
@@ -7676,7 +7685,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 56764.023,
               user_id: user_info.id
             })
@@ -7685,7 +7694,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 56764.023,
               user_id: user_info.id
             })
@@ -7707,7 +7716,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 14191.006,
               user_id: user_info.id
             })
@@ -7727,7 +7736,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 5676.402 + 39734.816,
               user_id: user_info.id
             })
@@ -7750,7 +7759,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 127719.051,
               user_id: user_info.id
             })
@@ -7759,7 +7768,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 127719.051,
               user_id: user_info.id
             })
@@ -7781,7 +7790,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 31929.763,
               user_id: user_info.id
             })
@@ -7801,7 +7810,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 12771.905 + 89403.336,
               user_id: user_info.id
             })
@@ -7832,7 +7841,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 437.500,
               user_id: user_info.id
             })
@@ -7841,7 +7850,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 437.500,
               user_id: user_info.id
             })
@@ -7861,7 +7870,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 109.375,
               user_id: user_info.id
             })
@@ -7881,7 +7890,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment",
+              reason: placement_pay,
               payment: 328.125,
               user_id: user_info.id
             })
@@ -7901,7 +7910,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 43.750,
               user_id: user_info.id
             })
@@ -7924,7 +7933,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 984.375,
               user_id: user_info.id
             })
@@ -7933,7 +7942,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 984.375,
               user_id: user_info.id
             })
@@ -7953,7 +7962,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 246.094,
               user_id: user_info.id
             })
@@ -7973,7 +7982,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment",
+              reason: placement_pay,
               payment: 738.281,
               user_id: user_info.id
             })
@@ -7993,7 +8002,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 98.438,
               user_id: user_info.id
             })
@@ -8016,7 +8025,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 2214.844,
               user_id: user_info.id
             })
@@ -8025,7 +8034,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 2214.844,
               user_id: user_info.id
             })
@@ -8045,7 +8054,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Referal",
+              reason: Reff_pkg,
               payment: 553.711,
               user_id: user_info.id
             })
@@ -8065,7 +8074,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment",
+              reason: placement_pay,
               payment: 1661.133,
               user_id: user_info.id
             })
@@ -8085,7 +8094,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 221.484,
               user_id: user_info.id
             })
@@ -8108,7 +8117,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 4983.398,
               user_id: user_info.id
             })
@@ -8117,7 +8126,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 4983.398,
               user_id: user_info.id
             })
@@ -8139,7 +8148,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 1245.850,
               user_id: user_info.id
             })
@@ -8159,7 +8168,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 3737.549,
               user_id: user_info.id
             })
@@ -8179,7 +8188,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 498.340,
               user_id: user_info.id
             })
@@ -8202,7 +8211,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 11212.646,
               user_id: user_info.id
             })
@@ -8211,7 +8220,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 11212.646,
               user_id: user_info.id
             })
@@ -8233,7 +8242,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 2803.162,
               user_id: user_info.id
             })
@@ -8253,7 +8262,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 8409.485,
               user_id: user_info.id
             })
@@ -8273,7 +8282,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 1121.265,
               user_id: user_info.id
             })
@@ -8296,7 +8305,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 25228.455,
               user_id: user_info.id
             })
@@ -8305,7 +8314,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 25228.455,
               user_id: user_info.id
             })
@@ -8327,7 +8336,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 6307.114,
               user_id: user_info.id
             })
@@ -8347,7 +8356,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 18921.341,
               user_id: user_info.id
             })
@@ -8367,7 +8376,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 2522.845,
               user_id: user_info.id
             })
@@ -8390,7 +8399,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 56764.023,
               user_id: user_info.id
             })
@@ -8399,7 +8408,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 56764.023,
               user_id: user_info.id
             })
@@ -8421,7 +8430,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 14191.006,
               user_id: user_info.id
             })
@@ -8441,7 +8450,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 42513.017,
               user_id: user_info.id
             })
@@ -8461,7 +8470,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 5676.402,
               user_id: user_info.id
             })
@@ -8484,7 +8493,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 127719.051,
               user_id: user_info.id
             })
@@ -8493,7 +8502,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: user_info.id,
-              reason: "Upgraded package",
+              reason: Upgrade_pkg,
               payment: 127719.051,
               user_id: user_info.id
             })
@@ -8515,7 +8524,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: findReff.id,
-              reason: "Refferal trasaction",
+              reason: Reff_transac,
               payment: 31929.763,
               user_id: user_info.id
             })
@@ -8535,7 +8544,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: Placement_check[0].id,
-              reason: "placement payment Transaction",
+              reason: placement_Transaction,
               payment: 95789.289,
               user_id: user_info.id
             })
@@ -8555,7 +8564,7 @@ const Upgrades = async (req, res) => {
             {
               from: user_info.id,
               to: 1,
-              reason: " Tax for admin",
+              reason: Taxforadminfrom,
               payment: 12771.905,
               user_id: user_info.id
             })
@@ -8568,7 +8577,9 @@ const Upgrades = async (req, res) => {
     }
   }
 };
+const Upgrade_code = async (Selected, pkg,) => {
 
+}
 const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
   let ReffkWallets1, reffKharcha, placementKharcha
 
@@ -8626,7 +8637,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         user_id: user_info.id,
         username: SearchUser.username,
       });
-      
+
       await Upgrade.update({
         profile_id: usermake.id,
         upgrade: 0,
@@ -8636,6 +8647,14 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         where: {
           user_id: user_info.id,
           pkg_price: pkg,
+        }
+      });
+      await Profile.update({
+        right: usermake.user_id
+      }, {
+        where: {
+          user_id: findRight.user_id,
+          pkg: pkg,
         }
       });
 
@@ -8656,13 +8675,17 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           { payment: adminkWallets1.payment + percentage55 },
           { where: { user_id: adminkWallets1.user_id } }
         );
+
+        // 55% to admin
         await Transaction.create({
           from: user_info.id,
           to: 1,
-          reason: "commision with tax for admin",
+          reason: `commision with tax from ${SearchUser.username}`,
           payment: percentage55,
           user_id: user_info.id,
         });
+
+        //own transaction
         await Transaction.create({
           from: user_info.id,
           to: user_info.id,
@@ -8670,6 +8693,17 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           payment: pkg,
           user_id: user_info.id,
         });
+
+        //transaction
+        await Transaction.create({
+          from: user_info.id,
+          to: findRight.user_id,
+          reason: `Placement Fund from ${SearchUser.username}`,
+          payment: percentage45,
+          user_id: findRight.user_id,
+        });
+
+        //transaction for placement
         await wallet.update(
           { payment: placementWallet.payment + percentage45 },
           { where: { user_id: findRight.user_id } }
@@ -8685,7 +8719,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         await Transaction.create({
           from: user_info.id,
           to: 1,
-          reason: "tax for admin",
+          reason: `tax for admin ${SearchUser.username}`,
           payment: percentage10,
           user_id: 1,
         });
@@ -8694,7 +8728,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         await Transaction.create({
           from: user_info.id,
           to: Reff.directReffUser.id,
-          reason: "Refferal Fund",
+          reason: `Refferal Fund from ${SearchUser.username}`,
           payment: percentage45,
           user_id: Reff.directReffUser.id,
         });
@@ -8728,13 +8762,13 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         await Transaction.create({
           from: user_info.id,
           to: findRight.user_id,
-          reason: "placement Fund",
+          reason: `placement Fund from ${SearchUser.username}`,
           payment: percentage45,
           user_id: findRight.user_id,
         });
 
         await Transaction.create({
-          from: "meta mask",
+          from: "Blockchain Wallet",
           to: user_info.id,
           reason: "you purchased pakage",
           payment: pkg,
@@ -8786,7 +8820,14 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
             pkg_price: pkg,
           }
         });
-
+        await Profile.update({
+          left: usermake.user_id
+        }, {
+          where: {
+            user_id: findLeft.user_id,
+            pkg: pkg,
+          }
+        });
         await Pakage.create({
           user_id: user_info.id,
           pkg_price: pkg,
@@ -8803,13 +8844,17 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
             { payment: adminkWallets1.payment + percentage55 },
             { where: { user_id: adminkWallets1.user_id } }
           );
+
+          // 55% to admin
           await Transaction.create({
             from: user_info.id,
             to: 1,
-            reason: "commision with tax for admin",
+            reason: `commision with tax from ${SearchUser.username}`,
             payment: percentage55,
             user_id: user_info.id,
           });
+
+          //own transaction
           await Transaction.create({
             from: user_info.id,
             to: user_info.id,
@@ -8817,10 +8862,22 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
             payment: pkg,
             user_id: user_info.id,
           });
+          //transaction
+          await Transaction.create({
+            from: user_info.id,
+            to: findLeft.user_id,
+            reason: `Placement Fund from ${SearchUser.username}`,
+            payment: percentage45,
+            user_id: findLeft.user_id,
+          });
+
+          //transaction for placement
           await wallet.update(
             { payment: placementWallet.payment + percentage45 },
-            { where: { user_id: findRight.user_id } }
+            { where: { user_id: findLeft.user_id } }
           ); // 45% for placement
+
+
         } else {
 
           await wallet.update(
@@ -8832,18 +8889,16 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           await Transaction.create({
             from: user_info.id,
             to: 1,
-            reason: " Tax to admin",
+            reason: `Tax to admin ${SearchUser.username}`,
             payment: percentage10,
             user_id: 1,
           });
-
-
 
           //transaction
           await Transaction.create({
             from: user_info.id,
             to: Reff.directReffUser.id,
-            reason: "Refferal Fund",
+            reason: `Refferal Fund from ${SearchUser.username}`,
             payment: percentage45,
             user_id: Reff.directReffUser.id,
           });
@@ -8876,14 +8931,14 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           await Transaction.create({
             from: user_info.id,
             to: findLeft.user_id,
-            reason: "Placement Fund",
+            reason: `Placement Fund from ${SearchUser.username}`,
             payment: percentage45,
             user_id: findLeft.user_id,
           });
 
 
           await Transaction.create({
-            from: "meta mask",
+            from: "Blockchain Wallet",
             to: user_info.id,
             reason: "you purchased pakage",
             payment: pkg,
@@ -8943,7 +8998,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           await Transaction.create({
             from: user_info.id,
             to: 1,
-            reason: "commision with tax for admin",
+            reason: `commision with tax from ${SearchUser.username}`,
             payment: pkg,
             user_id: user_info.id,
           });
@@ -8957,25 +9012,33 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
         } else {
           await wallet.update(
-            { payment: adminkWallets1.payment + percentage10 },
+            { payment: adminkWallets1.payment + percentage55 },
             { where: { user_id: adminkWallets1.user_id } }
-          ); // 10% for admin
+          ); // 55% for admin
 
           await wallet.update(
-            { payment: Reff.directReffUser.reff.payment + percentage90 },
+            { payment: Reff.directReffUser.reff.payment + percentage45 },
             { where: { user_id: Reff.directReffUser.id } }
-          ); // 90% for user
+          ); // 45% for user
 
           await Transaction.create({
             from: user_info.id,
             to: 1,
-            reason: "tax for admin",
-            payment: percentage10,
+            reason: `tax for admin from ${SearchUser.username} for package ${pkg}`,
+            payment: percentage55,
             user_id: 1,
           });
 
           await Transaction.create({
-            from: "Meta mask",
+            from: user_info.id,
+            to: Reff.directReffUser.id,
+            reason: `Your Refferal ${SearchUser.username} Purchased a package for ${pkg}`,
+            payment: percentage45,
+            user_id: user_info.id,
+          });
+
+          await Transaction.create({
+            from: "Blockchain Wallet",
             to: user_info.id,
             reason: "you purchased pakage",
             payment: pkg,
@@ -9209,10 +9272,10 @@ const Pakage_info = async (req, res) => {
 const ShowReff = async (req, res) => {
   const userfind = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(userfind);
-  const { pkg } = req.body
+  const { pkg,UserID } = req.body
 
   const user = await Profile.findOne({
-    where: { user_id: user_info.id, pkg: pkg },
+    where: { user_id: UserID},
     // attributes: ["username", "left", "right"],
     include: [
       {
@@ -9239,6 +9302,10 @@ const ShowReff = async (req, res) => {
         model: User,
         as: 'User',
         attributes: ['username']
+      },
+      {
+        model:Upgrade,
+        where:{pkg_price:pkg}
       }
     ],
   });
@@ -9252,7 +9319,7 @@ const getUserByTrend = async (req, res) => {
 
 
   const user = await Profile.findOne({
-    where: { user_id: UserID, pkg: pkg },
+    where: { user_id: UserID },
 
     include: [
       {
@@ -9279,12 +9346,99 @@ const getUserByTrend = async (req, res) => {
         model: User,
         as: 'User',
         attributes: ['username']
+      },
+      {
+        model:Upgrade,
+        where:{pkg_price:pkg}
       }
     ],
   })
   res.status(200).json(user);
 };
 // -----------------TREND END
+const testTrend = async (req, res) => {
+  const pkg = req.body.pkg;
+  const UserID = req.body.UserID;
+  const Users = req.headers.authorization.split(' ')[1]
+  const user_info = jwt_decode(Users)
+
+  let placements = []
+
+  let placement = await Profile.findOne(
+    {
+      where: {
+        [Sequelize.Op.or]: [
+          { left: UserID },
+          { right: UserID },
+        ],
+      },
+      include: [
+        {
+          model: Upgrade,
+          where:{pkg_price:pkg}
+        },
+      ],
+    }
+  );
+
+  if (placement) {
+    placements.push(placement);
+  }
+
+  for (let i = 2; i <= 16; i++) {
+
+    if (!placement) {
+      break;
+    }
+    placement = await Profile.findOne({
+      where: {
+        [Sequelize.Op.or]: [
+          { left: placement.user_id},
+          { right: placement.user_id},
+        ],
+      },
+      include: [
+        { model: Upgrade ,where:{pkg_price:pkg}}
+      ],
+    });
+    if (placement) {
+      placements.push(placement);
+    }
+  }
+  // const user = await Profile.findOne({
+  //   where: { user_id: UserID, pkg: pkg },
+
+  //   include: [
+  //     {
+  //       model: Refferal,
+  //       as: "left_placement",
+  //       attributes: ["refferal", "user_id", "level_id", "placement_id"],
+  //       include: {
+  //         model: User,
+  //         as: 'User',
+  //         attributes: ['username']
+  //       }
+  //     },
+  //     {
+  //       model: Refferal,
+  //       as: "right_placement",
+  //       attributes: ["refferal", "user_id", "level_id", "placement_id"],
+  //       include: {
+  //         model: User,
+  //         as: 'User',
+  //         attributes: ['username']
+  //       }
+  //     },
+  //     {
+  //       model: User,
+  //       as: 'User',
+  //       attributes: ['username']
+  //     }
+  //   ],
+  // })
+  res.json(placements);
+
+};
 const wallets = async (req, res) => {
   const user = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(user);
@@ -9455,7 +9609,7 @@ module.exports = {
   ADMIN,
   Register,
   Login,
-  // makeProfile,
+  testTrend,
   find_Direct_Reff_Transactions,
   userDetail,
   showusers,
