@@ -45,6 +45,8 @@ App.get('/wallet', ctrl.wallets)
 App.get('/finduserdetail', ctrl.FIndUserDetail)
 
 App.get('/findTransac', ctrl.findTransac)
+App.post('/findrefferal', ctrl.FindRefferal)
+App.post('/resetpassword', ctrl.ResetPassword)
 App.get('/find_Direct_Reff_Transactions', ctrl.find_Direct_Reff_Transactions)
 
 //decode

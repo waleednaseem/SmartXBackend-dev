@@ -51,12 +51,12 @@ module.exports = (sequelize, DataTypes) => {
       });
       Profile.hasOne(models.wallet,{
         foreignKey:'user_id',
-        id:'id',
+        sourceKey:'user_id',
         onDelete: 'CASCADE',
       })
       Profile.hasOne(models.Pakage,{
         foreignKey:'user_id',
-        id:'id',
+        sourceKey:'user_id',
         onDelete: 'CASCADE',
       })
       Profile.hasOne(models.Upgrade,{
