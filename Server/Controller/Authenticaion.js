@@ -349,23 +349,21 @@ const FindRefferal = async (req, res) => {
   res.json(refferal)
 }
 const ResetPassword = async (req, res) => {
-  const {password,new_password}=req.body
+  const { password, new_password } = req.body
   const user = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(user)
-  const findUser= await User.findOne({where:{id:user_info.id}})
-  const decode= jwt_decode(findUser.password)
+  const findUser = await User.findOne({ where: { id: user_info.id } })
+  const decode = jwt_decode(findUser.password)
 
-  if(decode.password == password){
+  if (decode.password == password) {
     const hashedPassword = jwt.sign({ new_password }, "teriMaaKiChot")
     User.update({
-      password:hashedPassword
-    },{
-      where:{id:user_info.id}
+      password: hashedPassword
+    }, {
+      where: { id: user_info.id }
     })
     res.json("Password changed!")
   }
-
-
 }
 
 const Upgrades = async (req, res) => {
@@ -398,6 +396,7 @@ const Upgrades = async (req, res) => {
   //placement start
   let placements = [];
   let Placement_Upgrade = []
+  let placement_check
 
   let placement = await Profile.findOne(
     {
@@ -427,8 +426,8 @@ const Upgrades = async (req, res) => {
     placement = await Profile.findOne({
       where: {
         [Sequelize.Op.or]: [
-          { left: placement.user_id, pkg: pakage_prices4 },
-          { right: placement.user_id, pkg: pakage_prices4 },
+          { left: placement.user_id, pkg: pkg },
+          { right: placement.user_id, pkg: pkg },
         ],
       },
       include: [
@@ -457,10 +456,10 @@ const Upgrades = async (req, res) => {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
     }
-    Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
+    placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
 
     //user ka level
-    if (Placement_Upgrade.length === 0) {
+    if (placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
         case 0:
 
@@ -1124,19 +1123,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 87.5
+              payment: placement_check[0].wallet.payment + 87.5
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_pay,
               payment: 93.750,
               user_id: user_info.id
@@ -1218,19 +1217,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 196.875
+              payment: placement_check[0].wallet.payment + 196.875
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 210.938,
               user_id: user_info.id
@@ -1312,19 +1311,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 442.969
+              payment: placement_check[0].wallet.payment + 442.969
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 474.609,
               user_id: user_info.id
@@ -1406,19 +1405,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 996.680
+              payment: placement_check[0].wallet.payment + 996.680
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 1067.871,
               user_id: user_info.id
@@ -1500,19 +1499,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 2242.529
+              payment: placement_check[0].wallet.payment + 2242.529
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 2402.710,
               user_id: user_info.id
@@ -1594,19 +1593,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 5045.691
+              payment: placement_check[0].wallet.payment + 5045.691
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 5406.097,
               user_id: user_info.id
@@ -1688,19 +1687,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 11352.805
+              payment: placement_check[0].wallet.payment + 11352.805
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 12163.719,
               user_id: user_info.id
@@ -1782,19 +1781,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 25549.810
+              payment: placement_check[0].wallet.payment + 25549.810
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 27368.368,
               user_id: user_info.id
@@ -1830,11 +1829,9 @@ const Upgrades = async (req, res) => {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
     }
-    Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
-    //  res.json(Placement_Upgrade[0].wallet.payment)
-    //  return false
+    placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level >= Selected.Upgrade.level);
     // user ka level
-    if (Placement_Upgrade.length === 0) {
+    if (placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
         case 0:
           //upgrade levels
@@ -2485,19 +2482,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 8.75
+              payment: placement_check[0].wallet.payment + 8.75
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_pay,
               payment: 9.375,
               user_id: user_info.id
@@ -2577,19 +2574,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 44.297
+              payment: placement_check[0].wallet.payment + 44.297
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_pay,
               payment: 47.461,
               user_id: user_info.id
@@ -2669,19 +2666,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 44.297
+              payment: placement_check[0].wallet.payment + 44.297
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_pay,
               payment: 47.461,
               user_id: user_info.id
@@ -2763,19 +2760,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 99.668
+              payment: placement_check[0].wallet.payment + 99.668
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 106.787,
               user_id: user_info.id
@@ -2857,19 +2854,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 224.253
+              payment: placement_check[0].wallet.payment + 224.253
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 240.271,
               user_id: user_info.id
@@ -2951,19 +2948,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 504.569
+              payment: placement_check[0].wallet.payment + 504.569
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 540.610,
               user_id: user_info.id
@@ -3045,19 +3042,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 1135.280
+              payment: placement_check[0].wallet.payment + 1135.280
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 1216.372,
               user_id: user_info.id
@@ -3139,19 +3136,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 2554.381
+              payment: placement_check[0].wallet.payment + 2554.381
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 2736.837,
               user_id: user_info.id
@@ -3187,10 +3184,10 @@ const Upgrades = async (req, res) => {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
     }
-    Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
+    placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
 
     //user ka level
-    if (Placement_Upgrade.length === 0) {
+    if (placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
         case 0:
           //upgrade levels
@@ -3840,19 +3837,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 17.500
+              payment: placement_check[0].wallet.payment + 17.500
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_pay,
               payment: 18.750,
               user_id: user_info.id
@@ -3932,19 +3929,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 39.375
+              payment: placement_check[0].wallet.payment + 39.375
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_pay,
               payment: 42.188,
               user_id: user_info.id
@@ -4024,19 +4021,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 88.594
+              payment: placement_check[0].wallet.payment + 88.594
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_pay,
               payment: 94.922,
               user_id: user_info.id
@@ -4118,19 +4115,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 199.336
+              payment: placement_check[0].wallet.payment + 199.336
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 213.574,
               user_id: user_info.id
@@ -4212,19 +4209,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 448.506
+              payment: placement_check[0].wallet.payment + 448.506
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 480.542,
               user_id: user_info.id
@@ -4306,19 +4303,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 1009.138
+              payment: placement_check[0].wallet.payment + 1009.138
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 1081.219,
               user_id: user_info.id
@@ -4400,19 +4397,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 2270.561
+              payment: placement_check[0].wallet.payment + 2270.561
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 2432.744,
               user_id: user_info.id
@@ -4494,19 +4491,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 5108.762
+              payment: placement_check[0].wallet.payment + 5108.762
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 5473.674,
               user_id: user_info.id
@@ -4542,10 +4539,10 @@ const Upgrades = async (req, res) => {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
     }
-    Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
+    placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
 
     //user ka level
-    if (Placement_Upgrade.length === 0) {
+    if (placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
         case 0:
           //upgrade levels
@@ -5195,19 +5192,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 43.750
+              payment: placement_check[0].wallet.payment + 43.750
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_pay,
               payment: 46.875,
               user_id: user_info.id
@@ -5287,19 +5284,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 98.438
+              payment: placement_check[0].wallet.payment + 98.438
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_pay,
               payment: 105.469,
               user_id: user_info.id
@@ -5379,19 +5376,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 22.484
+              payment: placement_check[0].wallet.payment + 22.484
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_pay,
               payment: 237.305,
               user_id: user_info.id
@@ -5473,19 +5470,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 498.940
+              payment: placement_check[0].wallet.payment + 498.940
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 533.936,
               user_id: user_info.id
@@ -5567,19 +5564,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 1121.265
+              payment: placement_check[0].wallet.payment + 1121.265
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 1201.355,
               user_id: user_info.id
@@ -5661,19 +5658,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 2522.845
+              payment: placement_check[0].wallet.payment + 2522.845
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 2703.049,
               user_id: user_info.id
@@ -5755,19 +5752,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 11352.80
+              payment: placement_check[0].wallet.payment + 11352.80
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 6081.860,
               user_id: user_info.id
@@ -5849,19 +5846,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 12771.905
+              payment: placement_check[0].wallet.payment + 12771.905
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 13684.184,
               user_id: user_info.id
@@ -5897,10 +5894,10 @@ const Upgrades = async (req, res) => {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
     }
-    Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
+    placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
 
     //user ka level
-    if (Placement_Upgrade.length === 0) {
+    if (placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
         case 0:
           //upgrade levels
@@ -6550,19 +6547,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 175.00
+              payment: placement_check[0].wallet.payment + 175.00
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_pay,
               payment: 187.500,
               user_id: user_info.id
@@ -6642,19 +6639,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 393.750
+              payment: placement_check[0].wallet.payment + 393.750
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_pay,
               payment: 421.875,
               user_id: user_info.id
@@ -6734,19 +6731,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 885.338
+              payment: placement_check[0].wallet.payment + 885.338
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_pay,
               payment: 949.219,
               user_id: user_info.id
@@ -6828,19 +6825,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 1993.359
+              payment: placement_check[0].wallet.payment + 1993.359
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 2135.742,
               user_id: user_info.id
@@ -6922,19 +6919,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 4485.059
+              payment: placement_check[0].wallet.payment + 4485.059
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 4805.420,
               user_id: user_info.id
@@ -7016,19 +7013,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 10091.382
+              payment: placement_check[0].wallet.payment + 10091.382
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 10812.195,
               user_id: user_info.id
@@ -7110,19 +7107,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 22705.609
+              payment: placement_check[0].wallet.payment + 22705.609
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 24327.438,
               user_id: user_info.id
@@ -7204,19 +7201,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 51087.621
+              payment: placement_check[0].wallet.payment + 51087.621
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 54736.736,
               user_id: user_info.id
@@ -7252,10 +7249,10 @@ const Upgrades = async (req, res) => {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
     }
-    Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
+    placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
 
     //user ka level
-    if (Placement_Upgrade.length === 0) {
+    if (placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
         case 0:
           //upgrade levels
@@ -7905,19 +7902,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 306.250
+              payment: placement_check[0].wallet.payment + 306.250
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_pay,
               payment: 328.125,
               user_id: user_info.id
@@ -7997,19 +7994,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 689.063
+              payment: placement_check[0].wallet.payment + 689.063
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_pay,
               payment: 738.281,
               user_id: user_info.id
@@ -8089,19 +8086,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 1550.391
+              payment: placement_check[0].wallet.payment + 1550.391
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_pay,
               payment: 1661.133,
               user_id: user_info.id
@@ -8183,19 +8180,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 3488.379
+              payment: placement_check[0].wallet.payment + 3488.379
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 3737.549,
               user_id: user_info.id
@@ -8277,19 +8274,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 7084.853
+              payment: placement_check[0].wallet.payment + 7084.853
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 8409.485,
               user_id: user_info.id
@@ -8371,19 +8368,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 17659.918
+              payment: placement_check[0].wallet.payment + 17659.918
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 18921.341,
               user_id: user_info.id
@@ -8465,19 +8462,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 39734.816
+              payment: placement_check[0].wallet.payment + 39734.816
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 42513.017,
               user_id: user_info.id
@@ -8559,19 +8556,19 @@ const Upgrades = async (req, res) => {
           // placement wallet
           await wallet.update(
             {
-              payment: Placement_Upgrade[0].wallet.payment + 89403.336
+              payment: placement_check[0].wallet.payment + 89403.336
             }
             ,
             {
               where: {
-                user_id: Placement_Upgrade[0].user_id
+                user_id: placement_check[0].user_id
               }
             })
           // placement transaction
           await Transaction.create(
             {
               from: user_info.id,
-              to: Placement_Upgrade[0].user_id,
+              to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 95789.289,
               user_id: user_info.id
@@ -8607,8 +8604,29 @@ const Upgrades = async (req, res) => {
 };
 
 
-const Upgrade_code = async (Selected, pkg,) => {
+const Withdraw = async (req, res) => {
+  const { Withdraw_payment } = req.body
+  const user = req.headers.authorization.split(' ')[1]
+  const user_info = jwt_decode(user)
 
+  const Find_withdraw = await wallet.findOne({ where: { user_id: user_info.id } })
+  const admin = await wallet.findOne({ where: { user_id: 1 } })
+
+  const percentage5 = Withdraw_payment * 0.05;
+  
+  if (Find_withdraw.payment > Withdraw_payment) {
+    await wallet.update(
+      { payment: Find_withdraw.payment - Withdraw_payment },
+      { where: { user_id: user_info.id } }
+    )
+    await wallet.update(
+      { payment: admin.payment + percentage5},
+      { where: { user_id: 1 } }
+    )
+    res.json({ msg: "Withdraw Successfully!" })
+  } else {
+    res.json("You don't have enough amount")
+  }
 }
 const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
   let ReffkWallets1, reffKharcha, placementKharcha
@@ -9640,6 +9658,7 @@ module.exports = {
   Pakage_info,
   refferals,
   FindRefferal,
+  Withdraw,
   ResetPassword,
   Placements,
   ShowReff,

@@ -37,6 +37,7 @@ App.post('/testTrend', ctrl.testTrend)
 //payments
 
 App.get('/wallet', ctrl.wallets)
+App.post('/withdraw', ctrl.Withdraw)
 // App.post('/upgrad',ctrl.Placements)
 
 //payments end 
@@ -45,7 +46,7 @@ App.get('/wallet', ctrl.wallets)
 App.get('/finduserdetail', ctrl.FIndUserDetail)
 
 App.get('/findTransac', ctrl.findTransac)
-App.post('/findrefferal', ctrl.FindRefferal)
+App.get('/findrefferal', ctrl.FindRefferal)
 App.post('/resetpassword', ctrl.ResetPassword)
 App.get('/find_Direct_Reff_Transactions', ctrl.find_Direct_Reff_Transactions)
 
