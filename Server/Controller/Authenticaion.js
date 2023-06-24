@@ -356,13 +356,15 @@ const ResetPassword = async (req, res) => {
   const decode = jwt_decode(findUser.password)
 
   if (decode.password == password) {
-    const hashedPassword = jwt.sign({ new_password }, "teriMaaKiChot")
+    const hashedPassword = jwt.sign({ password:new_password }, "teriMaaKiChot")
     User.update({
       password: hashedPassword
     }, {
       where: { id: user_info.id }
     })
     res.json("Password changed!")
+  }else{
+    res.json('cant change!')
   }
 }
 
@@ -402,8 +404,8 @@ const Upgrades = async (req, res) => {
     {
       where: {
         [Sequelize.Op.or]: [
-          { left: Selected.user_id, pkg: pakage_prices4 },
-          { right: Selected.user_id, pkg: pakage_prices4 },
+          { left: Selected.user_id, pkg: pkg },
+          { right: Selected.user_id, pkg: pkg },
         ],
       },
       include: [
@@ -1830,6 +1832,9 @@ const Upgrades = async (req, res) => {
       Placement_Upgrade.push(placements[i]);
     }
     placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level >= Selected.Upgrade.level);
+    // res.json(placement_check)
+    // return false
+
     // user ka level
     if (placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
