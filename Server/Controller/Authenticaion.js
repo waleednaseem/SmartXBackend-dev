@@ -9487,16 +9487,13 @@ const testTrend = async (req, res) => {
 const wallets = async (req, res) => {
   const user = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(user);
-  // const Walletx = await Profile.findOne({
-  //   where: { id: user_info.id },
-  // attributes: ['username', 'email', 'phone', 'left', 'right', 'level'],
-  //   include: [{
-  //     model: wallet,
-  //     attributes: ['payment']
-  //   }]
-  // })
   const Walletx = await wallet.findOne({ where: { user_id: user_info.id } });
   res.json(Walletx);
+};
+const profileInfo = async (req, res) => {
+  const user = req.headers.authorization.split(" ")[1];
+  const user_info = jwt_decode(user);
+ 
 };
 
 const Placements = async (req, res) => {
@@ -9661,6 +9658,7 @@ module.exports = {
   Upgrades,
   placementInvest,
   Pakage_info,
+  profileInfo,
   refferals,
   FindRefferal,
   Withdraw,
