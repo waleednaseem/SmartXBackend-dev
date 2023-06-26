@@ -48,6 +48,8 @@ App.get('/finduserdetail', ctrl.FIndUserDetail)
 App.get('/findTransac', ctrl.findTransac)
 App.get('/findrefferal', ctrl.FindRefferal)
 App.post('/resetpassword', ctrl.ResetPassword)
+App.get('/profile_info', ctrl.profileInfo)
+App.post('/update_profile', ctrl.update_profile)
 App.get('/find_Direct_Reff_Transactions', ctrl.find_Direct_Reff_Transactions)
 
 //decode

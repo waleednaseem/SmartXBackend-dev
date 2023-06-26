@@ -87,6 +87,7 @@ module.exports = (sequelize, DataTypes) => {
   Profile.init({
     email: DataTypes.STRING,
     username: DataTypes.STRING,
+    full_name: DataTypes.STRING,
     phone: DataTypes.INTEGER,
     left: {
       type: DataTypes.INTEGER,
@@ -102,6 +103,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     pkg: {
       type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    amount: {
+      type: DataTypes.FLOAT,
       allowNull: true
     },
     user_id: {

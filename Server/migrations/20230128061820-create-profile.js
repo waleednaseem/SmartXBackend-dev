@@ -11,11 +11,15 @@ module.exports = {
       },
       email: {
         type: Sequelize.STRING,
-        allowNull:false
+        allowNull:true
       },
       username: {
         type: Sequelize.STRING,
-        allowNull:false
+        allowNull:true
+      },
+      full_name: {
+        type: Sequelize.STRING,
+        allowNull:true
       },
       phone: {
         type: Sequelize.STRING,
@@ -35,6 +39,10 @@ module.exports = {
       },
       pkg: {
         type: Sequelize.INTEGER,
+        allowNull:false
+      },
+      amount: {
+        type: Sequelize.FLOAT,
         allowNull:false
       },
       user_id: {

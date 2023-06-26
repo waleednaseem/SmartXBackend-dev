@@ -97,23 +97,33 @@ const Register = async (req, res) => {
 
   const hashedPassword = jwt.sign({ password }, "teriMaaKiChot");
   const USER = await User.findOne({ where: { username: username } });
-
-  if (!USER) {
-    const userInfo = await User.create({
-      username: username,
-      password: hashedPassword,
-    });
-    await Refferal.create({
-      refferal: refferal,
-      user_id: userInfo.id,
-    });
-    await wallet.create({
-      payment: 0,
-      user_id: userInfo.id
-    })
-    res.json("User Registered Successfully");
-  } else {
-    res.json("User Found please try another username");
+  const findReff= await User.findOne({where:{id:refferal}})
+  // res.json(findReff.username)
+  // return false
+  if(username !=''&&password !='' && refferal != ''){
+    if(findReff){
+      if (!USER) {
+        const userInfo = await User.create({
+          username: username,
+          password: hashedPassword,
+        });
+        await Refferal.create({
+          refferal: refferal,
+          user_id: userInfo.id,
+        });
+        await wallet.create({
+          payment: 0,
+          user_id: userInfo.id
+        })
+        res.json("User Registered Successfully");
+      } else {
+        res.json("User Found!");
+      }
+    }else{
+      res.json("Refferal not Found!");
+    }
+  }else{
+    res.json("Please fill all fields!");
   }
 };
 
@@ -358,14 +368,14 @@ const ResetPassword = async (req, res) => {
   const decode = jwt_decode(findUser.password)
 
   if (decode.password == password) {
-    const hashedPassword = jwt.sign({ password:new_password }, "teriMaaKiChot")
+    const hashedPassword = jwt.sign({ password: new_password }, "teriMaaKiChot")
     User.update({
       password: hashedPassword
     }, {
       where: { id: user_info.id }
     })
     res.json("Password changed!")
-  }else{
+  } else {
     res.json('cant change!')
   }
 }
@@ -544,9 +554,9 @@ const Upgrades = async (req, res) => {
           //admin total income
           await TotalIncome.update(
             { income: find_admin.income + 12.50 + 87.5 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-          
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -626,12 +636,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 28.125 + 196.875 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -710,12 +720,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 63.281 + 442.969 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -774,7 +784,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 284.766 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -796,12 +806,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 142.383 + 996.680 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -858,7 +868,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 640.723 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -880,12 +890,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 320.361 + 2242.529 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -942,7 +952,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 1441.626 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -964,12 +974,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 720.813 + 5045.691 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -1026,7 +1036,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 3243.658 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -1048,12 +1058,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 1621.829 + 11352.805 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -1110,7 +1120,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 7298.232 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -1132,12 +1142,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 3649.116 + 25549.810 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -1201,7 +1211,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 25 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -1223,12 +1233,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 87.5 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 87.5 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -1249,12 +1259,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 12.50 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -1311,7 +1321,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 56.250 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -1333,12 +1343,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 196.875 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 196.875 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -1359,12 +1369,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 28.125 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -1421,7 +1431,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 126.563 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -1443,12 +1453,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 442.969 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 442.969 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -1469,12 +1479,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 63.281 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -1531,7 +1541,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 284.766 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -1553,12 +1563,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 996.680 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 996.680 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -1579,12 +1589,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 142.383 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -1641,7 +1651,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 640.723 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -1663,12 +1673,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 2242.529 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 2242.529 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -1689,12 +1699,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 320.361 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -1751,7 +1761,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 1441.626 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -1773,12 +1783,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 5045.691 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 5045.691 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -1799,12 +1809,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 720.813 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -1861,7 +1871,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 3243.658 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -1883,12 +1893,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 11352.805 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 11352.805 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -1909,12 +1919,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 1621.829 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -1971,7 +1981,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 7298.232 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -1993,12 +2003,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 25549.810 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 25549.810 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -2019,12 +2029,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 3649.116 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -2097,7 +2107,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 2.5 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -2119,12 +2129,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 1.250 + 8.75 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -2181,7 +2191,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 12.656 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -2203,12 +2213,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 6.382 + 44.297 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -2264,7 +2274,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 12.656 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -2286,12 +2296,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 6.328 + 44.297 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -2348,7 +2358,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 82.47 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -2370,12 +2380,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 41.238 + 99.668 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -2432,7 +2442,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 64.072 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -2454,12 +2464,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 32.036 + 224.253 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -2516,7 +2526,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 144.163 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -2538,12 +2548,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 72.081 + 504.569 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -2600,7 +2610,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 324.366 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -2622,12 +2632,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 162.183 + 1135.280 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -2684,7 +2694,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 729.823 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -2706,12 +2716,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 364.912 + 2554.381 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -2775,7 +2785,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 2.5 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -2797,12 +2807,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 8.75 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 8.75 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -2823,12 +2833,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 1.250 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -2884,7 +2894,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 12.656 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -2906,12 +2916,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 44.297 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 44.297 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -2932,12 +2942,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 6.382 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -2993,7 +3003,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 12.656 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -3015,12 +3025,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 44.297 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 44.297 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -3041,12 +3051,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 6.328 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -3103,7 +3113,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 82.47 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -3125,12 +3135,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 99.668 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 99.668 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -3151,12 +3161,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 41.238 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -3213,7 +3223,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 64.072 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -3235,12 +3245,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 224.253 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 224.253 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -3261,12 +3271,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 32.036 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -3323,7 +3333,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 144.163 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -3345,12 +3355,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 504.569 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 504.569 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -3371,12 +3381,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 72.081 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -3433,7 +3443,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 324.366 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -3455,12 +3465,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 1135.280 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 1135.280 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -3481,12 +3491,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 162.183 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -3543,7 +3553,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 729.823 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -3565,12 +3575,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 2554.381 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 2554.381 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -3591,12 +3601,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 364.912 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -3667,7 +3677,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 5.0 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -3689,12 +3699,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 2.500 + 17.500 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -3750,7 +3760,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 11.250 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -3772,12 +3782,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 5.625 + 39.375 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -3833,7 +3843,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 25.313 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -3855,12 +3865,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 12.656 + 88.594 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -3917,7 +3927,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 56.953 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -3939,12 +3949,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
-            { income: find_admin.income +28.477 + 199.336 },
-            { where: { user_id:1 } }
+          //admin total income
+          await TotalIncome.update(
+            { income: find_admin.income + 28.477 + 199.336 },
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -4001,7 +4011,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 128.145 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -4023,12 +4033,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 64.072 + 448.506 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -4085,7 +4095,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 288.325 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -4107,12 +4117,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 144.163 + 1009.138 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -4169,7 +4179,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 648.732 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -4191,12 +4201,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 324.366 + 2270.561 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -4253,7 +4263,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 1459.646 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -4275,12 +4285,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
-            { income: find_admin.income + 729.823 + 5108.762},
-            { where: { user_id:1 } }
+          //admin total income
+          await TotalIncome.update(
+            { income: find_admin.income + 729.823 + 5108.762 },
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -4344,7 +4354,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 5.0 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -4366,12 +4376,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 17.500 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 17.500 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -4392,12 +4402,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 2.500 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -4453,7 +4463,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 11.250 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -4475,12 +4485,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 39.375 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 39.375 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -4501,12 +4511,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 5.625 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -4562,7 +4572,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 25.313 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -4584,12 +4594,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 88.594 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 88.594 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -4610,12 +4620,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 12.656 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -4672,7 +4682,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 56.953 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -4694,12 +4704,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 199.336 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 199.336 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -4720,12 +4730,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 28.477 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -4782,7 +4792,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 128.145 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -4804,12 +4814,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 448.506 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 448.506 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -4830,12 +4840,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 64.072 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -4892,7 +4902,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 288.325 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -4914,12 +4924,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 1009.138 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 1009.138 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -4940,12 +4950,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 144.163 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -5002,7 +5012,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 648.732 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -5024,12 +5034,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 2270.561 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 2270.561 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -5050,12 +5060,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 324.366 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -5112,7 +5122,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 1459.646 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -5134,12 +5144,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 5108.762 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 5108.762 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -5160,12 +5170,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 729.823 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -5236,7 +5246,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 12.500 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -5258,12 +5268,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 6.250 + 43.750 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -5319,7 +5329,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 28.125 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -5341,12 +5351,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 14.063 + 98.438 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -5402,7 +5412,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 63.281 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -5424,12 +5434,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
-            { income: find_admin.income +31.641 + 22.484 },
-            { where: { user_id:1 } }
+          //admin total income
+          await TotalIncome.update(
+            { income: find_admin.income + 31.641 + 22.484 },
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -5486,7 +5496,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 142.383 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -5508,12 +5518,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 71.191 + 498.940 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -5570,7 +5580,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 320.361 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -5592,12 +5602,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 160.181 + 1121.265 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -5654,7 +5664,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 7205.813 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -5676,12 +5686,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 360.406 + 2522.845 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -5738,7 +5748,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 5676.402 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -5760,12 +5770,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 810.915 + 11352.80 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -5822,7 +5832,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 3649.116 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -5844,12 +5854,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
-            { income: find_admin.income +1824.558 + 12771.905 },
-            { where: { user_id:1 } }
+          //admin total income
+          await TotalIncome.update(
+            { income: find_admin.income + 1824.558 + 12771.905 },
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -5913,7 +5923,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 12.500 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -5935,12 +5945,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 43.750 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 43.750 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -5961,12 +5971,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 6.250 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -6022,7 +6032,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 28.125 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -6044,12 +6054,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 98.438 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 98.438 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -6070,12 +6080,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 14.063 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -6131,7 +6141,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 63.281 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -6153,12 +6163,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 22.484 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 22.484 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -6179,12 +6189,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 31.641 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -6241,7 +6251,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 142.383 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -6263,12 +6273,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 498.940 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 498.940 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -6289,12 +6299,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 71.191 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -6351,7 +6361,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 320.361 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -6373,12 +6383,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 1121.265 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 1121.265 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -6399,12 +6409,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 160.181 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -6461,7 +6471,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 7205.813 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -6483,12 +6493,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 2883.252 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 2883.252 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -6509,12 +6519,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 360.406 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -6571,7 +6581,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 5676.402 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -6593,12 +6603,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 11352.80 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 11352.80 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -6619,12 +6629,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 810.915 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -6681,7 +6691,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 3649.116 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -6703,12 +6713,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 12771.905 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 12771.905 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -6729,12 +6739,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 1824.558 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -6805,7 +6815,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 50 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -6827,12 +6837,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 25.00 + 175.00 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -6888,7 +6898,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 112.500 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -6910,12 +6920,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 56.250 + 393.750 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -6971,7 +6981,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 253.125 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -6993,12 +7003,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 126.563 + 885.338 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -7055,7 +7065,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 569.531 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -7077,12 +7087,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
-            { income: find_admin.income + 284.766 + 1993.359},
-            { where: { user_id:1 } }
+          //admin total income
+          await TotalIncome.update(
+            { income: find_admin.income + 284.766 + 1993.359 },
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -7139,7 +7149,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 1281.445 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -7161,12 +7171,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
-            { income: find_admin.income + 640.723 + 4485.059},
-            { where: { user_id:1 } }
+          //admin total income
+          await TotalIncome.update(
+            { income: find_admin.income + 640.723 + 4485.059 },
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -7223,7 +7233,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 2883.252 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -7245,12 +7255,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
-            { income: find_admin.income +1441.626 + 10091.382 },
-            { where: { user_id:1 } }
+          //admin total income
+          await TotalIncome.update(
+            { income: find_admin.income + 1441.626 + 10091.382 },
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -7307,7 +7317,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 6487.317 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -7329,12 +7339,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 3243.658 + 22705.609 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -7391,7 +7401,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 14596.463 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -7413,12 +7423,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 7298.232 + 51087.621 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -7482,7 +7492,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 50 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -7504,12 +7514,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 175.00},
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 175.00 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -7530,12 +7540,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 25.00 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -7591,7 +7601,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 112.500 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -7613,12 +7623,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 393.750 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 393.750 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -7639,12 +7649,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 56.250 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -7700,7 +7710,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 253.125 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -7722,12 +7732,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 885.338 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 885.338 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -7748,12 +7758,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 126.563 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -7810,7 +7820,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 569.531 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -7832,12 +7842,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 1993.359 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 1993.359 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -7858,12 +7868,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 284.766 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -7920,7 +7930,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 1281.445 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -7942,12 +7952,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 4485.059 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 4485.059 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -7968,12 +7978,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 640.723 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -8030,7 +8040,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 2883.252 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -8052,13 +8062,13 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 10091.382 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 10091.382 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
+
           // placement transaction
           await Transaction.create(
             {
@@ -8079,12 +8089,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 1441.626 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -8141,7 +8151,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 6487.317 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -8163,12 +8173,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 22705.609 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 22705.609 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -8189,12 +8199,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 3243.658 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -8251,7 +8261,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 14596.463 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -8273,12 +8283,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 51087.621 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 51087.621 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -8299,12 +8309,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 7298.232 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -8375,7 +8385,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 87.500 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -8397,12 +8407,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 43.750 + 306.250 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -8458,7 +8468,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 196.875 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -8480,12 +8490,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 98.438 + 689.063 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -8541,7 +8551,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 442.969 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -8563,12 +8573,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 221.484 + 1550.391 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -8625,7 +8635,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 996.680 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -8647,12 +8657,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 498.340 + 3488.379 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -8709,7 +8719,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 2242.529 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -8731,12 +8741,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 1121.265 + 7084.853 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -8793,7 +8803,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 5045.691 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -8815,12 +8825,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 2522.845 + 17659.918 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -8877,7 +8887,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 11352.805 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -8899,12 +8909,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 5676.402 + 39734.816 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -8961,7 +8971,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 25543.810 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -8983,12 +8993,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
-            { income: find_admin.income +12771.905 + 89403.336 },
-            { where: { user_id:1 } }
+          //admin total income
+          await TotalIncome.update(
+            { income: find_admin.income + 12771.905 + 89403.336 },
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -9052,7 +9062,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 87.500 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -9074,12 +9084,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 306.250 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 306.250 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -9100,12 +9110,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 43.750 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -9161,7 +9171,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 196.875 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -9183,12 +9193,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 689.063 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 689.063 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -9209,12 +9219,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 98.438 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -9270,7 +9280,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 442.969 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -9292,12 +9302,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 1550.391 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 1550.391 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -9318,12 +9328,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 221.484 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -9380,7 +9390,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 996.680 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -9402,12 +9412,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 3488.379 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 3488.379 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -9428,12 +9438,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 498.340 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -9490,7 +9500,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 2242.529 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -9512,12 +9522,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income +  7084.853 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 7084.853 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -9538,12 +9548,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 1121.265 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -9600,7 +9610,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 5045.691 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -9622,12 +9632,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 17659.918 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 17659.918 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -9648,12 +9658,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 2522.845 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -9710,7 +9720,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 11352.805 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -9732,12 +9742,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 39734.816 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 39734.816 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -9758,12 +9768,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 5676.402 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -9820,7 +9830,7 @@ const Upgrades = async (req, res) => {
           // payment in 
           await TotalIncome.update(
             { income: find_income.income + 25543.810 },
-            { where: { user_id:findReff.id } }
+            { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
           await Transaction.create(
@@ -9842,12 +9852,12 @@ const Upgrades = async (req, res) => {
                 user_id: placement_check[0].user_id
               }
             })
-            // placement wala
-            await TotalIncome.update(
-              { income: find_income.income + 89403.336 },
-              { where: { user_id:placement_check[0].user_id } }
-            );
-            
+          // placement wala
+          await TotalIncome.update(
+            { income: find_income.income + 89403.336 },
+            { where: { user_id: placement_check[0].user_id } }
+          );
+
           // placement transaction
           await Transaction.create(
             {
@@ -9868,12 +9878,12 @@ const Upgrades = async (req, res) => {
                 user_id: 1
               }
             })
-            //admin total income
-            await TotalIncome.update(
+          //admin total income
+          await TotalIncome.update(
             { income: find_admin.income + 12771.905 },
-            { where: { user_id:1 } }
+            { where: { user_id: 1 } }
           );
-            
+
           // admin wallet transaction
           await Transaction.create(
             {
@@ -9899,22 +9909,39 @@ const Withdraw = async (req, res) => {
   const user_info = jwt_decode(user)
 
   const Find_withdraw = await wallet.findOne({ where: { user_id: user_info.id } })
+  const Find_total_withdraw = await TotalWithdraw.findOne({ where: { user_id: user_info.id } })
   const admin = await wallet.findOne({ where: { user_id: 1 } })
 
   const percentage5 = Withdraw_payment * 0.05;
-  
-  if (Find_withdraw.payment > Withdraw_payment) {
-    await wallet.update(
-      { payment: Find_withdraw.payment - Withdraw_payment },
-      { where: { user_id: user_info.id } }
-    )
-    await wallet.update(
-      { payment: admin.payment + percentage5},
-      { where: { user_id: 1 } }
-    )
-    res.json({ msg: "Withdraw Successfully!" })
-  } else {
-    res.json("You don't have enough amount")
+
+  if( Withdraw_payment > 0 ){
+    if (Find_withdraw.payment > Withdraw_payment ) {
+      await wallet.update(
+        { payment: Find_withdraw.payment - Withdraw_payment },
+        { where: { user_id: user_info.id } }
+      )
+      await wallet.update(
+        { payment: admin.payment + percentage5 },
+        { where: { user_id: 1 } }
+      )
+      await TotalWithdraw.update({
+        withdraw: Find_total_withdraw.withdraw + Withdraw_payment
+      }, {
+        where: { user_id: user_info.id }
+      })
+      await Transaction.create({
+        from: 1,
+        to: user_info.id,
+        reason: `You have withdraw ${Withdraw_payment}`,
+        payment: Withdraw_payment,
+        user_id: user_info.id
+      })
+      res.json({ msg: "Withdraw Successfully!" })
+    } else {
+      res.json({msg:"You don't have enough amount"})
+    }
+  }else{
+    res.json({msg:"Please mention amount"})
   }
 }
 const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
@@ -9922,8 +9949,9 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
   const SearchUser = await User.findOne({ where: { id: user_info.id } })
   const Real_profile = await Profile.findOne({ where: { user_id: user_info.id, pkg: pkg } })
-  const find_income = await TotalIncome.findOne({ where: { user_id: user_info.id } })
 
+  const find_Admin_income = await TotalIncome.findOne({ where: { user_id: 1 } })
+  let find_income
   if (Real_profile) {
     res.json('Package Found!')
   } else {
@@ -10004,6 +10032,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
       });
 
       const adminkWallets1 = await wallet.findOne({ where: { user_id: 1 } });
+      find_income = await TotalIncome.findOne({ where: { user_id: findRight.user_id } })
 
       const placementWallet = await wallet.findOne({
         where: { user_id: findRight.user_id },
@@ -10015,7 +10044,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           { where: { user_id: adminkWallets1.user_id } }
         );
         await TotalIncome.update(
-          { income: find_income.income + percentage55 },
+          { income: find_Admin_income.income + percentage55 },
           { where: { user_id: adminkWallets1.user_id } }
         );
 
@@ -10065,7 +10094,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         ); // 10% for admin
 
         await TotalIncome.update(
-          { income: find_income.income + percentage10 },
+          { income: find_Admin_income.income + percentage10 },
           { where: { user_id: adminkWallets1.user_id } }
         );
 
@@ -10109,6 +10138,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
               },
             },
           });
+          find_income = await TotalIncome.findOne({ where: { user_id: innerReff.directReffUser.id } })
           await wallet.update(
             { payment: innerReff.directReffUser.reff.payment + percentage45 },
             { where: { user_id: innerReff.directReffUser.id } }
@@ -10202,13 +10232,15 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           where: { user_id: findLeft.user_id },
         })
 
+        find_income = await TotalIncome.findOne({ where: { user_id: findLeft.user_id } })
+
         if (Reff.directReffUser.id == 1) {
           await wallet.update(
             { payment: adminkWallets1.payment + percentage55 },
             { where: { user_id: adminkWallets1.user_id } }
           );
           await TotalIncome.update(
-            { income: find_income.income + percentage55 },
+            { income: find_Admin_income.income + percentage55 },
             { where: { user_id: adminkWallets1.user_id } }
           );
 
@@ -10258,7 +10290,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           ); // 10% for admin
 
           await TotalIncome.update(
-            { income: find_income.income + percentage10 },
+            { income: find_Admin_income.income + percentage10 },
             { where: { user_id: adminkWallets1.user_id } }
           );
 
@@ -10304,6 +10336,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
                 },
               },
             });
+            find_income = await TotalIncome.findOne({ where: { user_id: innerReff.directReffUser.id } })
             await wallet.update(
               { payment: innerReff.directReffUser.reff.payment + percentage45 },
               { where: { user_id: innerReff.directReffUser.id } }
@@ -10377,15 +10410,18 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
         const percentage55 = pkg * 0.55
         const percentage45 = pkg * 0.45
-
+        find_income = await TotalIncome.findOne({ where: { user_id: Reff.directReffUser.id } })
+        const find_income_admin = await TotalIncome.findOne({ where: { user_id: 1 } })
         if (Reff.directReffUser.id == 1) {
+          // res.json({check:find_income_admin.income + pkg})
+          // return false
           await wallet.update(
             { payment: adminkWallets1.payment + pkg },
             { where: { user_id: adminkWallets1.user_id } }
           );
           await TotalIncome.update(
-            { income: find_income.income + pkg },
-            { where: { user_id: adminkWallets1.user_id } }
+            { income: find_income_admin.income + pkg },
+            { where: { user_id: find_income_admin.user_id } }
           );
           await Transaction.create({
             from: user_info.id,
@@ -10409,8 +10445,8 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           ); // 55% for admin
 
           await TotalIncome.update(
-            { income: find_income.income + percentage55 },
-            { where: { user_id: adminkWallets1.user_id } }
+            { income: find_Admin_income.income + percentage55 },
+            { where: { user_id: find_Admin_income.user_id } }
           );
 
           await wallet.update(
@@ -10420,7 +10456,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
           await TotalIncome.update(
             { income: find_income.income + percentage45 },
-            { where: { user_id: Reff.directReffUser.id } }
+            { where: { user_id: find_income.user_id } }
           );
 
           await Transaction.create({
@@ -10670,6 +10706,17 @@ const Pakage_info = async (req, res) => {
 
   res.json({ findUpdate, NextPackage })
 }
+const update_profile =async(req,res)=>{
+  const user = req.headers.authorization.split(' ')[1]
+  const user_info = jwt_decode(user)
+  const {full_name,email,phone}=req.body
+  await Profile.update({
+    full_name,email,phone
+  },{
+    where:{user_id:user_info.id}
+  })
+  res.json({msg:'Profile updated'})
+}
 // ----------------- TREND START
 const ShowReff = async (req, res) => {
   const userfind = req.headers.authorization.split(" ")[1];
@@ -10842,7 +10889,14 @@ const wallets = async (req, res) => {
 const profileInfo = async (req, res) => {
   const user = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(user);
- 
+  let total_income, total_withdrawal, date_register, Last_withdraw_time
+
+  total_income = await TotalIncome.findOne({ where: { user_id: user_info.id } })
+  total_withdrawal = await TotalWithdraw.findOne({ where: { user_id: user_info.id } })
+  date_register = await User.findOne({ where: { id: user_info.id } })
+  Last_withdraw_time = total_withdrawal.updatedAt
+
+  res.json({ total_income: total_income.income, total_withdrawal: total_withdrawal.withdraw, date_register: date_register.createdAt, Last_withdraw_time })
 };
 
 const Placements = async (req, res) => {
@@ -10905,7 +10959,18 @@ const FindUserPakage = async (req, res) => {
   const findPkg = await Upgrade.findOne({ where: { user_id: user_info.id } })
   const find_income = await TotalIncome.findOne({ where: { user_id: user_info.id } })
   const find_withdraw = await TotalWithdraw.findOne({ where: { user_id: user_info.id } })
+  const find_Admin_income = await TotalIncome.findOne({ where: { user_id: 1 } })
 
+  if (!find_Admin_income) {
+    await TotalWithdraw.create({
+      user_id: 1,
+      withdraw: 0
+    })
+    await TotalIncome.create({
+      user_id: 1,
+      income: 0
+    })
+  }
   if (!findPkg) {
     pkg_check = await Upgrade.bulkCreate([
       {
@@ -10962,19 +11027,20 @@ const FindUserPakage = async (req, res) => {
     where: { user_id: user_info.id }
   });
 
-  if(!find_income){
+  if (!find_income) {
     await TotalIncome.create({
-      user_id:user_info.id,
-      income:0
+      user_id: user_info.id,
+      income: 0
     })
   }
 
-  if(!find_withdraw){
+  if (!find_withdraw) {
     await TotalWithdraw.create({
-      user_id:user_info.id,
-      withdraw:0
+      user_id: user_info.id,
+      withdraw: 0
     })
   }
+
 
   res.status(200).send({ packages, pkg_check });
 };
@@ -11024,6 +11090,7 @@ module.exports = {
   placementInvest,
   Pakage_info,
   profileInfo,
+  update_profile,
   refferals,
   FindRefferal,
   Withdraw,
