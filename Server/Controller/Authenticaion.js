@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const jwt_decode = require("jwt-decode");
 const { Sequelize } = require("sequelize");
 const { sequelize } = require("../models");
+const nodemailer = require('nodemailer');
+const client = require('twilio')('AC4148bda9be96f980d55d67df8c2f2853', '719e1a252dc5fd233f5658e86629eecd')
 
 //finding user
 // const user=req.headers.authorization.split(' ')[1]
@@ -17,6 +19,7 @@ const Transaction = db.Transaction;
 const Upgrade = db.Upgrade;
 const TotalIncome = db.total_income;
 const TotalWithdraw = db.total_withdraw;
+const User_Profile = db.User_profile
 
 const pakage_prices1 = 10;
 const pakage_prices2 = 20;
@@ -97,11 +100,11 @@ const Register = async (req, res) => {
 
   const hashedPassword = jwt.sign({ password }, "teriMaaKiChot");
   const USER = await User.findOne({ where: { username: username } });
-  const findReff= await User.findOne({where:{id:refferal}})
+  const findReff = await User.findOne({ where: { id: refferal } })
   // res.json(findReff.username)
   // return false
-  if(username !=''&&password !='' && refferal != ''){
-    if(findReff){
+  if (username != '' && password != '' && refferal != '') {
+    if (findReff) {
       if (!USER) {
         const userInfo = await User.create({
           username: username,
@@ -115,14 +118,17 @@ const Register = async (req, res) => {
           payment: 0,
           user_id: userInfo.id
         })
+        await User_Profile.create({
+          user_id: userInfo.id
+        })
         res.json("User Registered Successfully");
       } else {
         res.json("User Found!");
       }
-    }else{
+    } else {
       res.json("Refferal not Found!");
     }
-  }else{
+  } else {
     res.json("Please fill all fields!");
   }
 };
@@ -9914,8 +9920,8 @@ const Withdraw = async (req, res) => {
 
   const percentage5 = Withdraw_payment * 0.05;
 
-  if( Withdraw_payment > 0 ){
-    if (Find_withdraw.payment > Withdraw_payment ) {
+  if (Withdraw_payment > 0) {
+    if (Find_withdraw.payment > Withdraw_payment) {
       await wallet.update(
         { payment: Find_withdraw.payment - Withdraw_payment },
         { where: { user_id: user_info.id } }
@@ -9938,10 +9944,10 @@ const Withdraw = async (req, res) => {
       })
       res.json({ msg: "Withdraw Successfully!" })
     } else {
-      res.json({msg:"You don't have enough amount"})
+      res.json({ msg: "You don't have enough amount" })
     }
-  }else{
-    res.json({msg:"Please mention amount"})
+  } else {
+    res.json({ msg: "Please mention amount" })
   }
 }
 const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
@@ -10706,16 +10712,16 @@ const Pakage_info = async (req, res) => {
 
   res.json({ findUpdate, NextPackage })
 }
-const update_profile =async(req,res)=>{
+const update_profile = async (req, res) => {
   const user = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(user)
-  const {full_name,email,phone}=req.body
-  await Profile.update({
-    full_name,email,phone
-  },{
-    where:{user_id:user_info.id}
+  const { full_name, email, phone } = req.body
+  await User_Profile.update({
+    full_name, email, phone
+  }, {
+    where: { user_id: user_info.id }
   })
-  res.json({msg:'Profile updated'})
+  res.json({ msg: 'Profile updated' })
 }
 // ----------------- TREND START
 const ShowReff = async (req, res) => {
@@ -11045,6 +11051,83 @@ const FindUserPakage = async (req, res) => {
   res.status(200).send({ packages, pkg_check });
 };
 
+async function sendVerificationEmail(email, code) {
+  // Configure Nodemailer with your email service details
+
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    port: 587,
+    auth: {
+      user: 'waleed.naseem1@gmail.com',
+      pass: 'ualrrsguaiqfzaje',
+    },
+  });
+
+  // Define the email content
+  const mailOptions = {
+    from: '"smartxblockchain" <waleed.naseem1@gmail.com>',
+    to: email,
+    subject: 'Email Verification',
+    text: `Your verification code is: ${code}`,
+  };
+  // Send the email
+  return transporter.sendMail(mailOptions);
+}
+
+// Function to generate a random verification code
+function generateVerificationCode() {
+  const codeLength = 6;
+  const digits = '0123456789';
+  let code = '';
+
+  for (let i = 0; i < codeLength; i++) {
+    code += digits[Math.floor(Math.random() * digits.length)];
+  }
+
+  return code;
+}
+
+const verifyEmail = async (req, res) => {
+  const { email } = req.body;
+  const user = req.headers.authorization.split(' ')[1]
+  const user_info = jwt_decode(user)
+
+  const verificationCode = generateVerificationCode();
+
+  await User_Profile.update({
+    email_opt: verificationCode
+  }, { where: { user_id: user_info.id } })
+  sendVerificationEmail(email, verificationCode)
+    .then(() => {
+      res.json({ message: 'Verification email sent' });
+      // res.json({ message: 'Verification email sent' });
+    })
+    .catch((error) => {
+      res.json({ message: 'Failed to send verification email', error });
+    });
+}
+const verifyCode = async (req, res) => {
+  const user = req.headers.authorization.split(' ')[1]
+  const user_info = jwt_decode(user)
+  const { code } = req.body
+  const verify = await User_Profile.findOne({ where: { user_id: user_info.id, email_opt: code } })
+  if (verify) {
+    res.json({ msg: "Verified successfully !" })
+  }else{
+    res.json({ msg: "Validation code error !" })
+  }
+}
+
+const mob_verify=async(req,res)=>{
+  client.messages
+  .create({
+    body: 'Hello from twilio-node',
+    to: '+923168670828', // Text your number
+    from: '+923168670828', // From a valid Twilio number
+  })
+  .then((message) => res.json(message.sid))
+}
+
 const findTransac = async (req, res) => {
   const user = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(user);
@@ -11088,6 +11171,9 @@ module.exports = {
   showusers,
   Upgrades,
   placementInvest,
+  verifyCode,
+  verifyEmail,
+  mob_verify,
   Pakage_info,
   profileInfo,
   update_profile,

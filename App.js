@@ -8,6 +8,7 @@ const ctrl = require('./Server/Controller/Authenticaion')
 const Authentication = require('./Server/Middleware/Authentication')
 
 
+
 App.use(cors({
     origin: '*'
 }))
@@ -16,6 +17,10 @@ App.use(bodyparser.urlencoded({ extended: false }))
 
 // parse application/json
 App.use(bodyparser.json())
+
+
+// Function to send verification email
+
 
 
 App.get('/admin', ctrl.ADMIN)
@@ -33,6 +38,15 @@ App.post('/ShowReffTrend', ctrl.ShowReff)
 App.post('/trenduser', ctrl.getUserByTrend)
 App.post('/testTrend', ctrl.testTrend)
 
+
+//mailer
+// Endpoint for email verification
+App.post('/verify-email', ctrl.verifyEmail);
+
+// Endpoint for verifying the code
+App.post('/verify-code', ctrl.verifyCode);
+App.post('/mob_verify', ctrl.mob_verify);
+//mailer
 
 //payments
 
