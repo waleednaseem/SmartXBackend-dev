@@ -11088,23 +11088,28 @@ function generateVerificationCode() {
 }
 
 const verifyEmail = async (req, res) => {
-  const { email } = req.body;
   const user = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(user)
 
   const verificationCode = generateVerificationCode();
-
-  await User_Profile.update({
-    email_opt: verificationCode
-  }, { where: { user_id: user_info.id } })
-  sendVerificationEmail(email, verificationCode)
-    .then(() => {
-      res.json({ message: 'Verification email sent' });
-      // res.json({ message: 'Verification email sent' });
-    })
-    .catch((error) => {
-      res.json({ message: 'Failed to send verification email', error });
-    });
+  const Search_email = await User_Profile.findOne({
+    where:{user_id:user_info.id}
+  })
+  if(Search_email.email){
+    await User_Profile.update({
+      email_opt: verificationCode
+    }, { where: { user_id: user_info.id } })
+    sendVerificationEmail(Search_email.email, verificationCode)
+      .then(() => {
+        res.json({ message: 'Verification email sent' });
+        // res.json({ message: 'Verification email sent' });
+      })
+      .catch((error) => {
+        res.json({ message: 'Failed to send verification email', error });
+      });
+  }else{
+    res.json({message: "please update your profile first"})
+  }
 }
 const verifyCode = async (req, res) => {
   const user = req.headers.authorization.split(' ')[1]
@@ -11126,7 +11131,7 @@ const mob_verify=async(req,res)=>{
     from: '+923168670828', // From a valid Twilio number
   })
   .then((message) => res.json(message.sid))
-}
+} 
 
 const findTransac = async (req, res) => {
   const user = req.headers.authorization.split(" ")[1];

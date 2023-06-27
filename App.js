@@ -45,7 +45,7 @@ App.post('/verify-email', ctrl.verifyEmail);
 
 // Endpoint for verifying the code
 App.post('/verify-code', ctrl.verifyCode);
-App.post('/mob_verify', ctrl.mob_verify);
+// App.post('/mob_verify', ctrl.mob_verify);
 //mailer
 
 //payments
