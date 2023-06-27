@@ -27,6 +27,9 @@ module.exports = {
       mobile_opt: {
         type: Sequelize.INTEGER
       },
+      activate: {
+        type: Sequelize.BOOLEAN
+      },
       user_id: {
         type: Sequelize.INTEGER
       },

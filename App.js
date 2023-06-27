@@ -45,6 +45,7 @@ App.post('/verify-email', ctrl.verifyEmail);
 
 // Endpoint for verifying the code
 App.post('/verify-code', ctrl.verifyCode);
+App.get('/activate', ctrl.isActivate);
 // App.post('/mob_verify', ctrl.mob_verify);
 //mailer
 

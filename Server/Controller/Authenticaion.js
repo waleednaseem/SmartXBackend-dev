@@ -10803,6 +10803,20 @@ const getUserByTrend = async (req, res) => {
   res.status(200).json(user);
 };
 // -----------------TREND END
+
+const isActivate =async(req,res)=>{
+  const userx = req.headers.authorization.split(" ")[1];
+  const user_info = jwt_decode(userx);
+
+  const activate=await User_Profile.findOne({
+    where:{user_id:user_info.id}
+  })
+  if(activate.activate == true){
+    res.json({msg:'activated'})
+  }else{
+    res.json({msg:'not activated'})
+  }
+}
 const testTrend = async (req, res) => {
   const pkg = req.body.pkg;
   const UserID = req.body.UserID;
@@ -11179,6 +11193,7 @@ module.exports = {
   verifyCode,
   verifyEmail,
   mob_verify,
+  isActivate,
   Pakage_info,
   profileInfo,
   update_profile,
