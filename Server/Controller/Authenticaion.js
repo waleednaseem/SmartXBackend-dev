@@ -470,6 +470,7 @@ const Upgrades = async (req, res) => {
   const Upgrade_pkg = `Upgraded package from ${SearchUser.username}`
   const Reff_pkg = `Referal fund from ${SearchUser.username}`
   const Taxforadminfrom = `Tax for admin from ${SearchUser.username}`
+  const Placementforadminfrom = `Placement for admin from ${SearchUser.username}`
   const Reff_transac = `Refferal trasaction from ${SearchUser.username}`
   const placement_pay = `Placement payment from ${SearchUser.username}`
   const placement_Transaction = `Placement payment Transaction from ${SearchUser.username}`
@@ -2081,15 +2082,6 @@ const Upgrades = async (req, res) => {
             }
           }
           )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 12.5,
-          //     user_id: user_info.id
-          //   })
           //upgrade levels transaction
           await Transaction.create(
             {
@@ -2147,7 +2139,16 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: 1,
               reason: Taxforadminfrom,
-              payment: 1.250 + 8.75,
+              payment: 1.250 ,
+              user_id: user_info.id
+            })
+          // admin wallet transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: Placementforadminfrom,
+              payment: 8.75,
               user_id: user_info.id
             })
 
@@ -2165,15 +2166,6 @@ const Upgrades = async (req, res) => {
             }
           }
           )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 28.125,
-          //     user_id: user_info.id
-          //   })
           //upgrade levels transaction
           await Transaction.create(
             {
@@ -2186,7 +2178,7 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: findReff.wallet.payment + 12.656
+              payment: findReff.wallet.payment + 5.625
             }
             ,
             {
@@ -2205,13 +2197,13 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: findReff.id,
               reason: Reff_pkg,
-              payment: 15.820,
+              payment: 7.031,
               user_id: user_info.id
             })
           // admin wallet
           await wallet.update(
             {
-              payment: adminWallet.wallet.payment + 6.382 + 44.297
+              payment: adminWallet.wallet.payment + 2.813
             }
             ,
             {
@@ -2231,7 +2223,16 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: 1,
               reason: Taxforadminfrom,
-              payment: 6.382 + 44.297,
+              payment: 2.813,
+              user_id: user_info.id
+            })
+          // admin wallet transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: Placementforadminfrom,
+              payment: 19.688,
               user_id: user_info.id
             })
           break
@@ -2248,15 +2249,6 @@ const Upgrades = async (req, res) => {
             }
           }
           )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 63.281,
-          //     user_id: user_info.id
-          //   })
           //upgrade levels transaction
           await Transaction.create(
             {
@@ -2314,7 +2306,15 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: 1,
               reason: Taxforadminfrom,
-              payment: 6.328 + 44.297,
+              payment: 6.328 ,
+              user_id: user_info.id
+            })
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: Placementforadminfrom,
+              payment: 44.297,
               user_id: user_info.id
             })
           break
@@ -2331,15 +2331,6 @@ const Upgrades = async (req, res) => {
             }
           }
           )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 142.383,
-              user_id: user_info.id
-            })
           // upradde transaction
           await Transaction.create(
             {
@@ -2398,7 +2389,16 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: 1,
               reason: Taxforadminfrom,
-              payment: 41.238 + 99.668,
+              payment: 41.238 ,
+              user_id: user_info.id
+            })
+          // admin wallet transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: Placementforadminfrom,
+              payment: 99.668,
               user_id: user_info.id
             })
           break
@@ -2415,15 +2415,6 @@ const Upgrades = async (req, res) => {
             }
           }
           )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 320.361,
-              user_id: user_info.id
-            })
           // upradde transaction
           await Transaction.create(
             {
@@ -2482,7 +2473,16 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: 1,
               reason: Taxforadminfrom,
-              payment: 32.036 + 224.253,
+              payment: 32.036,
+              user_id: user_info.id
+            })
+          // admin wallet transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: Placementforadminfrom,
+              payment:  224.253,
               user_id: user_info.id
             })
           break
@@ -2499,15 +2499,6 @@ const Upgrades = async (req, res) => {
             }
           }
           )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 720.813,
-              user_id: user_info.id
-            })
           // upradde transaction
           await Transaction.create(
             {
@@ -2566,7 +2557,16 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: 1,
               reason: Taxforadminfrom,
-              payment: 72.081 + 504.569,
+              payment: 72.081,
+              user_id: user_info.id
+            })
+          // admin wallet transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: Placementforadminfrom,
+              payment: 504.569,
               user_id: user_info.id
             })
           break
@@ -2574,7 +2574,7 @@ const Upgrades = async (req, res) => {
           //upgrade levels
           await Upgrade.update({
             level: 7,
-            upgrade: 1621.029
+            upgrade: 1621.829
           }, {
             where:
             {
@@ -2587,18 +2587,9 @@ const Upgrades = async (req, res) => {
           await Transaction.create(
             {
               from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 1621.029,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
               to: user_info.id,
               reason: Upgrade_pkg,
-              payment: 1621.029,
+              payment: 1621.829,
               user_id: user_info.id
             })
 
@@ -2650,7 +2641,15 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: 1,
               reason: Taxforadminfrom,
-              payment: 162.183 + 1135.280,
+              payment: 162.183 ,
+              user_id: user_info.id
+            })
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: Placementforadminfrom,
+              payment: 1135.280,
               user_id: user_info.id
             })
           break
@@ -2667,15 +2666,6 @@ const Upgrades = async (req, res) => {
             }
           }
           )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 3649.116,
-              user_id: user_info.id
-            })
           // upradde transaction
           await Transaction.create(
             {
@@ -2734,7 +2724,16 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: 1,
               reason: Taxforadminfrom,
-              payment: 364.912 + 2554.381,
+              payment: 364.912 ,
+              user_id: user_info.id
+            })
+          // admin wallet transaction
+          await Transaction.create(
+            {
+              from: user_info.id,
+              to: 1,
+              reason: Placementforadminfrom,
+              payment: 2554.381,
               user_id: user_info.id
             })
           break
@@ -2759,15 +2758,6 @@ const Upgrades = async (req, res) => {
             }
           }
           )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 12.5,
-          //     user_id: user_info.id
-          //   })
           //upgrade levels transaction
           await Transaction.create(
             {
@@ -2868,15 +2858,6 @@ const Upgrades = async (req, res) => {
             }
           }
           )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 28.125,
-          //     user_id: user_info.id
-          //   })
           //upgrade levels transaction
           await Transaction.create(
             {
@@ -2889,7 +2870,7 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: findReff.wallet.payment + 12.656
+              payment: findReff.wallet.payment + 5.625
             }
             ,
             {
@@ -2899,7 +2880,7 @@ const Upgrades = async (req, res) => {
             })
           // payment in 
           await TotalIncome.update(
-            { income: find_income.income + 12.656 },
+            { income: find_income.income + 5.625 },
             { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
@@ -2908,13 +2889,13 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: findReff.id,
               reason: Reff_pkg,
-              payment: 15.820,
+              payment: 7.031,
               user_id: user_info.id
             })
           // placement wallet
           await wallet.update(
             {
-              payment: placement_check[0].wallet.payment + 44.297
+              payment: placement_check[0].wallet.payment + 19.688
             }
             ,
             {
@@ -2924,7 +2905,7 @@ const Upgrades = async (req, res) => {
             })
           // placement wala
           await TotalIncome.update(
-            { income: find_income.income + 44.297 },
+            { income: find_income.income + 19.688 },
             { where: { user_id: placement_check[0].user_id } }
           );
 
@@ -2934,13 +2915,13 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: placement_check[0].user_id,
               reason: placement_pay,
-              payment: 47.461,
+              payment: 21.094,
               user_id: user_info.id
             })
           // admin wallet
           await wallet.update(
             {
-              payment: adminWallet.wallet.payment + 6.382
+              payment: adminWallet.wallet.payment + 2.813
             }
             ,
             {
@@ -2950,7 +2931,7 @@ const Upgrades = async (req, res) => {
             })
           //admin total income
           await TotalIncome.update(
-            { income: find_admin.income + 6.382 },
+            { income: find_admin.income + 2.813 },
             { where: { user_id: 1 } }
           );
 
@@ -2960,7 +2941,7 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: 1,
               reason: Taxforadminfrom,
-              payment: 6.382,
+              payment: 2.813,
               user_id: user_info.id
             })
           break
@@ -2977,15 +2958,6 @@ const Upgrades = async (req, res) => {
             }
           }
           )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 63.281,
-          //     user_id: user_info.id
-          //   })
           //upgrade levels transaction
           await Transaction.create(
             {
@@ -3090,15 +3062,6 @@ const Upgrades = async (req, res) => {
           await Transaction.create(
             {
               from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 142.383,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
               to: user_info.id,
               reason: Upgrade_pkg,
               payment: 142.383,
@@ -3108,7 +3071,7 @@ const Upgrades = async (req, res) => {
           //payment to referal
           await wallet.update(
             {
-              payment: findReff.wallet.payment + 82.47
+              payment: findReff.wallet.payment + 28.47
             }
             ,
             {
@@ -3118,7 +3081,7 @@ const Upgrades = async (req, res) => {
             })
           // payment in 
           await TotalIncome.update(
-            { income: find_income.income + 82.47 },
+            { income: find_income.income + 28.47 },
             { where: { user_id: findReff.id } }
           );
           //payment refferal transaction
@@ -3196,15 +3159,6 @@ const Upgrades = async (req, res) => {
             }
           }
           )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 320.361,
-              user_id: user_info.id
-            })
           // upradde transaction
           await Transaction.create(
             {
@@ -3310,15 +3264,6 @@ const Upgrades = async (req, res) => {
           await Transaction.create(
             {
               from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 720.813,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
               to: user_info.id,
               reason: Upgrade_pkg,
               payment: 720.813,
@@ -3407,7 +3352,7 @@ const Upgrades = async (req, res) => {
           //upgrade levels
           await Upgrade.update({
             level: 7,
-            upgrade: 1621.029
+            upgrade: 1621.829
           }, {
             where:
             {
@@ -3420,18 +3365,9 @@ const Upgrades = async (req, res) => {
           await Transaction.create(
             {
               from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 1621.029,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
               to: user_info.id,
               reason: Upgrade_pkg,
-              payment: 1621.029,
+              payment: 1621.829,
               user_id: user_info.id
             })
 
@@ -3526,15 +3462,6 @@ const Upgrades = async (req, res) => {
             }
           }
           )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 3649.116,
-              user_id: user_info.id
-            })
           // upradde transaction
           await Transaction.create(
             {
@@ -10804,17 +10731,17 @@ const getUserByTrend = async (req, res) => {
 };
 // -----------------TREND END
 
-const isActivate =async(req,res)=>{
+const isActivate = async (req, res) => {
   const userx = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(userx);
 
-  const activate=await User_Profile.findOne({
-    where:{user_id:user_info.id}
+  const activate = await User_Profile.findOne({
+    where: { user_id: user_info.id }
   })
-  if(activate.activate == true){
-    res.json({msg:'activated'})
-  }else{
-    res.json({msg:'not activated'})
+  if (activate.activate == true) {
+    res.json({ msg: 'activated' })
+  } else {
+    res.json({ msg: 'not activated' })
   }
 }
 const testTrend = async (req, res) => {
@@ -11065,7 +10992,7 @@ const FindUserPakage = async (req, res) => {
   res.status(200).send({ packages, pkg_check });
 };
 
-async function sendVerificationEmail(email, code) {
+async function sendVerificationEmail(email, code,UserID) {
   // Configure Nodemailer with your email service details
 
   const transporter = nodemailer.createTransport({
@@ -11084,6 +11011,9 @@ async function sendVerificationEmail(email, code) {
     subject: 'Email Verification',
     text: `Your verification code is: ${code}`,
   };
+await User_Profile.update({
+    email_opt: code
+  }, { where: { user_id: UserID } })
   // Send the email
   return transporter.sendMail(mailOptions);
 }
@@ -11102,50 +11032,42 @@ function generateVerificationCode() {
 }
 
 const verifyEmail = async (req, res) => {
+  const {email}=req.body
   const user = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(user)
 
   const verificationCode = generateVerificationCode();
-  const Search_email = await User_Profile.findOne({
-    where:{user_id:user_info.id}
-  })
-  if(Search_email.email){
-    await User_Profile.update({
-      email_opt: verificationCode
-    }, { where: { user_id: user_info.id } })
-    sendVerificationEmail(Search_email.email, verificationCode)
+ 
+    sendVerificationEmail(email, verificationCode,user_info.id)
       .then(() => {
         res.json({ message: 'Verification email sent' });
-        // res.json({ message: 'Verification email sent' });
       })
       .catch((error) => {
         res.json({ message: 'Failed to send verification email', error });
       });
-  }else{
-    res.json({message: "please update your profile first"})
-  }
 }
 const verifyCode = async (req, res) => {
   const user = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(user)
-  const { code } = req.body
+  const { code, email } = req.body
   const verify = await User_Profile.findOne({ where: { user_id: user_info.id, email_opt: code } })
   if (verify) {
+    await User_Profile.update({activate:true,email},{where:{user_id:verify.user_id}})
     res.json({ msg: "Verified successfully !" })
-  }else{
+  } else {
     res.json({ msg: "Validation code error !" })
   }
 }
 
-const mob_verify=async(req,res)=>{
+const mob_verify = async (req, res) => {
   client.messages
-  .create({
-    body: 'Hello from twilio-node',
-    to: '+923168670828', // Text your number
-    from: '+923168670828', // From a valid Twilio number
-  })
-  .then((message) => res.json(message.sid))
-} 
+    .create({
+      body: 'Hello from twilio-node',
+      to: '+923168670828', // Text your number
+      from: '+923168670828', // From a valid Twilio number
+    })
+    .then((message) => res.json(message.sid))
+}
 
 const findTransac = async (req, res) => {
   const user = req.headers.authorization.split(" ")[1];
