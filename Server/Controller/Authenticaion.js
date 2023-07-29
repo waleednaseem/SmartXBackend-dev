@@ -2139,7 +2139,7 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: 1,
               reason: Taxforadminfrom,
-              payment: 1.250 ,
+              payment: 1.250,
               user_id: user_info.id
             })
           // admin wallet transaction
@@ -2306,7 +2306,7 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: 1,
               reason: Taxforadminfrom,
-              payment: 6.328 ,
+              payment: 6.328,
               user_id: user_info.id
             })
           await Transaction.create(
@@ -2389,7 +2389,7 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: 1,
               reason: Taxforadminfrom,
-              payment: 41.238 ,
+              payment: 41.238,
               user_id: user_info.id
             })
           // admin wallet transaction
@@ -2482,7 +2482,7 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: 1,
               reason: Placementforadminfrom,
-              payment:  224.253,
+              payment: 224.253,
               user_id: user_info.id
             })
           break
@@ -2641,7 +2641,7 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: 1,
               reason: Taxforadminfrom,
-              payment: 162.183 ,
+              payment: 162.183,
               user_id: user_info.id
             })
           await Transaction.create(
@@ -2724,7 +2724,7 @@ const Upgrades = async (req, res) => {
               from: user_info.id,
               to: 1,
               reason: Taxforadminfrom,
-              payment: 364.912 ,
+              payment: 364.912,
               user_id: user_info.id
             })
           // admin wallet transaction
@@ -10992,7 +10992,7 @@ const FindUserPakage = async (req, res) => {
   res.status(200).send({ packages, pkg_check });
 };
 
-async function sendVerificationEmail(email, code,UserID) {
+async function sendVerificationEmail(email, code, UserID) {
   // Configure Nodemailer with your email service details
 
   const transporter = nodemailer.createTransport({
@@ -11009,9 +11009,154 @@ async function sendVerificationEmail(email, code,UserID) {
     from: '"smartxblockchain" <waleed.naseem1@gmail.com>',
     to: email,
     subject: 'Email Verification',
-    text: `Your verification code is: ${code}`,
+    // text: `Your verification code is: ${code}`,
+    html: `
+      <!DOCTYPE html>
+<html>
+<head>
+  <title>Email Verification</title>
+  <style>
+    /* Add any custom styles here */
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 90%;
+      margin: 0 auto;
+      padding-left: 20px;
+      padding-right: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      color: #672626;
+    }
+    .containerInner {
+      width: 85%;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      text-align: center;
+      border-radius: 5px;
+      background-color: #672626;
+      color: #fff;
+    }
+    .containerflex {
+      display: block;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+    }
+    .hiOPT{
+      margin-top:20px;
+      margin-bottom:20px
+    }
+    ._Regards{
+      display:block;
+      align-items:center;
+      margin-top:10;
+      margin-bottom:20
+    }
+    .name {
+      color: #000;
+      font-size: 25px;
+      font-weight: bold;
+      font-family: 'Times New Roman', Times, serif;
+    }
+    .Regards {
+      color: #000;
+      font-size: 30px;
+      font-weight: bold;
+      font-family: 'Times New Roman', Times, serif;
+    }
+    .Regards2 {
+      color: #000;
+      font-size: 20px;
+      font-weight: 600;
+      font-family: 'Times New Roman', Times, serif;
+    }
+    .OTPhead {
+      color: #381313;
+      font-size: 30px;
+      font-weight: bold;
+      font-family: 'Times New Roman', Times, serif;
+    }
+    .OTP {
+      color: #672626;
+      font-size: 30px;
+      font-weight: bold;
+      font-family: 'Times New Roman', Times, serif;
+      text-align: center;
+      padding: 2px;
+      border: 1px solid #672626;
+      border-radius: 10px;
+      margin-top: 13px;
+      margin-bottom: 13px;
+      padding-bottom: 10px;
+    }
+    .logo {
+      display: block;
+      max-width: 80px;
+      margin: 0 auto;
+    }
+    .logo2 {
+      display: block;
+      max-width: 30px;
+      margin: 0 auto;
+    }
+    .pati {
+      width: 30px;
+      height: 2px;
+      background-color: #fff;
+    }
+    .message {
+      margin-top: 20px;
+    }
+    .button {
+      display: inline-block;
+      background-color: #672626;
+      color: #ffffff;
+      padding: 5px 20px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+   <div class="container">
+      <img style={{ marginBottom: "20px", marginTop: 5 }} class="logo" src="https://www.smartxblockchain.com/images/smart(1).png" />
+
+      <div class="containerflex">
+        <div class="containerInner">
+          <div>
+            <img class="logo2" src="https://icon-library.com/images/message-icon-png/message-icon-png-8.jpg" />
+          </div>
+          <div> Verify Your OTP CODE</div>
+        </div>
+
+        <div class="hiOPT" >
+          <div class="name">hi, abdul Qayoom turk</div>
+          <div class="OTPhead">Your OTP is :</div>
+          <div class="OTP">${code}</div>
+        </div>
+
+        <div class="_Regards">
+          <div class="Regards">Regards </div>
+          <div class="Regards2">Smartxblockchain </div>
+        </div>
+
+        <div class="containerInner">
+          <div> Copyrights © Smartxblockchain - All Rights Reserved</div>
+        </div>
+      </div>
+    </div>
+</body>
+</html>
+
+    `
   };
-await User_Profile.update({
+
+  await User_Profile.update({
     email_opt: code
   }, { where: { user_id: UserID } })
   // Send the email
@@ -11032,41 +11177,43 @@ function generateVerificationCode() {
 }
 
 const verifyEmail = async (req, res) => {
-  const {email}=req.body
+  const { email } = req.body
   const user = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(user)
 
   const verificationCode = generateVerificationCode();
- 
-    sendVerificationEmail(email, verificationCode,user_info.id)
-      .then(() => {
-        res.json({ message: 'Verification email sent' });
-      })
-      .catch((error) => {
-        res.json({ message: 'Failed to send verification email', error });
-      });
+
+  sendVerificationEmail(email, verificationCode, user_info.id)
+    .then(() => {
+      res.json({ message: 'Verification email sent' });
+    })
+    .catch((error) => {
+      res.json({ message: 'Failed to send verification email', error });
+    });
 }
 const verifyCode = async (req, res) => {
   const user = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(user)
-  const { code, email,full_name,phone,address } = req.body
+  const { code, email, full_name, phone, address } = req.body
   const verify = await User_Profile.findOne({ where: { user_id: user_info.id, email_opt: code } })
   if (verify) {
-    await User_Profile.update({activate:true,email,full_name,phone,address},{where:{user_id:verify.user_id}})
-   
+    await User_Profile.update({ activate: true, email, full_name, phone, address }, { where: { user_id: verify.user_id } })
+
     res.json({ msg: "Verified successfully !" })
   } else {
     res.json({ msg: "Validation code error !" })
   }
 }
 
-const Get_userProfile=async(req,res)=>{
-  
-const user = req.headers.authorization.split(' ')[1]
+const Get_userProfile = async (req, res) => {
+
+  const user = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(user)
-  const getProfile=await User_Profile.findOne({where:{
-    user_id: user_info.id
-  }})
+  const getProfile = await User_Profile.findOne({
+    where: {
+      user_id: user_info.id
+    }
+  })
   res.json(getProfile)
 }
 
