@@ -42,6 +42,7 @@ App.post('/testTrend', ctrl.testTrend)
 //mailer
 // Endpoint for email verification
 App.post('/verify-email', ctrl.verifyEmail);
+App.get('/get_user_profile', ctrl.Get_userProfile);
 
 // Endpoint for verifying the code
 App.post('/verify-code', ctrl.verifyCode);

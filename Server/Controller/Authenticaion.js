@@ -11049,25 +11049,27 @@ const verifyEmail = async (req, res) => {
 const verifyCode = async (req, res) => {
   const user = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(user)
-  const { code, email } = req.body
+  const { code, email,full_name,phone,address } = req.body
   const verify = await User_Profile.findOne({ where: { user_id: user_info.id, email_opt: code } })
   if (verify) {
-    await User_Profile.update({activate:true,email},{where:{user_id:verify.user_id}})
+    await User_Profile.update({activate:true,email,full_name,phone,address},{where:{user_id:verify.user_id}})
+   
     res.json({ msg: "Verified successfully !" })
   } else {
     res.json({ msg: "Validation code error !" })
   }
 }
 
-const mob_verify = async (req, res) => {
-  client.messages
-    .create({
-      body: 'Hello from twilio-node',
-      to: '+923168670828', // Text your number
-      from: '+923168670828', // From a valid Twilio number
-    })
-    .then((message) => res.json(message.sid))
+const Get_userProfile=async(req,res)=>{
+  
+const user = req.headers.authorization.split(' ')[1]
+  const user_info = jwt_decode(user)
+  const getProfile=await User_Profile.findOne({where:{
+    user_id: user_info.id
+  }})
+  res.json(getProfile)
 }
+
 
 const findTransac = async (req, res) => {
   const user = req.headers.authorization.split(" ")[1];
@@ -11114,7 +11116,7 @@ module.exports = {
   placementInvest,
   verifyCode,
   verifyEmail,
-  mob_verify,
+  Get_userProfile,
   isActivate,
   Pakage_info,
   profileInfo,
