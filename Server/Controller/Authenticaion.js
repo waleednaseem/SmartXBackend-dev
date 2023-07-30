@@ -10992,7 +10992,7 @@ const FindUserPakage = async (req, res) => {
   res.status(200).send({ packages, pkg_check });
 };
 
-async function sendVerificationEmail(email, code, UserID) {
+async function sendVerificationEmail(email, code, UserID,User) {
   // Configure Nodemailer with your email service details
 
   const transporter = nodemailer.createTransport({
@@ -11003,7 +11003,6 @@ async function sendVerificationEmail(email, code, UserID) {
       pass: 'ualrrsguaiqfzaje',
     },
   });
-
   // Define the email content
   const mailOptions = {
     from: '"smartxblockchain" <waleed.naseem1@gmail.com>',
@@ -11135,7 +11134,7 @@ async function sendVerificationEmail(email, code, UserID) {
         </div>
 
         <div class="hiOPT" >
-          <div class="name">hi, abdul Qayoom turk</div>
+          <div class="name">hi, ${User.username}</div>
           <div class="OTPhead">Your OTP is :</div>
           <div class="OTP">${code}</div>
         </div>
@@ -11181,9 +11180,11 @@ const verifyEmail = async (req, res) => {
   const user = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(user)
 
+  const name = await User.findOne({where:{id:user_info.id}})
+
   const verificationCode = generateVerificationCode();
 
-  sendVerificationEmail(email, verificationCode, user_info.id)
+  sendVerificationEmail(email, verificationCode, user_info.id,name)
     .then(() => {
       res.json({ message: 'Verification email sent' });
     })
