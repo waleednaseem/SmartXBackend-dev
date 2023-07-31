@@ -11164,10 +11164,10 @@ const verifyEmail = async (req, res) => {
 const verifyCode = async (req, res) => {
   const user = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(user)
-  const { code, email, full_name, phone, address } = req.body
+  const { code, email, full_name, phone, address,wallet_address } = req.body
   const verify = await User_Profile.findOne({ where: { user_id: user_info.id, email_opt: code } })
   if (verify) {
-    await User_Profile.update({ activate: true, email, full_name, phone, address }, { where: { user_id: verify.user_id } })
+    await User_Profile.update({ activate: true, email, full_name, phone, address,wallet_address }, { where: { user_id: verify.user_id } })
 
     res.json({ msg: "Verified successfully !" })
   } else {
