@@ -21,6 +21,9 @@ module.exports = {
       payment: {
         type: Sequelize.FLOAT
       },
+      trx: {
+        type: Sequelize.STRING
+      },
       user_id: {
         type: Sequelize.INTEGER
       },

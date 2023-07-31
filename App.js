@@ -70,6 +70,7 @@ App.get('/find_Direct_Reff_Transactions', ctrl.find_Direct_Reff_Transactions)
 
 //decode
 App.post('/decode', ctrl.decode)
+App.get('/snippet', ctrl.Upgrade_Snippet)
 //decode end
 
 
