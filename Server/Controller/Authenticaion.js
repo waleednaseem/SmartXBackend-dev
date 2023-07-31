@@ -484,190 +484,132 @@ const Upgrades = async (req, res) => {
     //user ka level
     if (placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
-        case 0: Upgrade_Snippet_CUTT_TO_ALL(
+        case 0:Upgrade_Snippet_CUTT_TO_ALL(
           1,
           125,
-          user_info,
+          user_info.id,
+          Upgrades4,
           findReff,
           find_admin,
           find_income,
           adminWallet,
           transactionUpgradeToAdmin,
           transactionFromReff,
-          AllTaxAdmin
-        )
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+          )
           break
         case 1: Upgrade_Snippet_CUTT_TO_ALL(
           2,
           281.250,
-          user_info,
+          user_info.id,
+          Upgrades4,
           findReff,
           find_admin,
           find_income,
           adminWallet,
           transactionUpgradeToAdmin,
           transactionFromReff,
-          AllTaxAdmin
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
         )
           break
         case 2: Upgrade_Snippet_CUTT_TO_ALL(
           3,
           632.813,
-          user_info,
+          user_info.id,
+          Upgrades4,
           findReff,
           find_admin,
           find_income,
           adminWallet,
           transactionUpgradeToAdmin,
           transactionFromReff,
-          AllTaxAdmin
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
         )
           break
         case 3: Upgrade_Snippet_CUTT_TO_ALL(
           4,
           1423.828,
-          user_info,
+          user_info.id,
+          Upgrades4,
           findReff,
           find_admin,
           find_income,
           adminWallet,
           transactionUpgradeToAdmin,
           transactionFromReff,
-          AllTaxAdmin
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
         )
           break
         case 4: Upgrade_Snippet_CUTT_TO_ALL(
           5,
           3203.613,
-          user_info,
+          user_info.id,
+          Upgrades4,
           findReff,
           find_admin,
           find_income,
           adminWallet,
           transactionUpgradeToAdmin,
           transactionFromReff,
-          AllTaxAdmin
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
         )
           break
-        case 5:Upgrade_Snippet_CUTT_TO_ALL(
-            6,
-            7208.130,
-            user_info,
-            findReff,
-            find_admin,
-            find_income,
-            adminWallet,
-            transactionUpgradeToAdmin,
-            transactionFromReff,
-            AllTaxAdmin
-          )
-          //upgrade levels
-          await Upgrade.update({
-            level: 6,
-            upgrade: 7208.130
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: transactionUpgraded,
-              payment: 7208.130,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: transactionUpgraded,
-              payment: 7208.130,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 1441.626
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 1441.626 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: transactionFromReff,
-              payment: 1802.032,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 720.813 + 5045.691
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 720.813 + 5045.691 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: AllTaxAdmin,
-              payment: 720.813 + 5045.691,
-              user_id: user_info.id
-            })
+        case 5: Upgrade_Snippet_CUTT_TO_ALL(
+          6,
+          7208.130,
+          user_info.id,
+          Upgrades4,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 6:Upgrade_Snippet_CUTT_TO_ALL(
+        case 6: Upgrade_Snippet_CUTT_TO_ALL(
           7,
           16218.292,
-          user_info,
+          user_info.id,
+          Upgrades4,
           findReff,
           find_admin,
           find_income,
           adminWallet,
           transactionUpgradeToAdmin,
           transactionFromReff,
-          AllTaxAdmin
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
         )
           break
-        case 7:Upgrade_Snippet_CUTT_TO_ALL(
+        case 7: Upgrade_Snippet_CUTT_TO_ALL(
           8,
           36491.158,
-          user_info,
+          user_info.id,
+          Upgrades4,
           findReff,
           find_admin,
           find_income,
           adminWallet,
           transactionUpgradeToAdmin,
           transactionFromReff,
-          AllTaxAdmin
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
         )
           break
         default:
@@ -9345,48 +9287,50 @@ const Upgrade_Snippet_CUTT_TO_ALL = async (
   level,
   Upgrade_Price,
   user_id,
+  pkg_price,
   findReff,
   find_admin,
   find_income,
   adminWallet,
   transactionUpgradeToAdmin,
   transactionFromReff,
-  AllTaxAdmin
+  AllTaxAdmin,
+  Upgrade_pkg,
+  Taxforadminfrom
 ) => {
 
-  let IF_ONLY_ADMIN_CUTT, IF_ONLY_ADMIN_REFF_CUTT
+  let IF_ONLY_ADMIN_CUTT, IF_ONLY_ADMIN_REFF_CUTT, IF_ONLY_ADMIN_Direct,IF_ONLY_ADMIN_placement
 
+  IF_ONLY_ADMIN_Direct = Upgrade_Price * 0.25
+  IF_ONLY_ADMIN_placement = Upgrade_Price * 0.75
   IF_ONLY_ADMIN_CUTT = Upgrade_Price * 0.80
   IF_ONLY_ADMIN_REFF_CUTT = Upgrade_Price * 0.20
 
   //upgrade levels
   await Upgrade.update({
-    level,
-    upgrade: Upgrade_Price
+    level: 1,
+    upgrade: 12.5
   }, {
     where:
     {
       user_id,
-      pkg_price: Upgrade_Price
+      pkg_price
     }
   }
   )
-
   //upgrade levels transaction
   await Transaction.create(
     {
       from: user_id,
       to: user_id,
-      reason: transactionUpgradeToAdmin,
+      reason: Upgrade_pkg,
       payment: Upgrade_Price,
-      user_id
+      user_id: user_id
     })
-
-
   //payment to referal
   await wallet.update(
     {
-      payment: findReff.wallet.payment + IF_ONLY_ADMIN_REFF_CUTT
+      payment: findReff.wallet.payment + 2.5
     }
     ,
     {
@@ -9396,20 +9340,18 @@ const Upgrade_Snippet_CUTT_TO_ALL = async (
     })
   // payment in 
   await TotalIncome.update(
-    { income: find_income.income + IF_ONLY_ADMIN_REFF_CUTT },
+    { income: find_income.income + 2.5 },
     { where: { user_id: findReff.id } }
   );
-
   //payment refferal transaction
   await Transaction.create(
     {
       from: user_id,
       to: findReff.id,
-      reason: transactionFromReff,
-      payment: IF_ONLY_ADMIN_REFF_CUTT,
-      user_id: findReff.id
+      reason: Reff_pkg,
+      payment: 3.125,
+      user_id: user_id
     })
-
   // admin wallet
   await wallet.update(
     {
@@ -9420,8 +9362,7 @@ const Upgrade_Snippet_CUTT_TO_ALL = async (
       where: {
         user_id: 1
       }
-    }
-  )
+    })
   //admin total income
   await TotalIncome.update(
     { income: find_admin.income + IF_ONLY_ADMIN_CUTT },
@@ -9433,10 +9374,20 @@ const Upgrade_Snippet_CUTT_TO_ALL = async (
     {
       from: user_id,
       to: 1,
-      reason: AllTaxAdmin,
-      payment: IF_ONLY_ADMIN_CUTT,
-      user_id: 1
+      reason: Taxforadminfrom,
+      payment: IF_ONLY_ADMIN_Direct,
+      user_id
     })
+  // admin wallet transaction
+  await Transaction.create(
+    {
+      from: user_id,
+      to: 1,
+      reason: Placementforadminfrom,
+      payment: IF_ONLY_ADMIN_placement,
+      user_id
+    })
+
 }
 
 const Upgrade_Snippet = async (req, res) => {
