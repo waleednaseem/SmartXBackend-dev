@@ -21,6 +21,9 @@ module.exports = {
       address: {
         type: Sequelize.STRING
       },
+      wallet_address: {
+        type: Sequelize.STRING
+      },
       profile_img: {
         type: Sequelize.STRING
       },

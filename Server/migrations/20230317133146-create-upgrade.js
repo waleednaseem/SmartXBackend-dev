@@ -13,7 +13,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       upgrade: {
-        type: Sequelize.INTEGER
+        type: Sequelize.FLOAT
       },
       pkg_price: {
         type: Sequelize.INTEGER

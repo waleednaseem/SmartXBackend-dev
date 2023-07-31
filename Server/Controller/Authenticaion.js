@@ -10642,9 +10642,9 @@ const Pakage_info = async (req, res) => {
 const update_profile = async (req, res) => {
   const user = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(user)
-  const { full_name, email, phone } = req.body
+  const { full_name, email, phone, wallet_address } = req.body
   await User_Profile.update({
-    full_name, email, phone
+    full_name, email, phone,wallet_address
   }, {
     where: { user_id: user_info.id }
   })
@@ -10793,37 +10793,6 @@ const testTrend = async (req, res) => {
       placements.push(placement);
     }
   }
-  // const user = await Profile.findOne({
-  //   where: { user_id: UserID, pkg: pkg },
-
-  //   include: [
-  //     {
-  //       model: Refferal,
-  //       as: "left_placement",
-  //       attributes: ["refferal", "user_id", "level_id", "placement_id"],
-  //       include: {
-  //         model: User,
-  //         as: 'User',
-  //         attributes: ['username']
-  //       }
-  //     },
-  //     {
-  //       model: Refferal,
-  //       as: "right_placement",
-  //       attributes: ["refferal", "user_id", "level_id", "placement_id"],
-  //       include: {
-  //         model: User,
-  //         as: 'User',
-  //         attributes: ['username']
-  //       }
-  //     },
-  //     {
-  //       model: User,
-  //       as: 'User',
-  //       attributes: ['username']
-  //     }
-  //   ],
-  // })
   res.json(placements);
 
 };

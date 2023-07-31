@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     profile_img: DataTypes.STRING,
     email_opt: DataTypes.INTEGER,
     address: DataTypes.STRING,
+    wallet_address: DataTypes.STRING,
     mobile_opt: DataTypes.INTEGER,
     activate: DataTypes.BOOLEAN,
     user_id:DataTypes.INTEGER
