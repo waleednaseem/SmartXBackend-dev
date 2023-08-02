@@ -62,6 +62,10 @@ const ADMIN = async (req, res) => {
       payment: 0,
       user_id: 1,
     });
+
+    await User_Profile.create({
+      user_id: 1
+    })
     res.json({ msg: "admin created" });
   } else {
     res.json({ msg: "admin found" });
@@ -386,6 +390,143 @@ const ResetPassword = async (req, res) => {
   }
 }
 
+const FindUsers = async (req, res) => {
+  const user = req.headers.authorization.split(' ')[1]
+  const user_info = jwt_decode(user)
+  const { pkg } = req.body
+  //placement start
+  let placements = [];
+  let Placement_Upgrade = []
+  let placement_check
+  const Selected = await Profile.findOne({
+    where: { user_id: user_info.id, pkg: pkg },
+    include: { model: Upgrade },
+
+  });
+
+  let placement = await Profile.findOne(
+    {
+      where: {
+        [Sequelize.Op.or]: [
+          { left: Selected.user_id, pkg: pkg },
+          { right: Selected.user_id, pkg: pkg },
+        ],
+      },
+      include: [
+        { model: Pakage, attributes: ["pkg_name", "pkg_price"] },
+        { model: Upgrade },
+        { model: wallet },
+      ],
+    }
+  );
+
+  if (placement) {
+    placements.push(placement);
+  }
+
+  for (let i = 2; i <= 16; i++) {
+
+    if (!placement) {
+      break;
+    }
+    placement = await Profile.findOne({
+      where: {
+        [Sequelize.Op.or]: [
+          { left: placement.user_id, pkg: pkg },
+          { right: placement.user_id, pkg: pkg },
+        ],
+      },
+      include: [
+        { model: Pakage, attributes: ["pkg_name", "pkg_price", "user_id"] },
+        { model: Upgrade },
+        { model: wallet },
+      ],
+    });
+    if (placement) {
+      placements.push(placement);
+    }
+  }
+
+  if (Selected.pkg == pkg) {
+    for (let i = 1; i < placements.length; i += 2) {
+      Placement_Upgrade.push(placements[i]);
+    }
+    placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
+  }
+  const FIndUser = await User.findOne({
+    where: { id: user_info.id },
+    include: { model: Profile }
+  })
+  const Only_admin = await User.findOne(
+    {
+      where: { id: 1 },
+      include: { model: User_Profile }
+    }
+  )
+
+  let Find_placement
+
+  Find_placement = await User.findOne(
+    {
+      where: { id: placement_check?.length > 0 ? placement_check[0]?.user_id : Only_admin?.id },
+      include: { model: User_Profile }
+    }
+  )
+  const Find_Reff = await User.findOne(
+    {
+      where: { id: FIndUser.Profile.refferal },
+      include: { model: User_Profile }
+    }
+  )
+  res.json({
+    placement: Find_placement.User_profile?.wallet_address,
+    Direct_reff: Find_Reff.User_profile?.wallet_address
+  })
+}
+const FindUsers_Purchase = async (req, res) => {
+  const user = req.headers.authorization.split(' ')[1]
+  const user_info = jwt_decode(user)
+  const { pkg } = req.body
+  //placement start
+  let placements = [];
+  let Placement_Upgrade = []
+  let placement_check
+  const Selected = await Profile.findOne({
+    where: { user_id: user_info.id, pkg: pkg },
+    include: { model: Upgrade },
+
+  });
+  const FIndUser = await User.findOne({
+    where: { id: user_info.id },
+    include: { model: Profile }
+  })
+
+  let placement, find_placement, Direct_reff
+
+  placement = await Profile.findOne(
+    {
+      where: {
+        [Sequelize.Op.or]: [
+          { left: Selected.user_id, pkg: pkg },
+          { right: Selected.user_id, pkg: pkg },
+        ],
+      }
+    }
+  );
+
+  find_placement = await User.findOne({
+    where: { id: placement.user_id },
+    include: { model: User_Profile }
+  })
+  Direct_reff = await User.findOne({
+    where: { id: FIndUser.Profile.refferal },
+    include: { model: User_Profile }
+  })
+
+  res.json({ placement: find_placement.User_profile.wallet_address, Direct_reff: Direct_reff.User_profile.wallet_address })
+
+}
+
 const Upgrades = async (req, res) => {
   const { pkg } = req.body
   const Upgrades1 = 10;
@@ -481,10 +622,9 @@ const Upgrades = async (req, res) => {
     }
     placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
 
-    //user ka level
     if (placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
-        case 0:Upgrade_Snippet_CUTT_TO_ALL(
+        case 0: No_placement_CUTT_TO_ALL(
           1,
           125,
           user_info.id,
@@ -497,10 +637,12 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom
-          )
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 1: Upgrade_Snippet_CUTT_TO_ALL(
+        case 1: No_placement_CUTT_TO_ALL(
           2,
           281.250,
           user_info.id,
@@ -513,10 +655,12 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
         )
           break
-        case 2: Upgrade_Snippet_CUTT_TO_ALL(
+        case 2: No_placement_CUTT_TO_ALL(
           3,
           632.813,
           user_info.id,
@@ -529,10 +673,12 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
         )
           break
-        case 3: Upgrade_Snippet_CUTT_TO_ALL(
+        case 3: No_placement_CUTT_TO_ALL(
           4,
           1423.828,
           user_info.id,
@@ -545,10 +691,12 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
         )
           break
-        case 4: Upgrade_Snippet_CUTT_TO_ALL(
+        case 4: No_placement_CUTT_TO_ALL(
           5,
           3203.613,
           user_info.id,
@@ -561,10 +709,12 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
         )
           break
-        case 5: Upgrade_Snippet_CUTT_TO_ALL(
+        case 5: No_placement_CUTT_TO_ALL(
           6,
           7208.130,
           user_info.id,
@@ -577,10 +727,12 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
         )
           break
-        case 6: Upgrade_Snippet_CUTT_TO_ALL(
+        case 6: No_placement_CUTT_TO_ALL(
           7,
           16218.292,
           user_info.id,
@@ -593,10 +745,12 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
         )
           break
-        case 7: Upgrade_Snippet_CUTT_TO_ALL(
+        case 7: No_placement_CUTT_TO_ALL(
           8,
           36491.158,
           user_info.id,
@@ -609,7 +763,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
         )
           break
         default:
@@ -617,779 +773,153 @@ const Upgrades = async (req, res) => {
           break;
       }
       res.status(200).json('Upgraded successfully!');
-    }
+    } //Upgrades4
     else {
       switch (Selected.Upgrade.level) {
-        case 0:
-          //upgrade levels
-          await Upgrade.update({
-            level: 1,
-            upgrade: 125
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 125,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 125,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 25
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 25 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Upgrade_pkg,
-              payment: 31.250,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 87.5
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 87.5 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_pay,
-              payment: 93.750,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 12.50
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 12.50 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 12.50,
-              user_id: user_info.id
-            })
+        case 0: GotPlacement_CUTT_TO_ALL(
+          1,
+          125,
+          user_info.id,
+          Upgrades4,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 1:
-          //upgrade levels
-          await Upgrade.update({
-            level: 2,
-            upgrade: 281.250
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // // upradde transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 281.250,
-          //     user_id: user_info.id
-          //   })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 281.250,
-              user_id: user_info.id
-            })
+        case 1: GotPlacement_CUTT_TO_ALL(
+          2,
+          281.250,
+          user_info.id,
+          Upgrades4,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
 
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 56.250
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 56.250 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 70.313,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 196.875
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 196.875 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 210.938,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 28.125
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 28.125 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 28.125,
-              user_id: user_info.id
-            })
           break
-        case 2:
-          //upgrade levels
-          await Upgrade.update({
-            level: 3,
-            upgrade: 632.813
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // // upradde transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 632.813,
-          //     user_id: user_info.id
-          //   })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 632.813,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 126.563
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 126.563 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 158.203,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 442.969
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 442.969 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 474.609,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 63.281
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 63.281 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 63.281,
-              user_id: user_info.id
-            })
+        case 2: GotPlacement_CUTT_TO_ALL(
+          3,
+          632.813,
+          user_info.id,
+          Upgrades4,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 3:
-          //upgrade levels
-          await Upgrade.update({
-            level: 4,
-            upgrade: 1423.828
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // // upradde transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 1423.828,
-          //     user_id: user_info.id
-          //   })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 1423.828,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 284.766
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 284.766 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 355.957,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 996.680
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 996.680 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 1067.871,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 142.383
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 142.383 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 142.383,
-              user_id: user_info.id
-            })
+        case 3: GotPlacement_CUTT_TO_ALL(
+          4,
+          1423.28,
+          user_info.id,
+          Upgrades4,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 4:
-          //upgrade levels
-          await Upgrade.update({
-            level: 5,
-            upgrade: 3203.613
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // // upradde transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 3203.613,
-          //     user_id: user_info.id
-          //   })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 3203.613,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 640.723
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 640.723 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 800.903,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 2242.529
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 2242.529 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 2402.710,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 320.361
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 320.361 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 320.361,
-              user_id: user_info.id
-            })
+        case 4: GotPlacement_CUTT_TO_ALL(
+          5,
+          3203.613,
+          user_info.id,
+          Upgrades4,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 5:
-          //upgrade levels
-          await Upgrade.update({
-            level: 6,
-            upgrade: 7208.130
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // // upradde transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 7208.130,
-          //     user_id: user_info.id
-          //   })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 7208.130,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 1441.626
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 1441.626 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 1802.032,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 5045.691
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 5045.691 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 5406.097,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 720.813
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 720.813 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 720.813,
-              user_id: user_info.id
-            })
+        case 5: GotPlacement_CUTT_TO_ALL(
+          6,
+          7208.130,
+          user_info.id,
+          Upgrades4,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 6:
-          //upgrade levels
-          await Upgrade.update({
-            level: 7,
-            upgrade: 16218.292
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // // upradde transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 16218.292,
-          //     user_id: user_info.id
-          //   })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 16218.292,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 3243.658
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 3243.658 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 4054.573,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 11352.805
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 11352.805 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 12163.719,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 1621.829
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 1621.829 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 1621.829,
-              user_id: user_info.id
-            })
+        case 6: GotPlacement_CUTT_TO_ALL(
+          7,
+          16218.292,
+          user_info.id,
+          Upgrades4,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 7:
+        case 7: GotPlacement_CUTT_TO_ALL(
+          8,
+          36491.158,
+          user_info.id,
+          Upgrades4,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           //upgrade levels
           await Upgrade.update({
             level: 8,
@@ -1510,679 +1040,152 @@ const Upgrades = async (req, res) => {
       Placement_Upgrade.push(placements[i]);
     }
     placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level >= Selected.Upgrade.level);
-    // res.json(placement_check)
-    // return false
 
-    // user ka level
     if (placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
-        case 0:
-          //upgrade levels
-          await Upgrade.update({
-            level: 1,
-            upgrade: 12.5
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 12.5,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 2.5
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 2.5 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 3.125,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 1.250 + 8.75
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 1.250 + 8.75 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 1.250,
-              user_id: user_info.id
-            })
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Placementforadminfrom,
-              payment: 8.75,
-              user_id: user_info.id
-            })
-
+        case 0: No_placement_CUTT_TO_ALL(
+          1,
+          12.5,
+          user_info.id,
+          Upgrades1,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 1:
-          //upgrade levels
-          await Upgrade.update({
-            level: 2,
-            upgrade: 28.125
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 28.125,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 5.625
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 12.656 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 7.031,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 2.813
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 6.382 + 44.297 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 2.813,
-              user_id: user_info.id
-            })
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Placementforadminfrom,
-              payment: 19.688,
-              user_id: user_info.id
-            })
+        case 1: No_placement_CUTT_TO_ALL(
+          2,
+          28.125,
+          user_info.id,
+          Upgrades1,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 2:
-          //upgrade levels
-          await Upgrade.update({
-            level: 3,
-            upgrade: 63.281
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 63.281,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 12.656
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 12.656 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 15.820,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 6.328 + 44.297
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 6.328 + 44.297 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 6.328,
-              user_id: user_info.id
-            })
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Placementforadminfrom,
-              payment: 44.297,
-              user_id: user_info.id
-            })
+        case 2: No_placement_CUTT_TO_ALL(
+          3,
+          63.281,
+          user_info.id,
+          Upgrades1,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 3:
-          //upgrade levels
-          await Upgrade.update({
-            level: 4,
-            upgrade: 142.383
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 142.383,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 82.47
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 82.47 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 35.596,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 41.238 + 99.668
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 41.238 + 99.668 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 41.238,
-              user_id: user_info.id
-            })
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Placementforadminfrom,
-              payment: 99.668,
-              user_id: user_info.id
-            })
+        case 3: No_placement_CUTT_TO_ALL(
+          4,
+          142.383,
+          user_info.id,
+          Upgrades1,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 4:
-          //upgrade levels
-          await Upgrade.update({
-            level: 5,
-            upgrade: 320.361
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 320.361,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 64.072
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 64.072 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 80.090,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 32.036 + 224.253
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 32.036 + 224.253 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 32.036,
-              user_id: user_info.id
-            })
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Placementforadminfrom,
-              payment: 224.253,
-              user_id: user_info.id
-            })
+        case 4: No_placement_CUTT_TO_ALL(
+          5,
+          320.361,
+          user_info.id,
+          Upgrades1,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 5:
-          //upgrade levels
-          await Upgrade.update({
-            level: 6,
-            upgrade: 720.813
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 720.813,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 144.163
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 144.163 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 180.203,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 72.081 + 504.569
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 72.081 + 504.569 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 72.081,
-              user_id: user_info.id
-            })
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Placementforadminfrom,
-              payment: 504.569,
-              user_id: user_info.id
-            })
+        case 5: No_placement_CUTT_TO_ALL(
+          6,
+          720.813,
+          user_info.id,
+          Upgrades1,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 6:
-          //upgrade levels
-          await Upgrade.update({
-            level: 7,
-            upgrade: 1621.829
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 1621.829,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 324.366
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 324.366 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 405.457,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 162.183 + 1135.280
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 162.183 + 1135.280 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 162.183,
-              user_id: user_info.id
-            })
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Placementforadminfrom,
-              payment: 1135.280,
-              user_id: user_info.id
-            })
+        case 6: No_placement_CUTT_TO_ALL(
+          7,
+          1621.829,
+          user_info.id,
+          Upgrades1,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 7:
-          //upgrade levels
-          await Upgrade.update({
-            level: 8,
-            upgrade: 3649.116
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 3649.116,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 729.823
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 729.823 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 912.279,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 364.912 + 2554.381
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 364.912 + 2554.381 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 364.912,
-              user_id: user_info.id
-            })
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Placementforadminfrom,
-              payment: 2554.381,
-              user_id: user_info.id
-            })
+        case 7: No_placement_CUTT_TO_ALL(
+          8,
+          3649.116,
+          user_info.id,
+          Upgrades1,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
         default:
           // Handle the default case if needed
@@ -2192,509 +1195,113 @@ const Upgrades = async (req, res) => {
     }
     else {
       switch (Selected.Upgrade.level) {
-        case 0:
-          //upgrade levels
-          await Upgrade.update({
-            level: 1,
-            upgrade: 12.5
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 12.5,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 2.5
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 2.5 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 3.125,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 8.75
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 8.75 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_pay,
-              payment: 9.375,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 1.250
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 1.250 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 1.250,
-              user_id: user_info.id
-            })
+        case 0: GotPlacement_CUTT_TO_ALL(
+          1,
+          12.5,
+          user_info.id,
+          Upgrades1,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 1:
-          //upgrade levels
-          await Upgrade.update({
-            level: 2,
-            upgrade: 28.125
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 28.125,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 5.625
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 5.625 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 7.031,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 19.688
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 19.688 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_pay,
-              payment: 21.094,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 2.813
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 2.813 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 2.813,
-              user_id: user_info.id
-            })
+        case 1: GotPlacement_CUTT_TO_ALL(
+          2,
+          28.125,
+          user_info.id,
+          Upgrades1,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 2:
-          //upgrade levels
-          await Upgrade.update({
-            level: 3,
-            upgrade: 63.281
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 63.281,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 12.656
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 12.656 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 15.820,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 44.297
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 44.297 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_pay,
-              payment: 47.461,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 6.328
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 6.328 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 6.328,
-              user_id: user_info.id
-            })
+        case 2: GotPlacement_CUTT_TO_ALL(
+          3,
+          63.281,
+          user_info.id,
+          Upgrades1,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 3:
-          //upgrade levels
-          await Upgrade.update({
-            level: 4,
-            upgrade: 142.383
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 142.383,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 28.47
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 28.47 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 35.596,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 99.668
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 99.668 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 106.787,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 41.238
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 41.238 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 41.238,
-              user_id: user_info.id
-            })
+        case 3: GotPlacement_CUTT_TO_ALL(
+          4,
+          142.383,
+          user_info.id,
+          Upgrades1,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 4:
-          //upgrade levels
-          await Upgrade.update({
-            level: 5,
-            upgrade: 320.361
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 320.361,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 64.072
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 64.072 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 80.090,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 224.253
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 224.253 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 240.271,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 32.036
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 32.036 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 32.036,
-              user_id: user_info.id
-            })
+        case 4: GotPlacement_CUTT_TO_ALL(
+          5,
+          320.361,
+          user_info.id,
+          Upgrades1,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 5:
+        case 5: GotPlacement_CUTT_TO_ALL(
+          6,
+          720.813,
+          user_info.id,
+          Upgrades1,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           //upgrade levels
           await Upgrade.update({
             level: 6,
@@ -2795,207 +1402,41 @@ const Upgrades = async (req, res) => {
               user_id: user_info.id
             })
           break
-        case 6:
-          //upgrade levels
-          await Upgrade.update({
-            level: 7,
-            upgrade: 1621.829
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 1621.829,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 324.366
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 324.366 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 405.457,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 1135.280
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 1135.280 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 1216.372,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 162.183
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 162.183 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 162.183,
-              user_id: user_info.id
-            })
+        case 6: GotPlacement_CUTT_TO_ALL(
+          7,
+          1621.829,
+          user_info.id,
+          Upgrades1,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 7:
-          //upgrade levels
-          await Upgrade.update({
-            level: 8,
-            upgrade: 3649.116
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 3649.116,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 729.823
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 729.823 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 912.279,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 2554.381
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 2554.381 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 2736.837,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 364.912
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 364.912 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 364.912,
-              user_id: user_info.id
-            })
+        case 7: GotPlacement_CUTT_TO_ALL(
+          8,
+          3649.116,
+          user_info.id,
+          Upgrades1,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
         default:
           // Handle the default case if needed
@@ -3012,674 +1453,149 @@ const Upgrades = async (req, res) => {
     //user ka level
     if (placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
-        case 0:
-          //upgrade levels
-          await Upgrade.update({
-            level: 1,
-            upgrade: 25
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 25,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 25,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 5.0
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 5.0 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 6.250,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 2.500 + 17.500
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 2.500 + 17.500 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 2.500 + 17.500,
-              user_id: user_info.id
-            })
+        case 0: No_placement_CUTT_TO_ALL(
+          1,
+          25,
+          user_info.id,
+          Upgrades2,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 1:
-          //upgrade levels
-          await Upgrade.update({
-            level: 2,
-            upgrade: 56.250
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 56.250,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 56.250,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 11.250
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 11.250 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 14.063,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 5.625 + 39.375
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 5.625 + 39.375 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 5.625 + 39.375,
-              user_id: user_info.id
-            })
+        case 1: No_placement_CUTT_TO_ALL(
+          2,
+          56.250,
+          user_info.id,
+          Upgrades2,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 2:
-          //upgrade levels
-          await Upgrade.update({
-            level: 3,
-            upgrade: 126.563
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 126.563,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 126.563,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 25.313
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 25.313 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 31.641,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 12.656 + 88.594
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 12.656 + 88.594 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 12.656 + 88.594,
-              user_id: user_info.id
-            })
+        case 2: No_placement_CUTT_TO_ALL(
+          3,
+          126.563,
+          user_info.id,
+          Upgrades2,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 3:
-          //upgrade levels
-          await Upgrade.update({
-            level: 4,
-            upgrade: 284.766
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 284.766,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 284.766,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 56.953
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 56.953 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 71.191,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 28.477 + 199.336
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 28.477 + 199.336 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 28.477 + 199.336,
-              user_id: user_info.id
-            })
+        case 3: No_placement_CUTT_TO_ALL(
+          4,
+          284.766,
+          user_info.id,
+          Upgrades2,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 4:
-          //upgrade levels
-          await Upgrade.update({
-            level: 5,
-            upgrade: 640.723
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 640.723,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 640.723,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 128.145
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 128.145 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 160.181,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 64.072 + 448.506
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 64.072 + 448.506 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 64.072 + 448.506,
-              user_id: user_info.id
-            })
+        case 4: No_placement_CUTT_TO_ALL(
+          5,
+          640.723,
+          user_info.id,
+          Upgrades2,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 5:
-          //upgrade levels
-          await Upgrade.update({
-            level: 6,
-            upgrade: 1441.626
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 1441.626,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 1441.626,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 288.325
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 288.325 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 360.406,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 144.163 + 1009.138
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 144.163 + 1009.138 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 144.163 + 1009.138,
-              user_id: user_info.id
-            })
+        case 5: No_placement_CUTT_TO_ALL(
+          6,
+          1441.626,
+          user_info.id,
+          Upgrades2,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 6:
-          //upgrade levels
-          await Upgrade.update({
-            level: 7,
-            upgrade: 3243.658
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 3243.658,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 3243.658,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 648.732
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 648.732 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 810.915,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 324.366 + 2270.561
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 324.366 + 2270.561 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 324.366 + 2270.561,
-              user_id: user_info.id
-            })
+        case 6: No_placement_CUTT_TO_ALL(
+          7,
+          3243.658,
+          user_info.id,
+          Upgrades2,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 7:
-          //upgrade levels
-          await Upgrade.update({
-            level: 8,
-            upgrade: 7298.232
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 7298.232,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 7298.232,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 1459.646
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 1459.646 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 1824.558,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 729.823 + 5108.762
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 729.823 + 5108.762 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 729.823 + 5108.762,
-              user_id: user_info.id
-            })
+        case 7: No_placement_CUTT_TO_ALL(
+          8,
+          7298.232,
+          user_info.id,
+          Upgrades2,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
         default:
           // Handle the default case if needed
@@ -3689,882 +1605,149 @@ const Upgrades = async (req, res) => {
     }
     else {
       switch (Selected.Upgrade.level) {
-        case 0:
-          //upgrade levels
-          await Upgrade.update({
-            level: 1,
-            upgrade: 25
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 25,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 25,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 5.0
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 5.0 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 6.250,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 17.500
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 17.500 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_pay,
-              payment: 18.750,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 2.500
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 2.500 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 2.500,
-              user_id: user_info.id
-            })
+        case 0: GotPlacement_CUTT_TO_ALL(
+          1,
+          25,
+          user_info.id,
+          Upgrades2,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 1:
-          //upgrade levels
-          await Upgrade.update({
-            level: 2,
-            upgrade: 56.250
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 56.250,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 56.250,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 11.250
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 11.250 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 14.063,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 39.375
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 39.375 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_pay,
-              payment: 42.188,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 5.625
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 5.625 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 5.625,
-              user_id: user_info.id
-            })
+        case 1: GotPlacement_CUTT_TO_ALL(
+          2,
+          56.250,
+          user_info.id,
+          Upgrades2,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 2:
-          //upgrade levels
-          await Upgrade.update({
-            level: 3,
-            upgrade: 126.563
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 126.563,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 126.563,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 25.313
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 25.313 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 31.641,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 88.594
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 88.594 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_pay,
-              payment: 94.922,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 12.656
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 12.656 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 12.656,
-              user_id: user_info.id
-            })
+        case 2: GotPlacement_CUTT_TO_ALL(
+          3,
+          126.563,
+          user_info.id,
+          Upgrades2,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 3:
-          //upgrade levels
-          await Upgrade.update({
-            level: 4,
-            upgrade: 284.766
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 284.766,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 284.766,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 56.953
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 56.953 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 71.191,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 199.336
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 199.336 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 213.574,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 28.477
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 28.477 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 28.477,
-              user_id: user_info.id
-            })
+        case 3: GotPlacement_CUTT_TO_ALL(
+          4,
+          284.766,
+          user_info.id,
+          Upgrades2,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 4:
-          //upgrade levels
-          await Upgrade.update({
-            level: 5,
-            upgrade: 640.723
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 640.723,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 640.723,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 128.145
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 128.145 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 160.181,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 448.506
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 448.506 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 480.542,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 64.072
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 64.072 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 64.072,
-              user_id: user_info.id
-            })
+        case 4: GotPlacement_CUTT_TO_ALL(
+          5,
+          640.723,
+          user_info.id,
+          Upgrades2,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 5:
-          //upgrade levels
-          await Upgrade.update({
-            level: 6,
-            upgrade: 1441.626
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 1441.626,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 1441.626,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 288.325
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 288.325 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 360.406,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 1009.138
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 1009.138 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 1081.219,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 144.163
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 144.163 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 144.163,
-              user_id: user_info.id
-            })
+        case 5: GotPlacement_CUTT_TO_ALL(
+          6,
+          1441.626,
+          user_info.id,
+          Upgrades2,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 6:
-          //upgrade levels
-          await Upgrade.update({
-            level: 7,
-            upgrade: 3243.658
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 3243.658,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 3243.658,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 648.732
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 648.732 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 810.915,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 2270.561
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 2270.561 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 2432.744,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 324.366
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 324.366 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 324.366,
-              user_id: user_info.id
-            })
+        case 6: GotPlacement_CUTT_TO_ALL(
+          7,
+          3243.658,
+          user_info.id,
+          Upgrades2,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 7:
-          //upgrade levels
-          await Upgrade.update({
-            level: 8,
-            upgrade: 7298.232
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 7298.232,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 7298.232,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 1459.646
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 1459.646 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 1824.558,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 5108.762
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 5108.762 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 5473.674,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 729.823
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 729.823 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 729.823,
-              user_id: user_info.id
-            })
+        case 7: GotPlacement_CUTT_TO_ALL(
+          8,
+          7298.232,
+          user_info.id,
+          Upgrades2,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
         default:
           // Handle the default case if needed
@@ -4581,674 +1764,149 @@ const Upgrades = async (req, res) => {
     //user ka level
     if (placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
-        case 0:
-          //upgrade levels
-          await Upgrade.update({
-            level: 1,
-            upgrade: 62.500
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 62.500,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 62.500,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 12.500
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 12.500 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 15.625,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 6.250 + 43.750
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 6.250 + 43.750 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 6.250 + 43.750,
-              user_id: user_info.id
-            })
+        case 0: No_placement_CUTT_TO_ALL(
+          1,
+          62.500,
+          user_info.id,
+          Upgrades3,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 1:
-          //upgrade levels
-          await Upgrade.update({
-            level: 2,
-            upgrade: 140.625
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 140.625,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 140.625,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 28.125
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 28.125 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 35.156,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 14.063 + 98.438
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 14.063 + 98.438 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 14.063 + 98.438,
-              user_id: user_info.id
-            })
+        case 1: No_placement_CUTT_TO_ALL(
+          2,
+          140.625,
+          user_info.id,
+          Upgrades3,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 2:
-          //upgrade levels
-          await Upgrade.update({
-            level: 3,
-            upgrade: 316.406
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 316.406,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 316.406,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 63.281
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 63.281 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 79.105,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 31.641 + 22.484
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 31.641 + 22.484 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 31.641 + 22.484,
-              user_id: user_info.id
-            })
+        case 2: No_placement_CUTT_TO_ALL(
+          3,
+          316.406,
+          user_info.id,
+          Upgrades3,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 3:
-          //upgrade levels
-          await Upgrade.update({
-            level: 4,
-            upgrade: 711.914
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 711.914,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 711.914,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 142.383
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 142.383 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 177.979,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 71.191 + 498.940
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 71.191 + 498.940 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 71.191 + 498.940,
-              user_id: user_info.id
-            })
+        case 3: No_placement_CUTT_TO_ALL(
+          4,
+          711.914,
+          user_info.id,
+          Upgrades3,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 4:
-          //upgrade levels
-          await Upgrade.update({
-            level: 5,
-            upgrade: 1601.807
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 1601.807,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 1601.807,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 320.361
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 320.361 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 400.452,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 160.181 + 1121.265
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 160.181 + 1121.265 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 160.181 + 1121.265,
-              user_id: user_info.id
-            })
+        case 4: No_placement_CUTT_TO_ALL(
+          5,
+          1601.807,
+          user_info.id,
+          Upgrades3,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 5:
-          //upgrade levels
-          await Upgrade.update({
-            level: 6,
-            upgrade: 3604.065
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 3604.065,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 3604.065,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 7205.813
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 7205.813 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 901.016,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 360.406 + 2522.845
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 360.406 + 2522.845 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 360.406 + 2522.845,
-              user_id: user_info.id
-            })
+        case 5: No_placement_CUTT_TO_ALL(
+          6,
+          3604.065,
+          user_info.id,
+          Upgrades3,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 6:
-          //upgrade levels
-          await Upgrade.update({
-            level: 7,
-            upgrade: 8109.146
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 8109.146,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 8109.146,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 5676.402
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 5676.402 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 2027.287,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 810.915 + 11352.80
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 810.915 + 11352.80 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 810.915 + 11352.80,
-              user_id: user_info.id
-            })
+        case 6: No_placement_CUTT_TO_ALL(
+          7,
+          8109.146,
+          user_info.id,
+          Upgrades3,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 7:
-          //upgrade levels
-          await Upgrade.update({
-            level: 8,
-            upgrade: 18245.579
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 18245.579,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 18245.579,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 3649.116
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 3649.116 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 4561.395,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 1824.558 + 12771.905
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 1824.558 + 12771.905 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 1824.558 + 12771.905,
-              user_id: user_info.id
-            })
+        case 7: No_placement_CUTT_TO_ALL(
+          8,
+          18245.579,
+          user_info.id,
+          Upgrades3,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
         default:
           // Handle the default case if needed
@@ -5258,882 +1916,149 @@ const Upgrades = async (req, res) => {
     }
     else {
       switch (Selected.Upgrade.level) {
-        case 0:
-          //upgrade levels
-          await Upgrade.update({
-            level: 1,
-            upgrade: 62.500
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 62.500,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 62.500,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 12.500
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 12.500 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 15.625,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 43.750
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 43.750 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_pay,
-              payment: 46.875,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 6.250
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 6.250 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 6.250,
-              user_id: user_info.id
-            })
+        case 0: GotPlacement_CUTT_TO_ALL(
+          1,
+          62.500,
+          user_info.id,
+          Upgrades3,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 1:
-          //upgrade levels
-          await Upgrade.update({
-            level: 2,
-            upgrade: 140.625
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 140.625,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 140.625,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 28.125
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 28.125 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 35.156,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 98.438
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 98.438 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_pay,
-              payment: 105.469,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 14.063
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 14.063 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 14.063,
-              user_id: user_info.id
-            })
+        case 1: GotPlacement_CUTT_TO_ALL(
+          2,
+          140.625,
+          user_info.id,
+          Upgrades3,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 2:
-          //upgrade levels
-          await Upgrade.update({
-            level: 3,
-            upgrade: 316.406
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 316.406,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 316.406,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 63.281
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 63.281 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 79.105,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 22.484
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 22.484 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_pay,
-              payment: 237.305,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 31.641
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 31.641 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 31.641,
-              user_id: user_info.id
-            })
+        case 2: GotPlacement_CUTT_TO_ALL(
+          3,
+          316.406,
+          user_info.id,
+          Upgrades3,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 3:
-          //upgrade levels
-          await Upgrade.update({
-            level: 4,
-            upgrade: 711.914
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 711.914,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 711.914,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 142.383
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 142.383 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 177.979,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 498.940
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 498.940 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 533.936,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 71.191
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 71.191 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 71.191,
-              user_id: user_info.id
-            })
+        case 3: GotPlacement_CUTT_TO_ALL(
+          4,
+          711.914,
+          user_info.id,
+          Upgrades3,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 4:
-          //upgrade levels
-          await Upgrade.update({
-            level: 5,
-            upgrade: 1601.807
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 1601.807,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 1601.807,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 320.361
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 320.361 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 400.452,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 1121.265
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 1121.265 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 1201.355,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 160.181
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 160.181 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 160.181,
-              user_id: user_info.id
-            })
+        case 4: GotPlacement_CUTT_TO_ALL(
+          5,
+          1601.807,
+          user_info.id,
+          Upgrades3,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 5:
-          //upgrade levels
-          await Upgrade.update({
-            level: 6,
-            upgrade: 3604.065
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 3604.065,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 3604.065,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 7205.813
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 7205.813 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 901.016,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 2883.252
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 2883.252 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 2703.049,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 360.406
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 360.406 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 360.406,
-              user_id: user_info.id
-            })
+        case 5: GotPlacement_CUTT_TO_ALL(
+          6,
+          3604.065,
+          user_info.id,
+          Upgrades3,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 6:
-          //upgrade levels
-          await Upgrade.update({
-            level: 7,
-            upgrade: 8109.146
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 8109.146,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 8109.146,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 5676.402
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 5676.402 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 2027.287,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 11352.80
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 11352.80 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 6081.860,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 810.915
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 810.915 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 810.915,
-              user_id: user_info.id
-            })
+        case 6: GotPlacement_CUTT_TO_ALL(
+          7,
+          8109.146,
+          user_info.id,
+          Upgrades3,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 7:
-          //upgrade levels
-          await Upgrade.update({
-            level: 8,
-            upgrade: 18245.579
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 18245.579,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 18245.579,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 3649.116
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 3649.116 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 4561.395,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 12771.905
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 12771.905 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 13684.184,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 1824.558
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 1824.558 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 1824.558,
-              user_id: user_info.id
-            })
+        case 7: GotPlacement_CUTT_TO_ALL(
+          8,
+          18245.579,
+          user_info.id,
+          Upgrades3,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
         default:
           // Handle the default case if needed
@@ -6150,674 +2075,149 @@ const Upgrades = async (req, res) => {
     //user ka level
     if (placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
-        case 0:
-          //upgrade levels
-          await Upgrade.update({
-            level: 1,
-            upgrade: 250
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 250,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 250,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 50
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 50 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 62.500,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 25.00 + 175.00
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 25.00 + 175.00 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 25.00 + 175.00,
-              user_id: user_info.id
-            })
+        case 0: No_placement_CUTT_TO_ALL(
+          1,
+          250,
+          user_info.id,
+          Upgrades5,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 1:
-          //upgrade levels
-          await Upgrade.update({
-            level: 2,
-            upgrade: 281.250
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 281.250,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 281.250,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 112.500
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 112.500 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 140.625,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 56.250 + 393.750
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 56.250 + 393.750 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 56.250 + 393.750,
-              user_id: user_info.id
-            })
+        case 1: No_placement_CUTT_TO_ALL(
+          2,
+          281.250,
+          user_info.id,
+          Upgrades5,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 2:
-          //upgrade levels
-          await Upgrade.update({
-            level: 3,
-            upgrade: 632.813
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 632.813,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 632.813,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 253.125
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 253.125 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 361.409,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 126.563 + 885.338
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 126.563 + 885.338 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 126.563 + 885.338,
-              user_id: user_info.id
-            })
+        case 2: No_placement_CUTT_TO_ALL(
+          3,
+          632.813,
+          user_info.id,
+          Upgrades5,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 3:
-          //upgrade levels
-          await Upgrade.update({
-            level: 4,
-            upgrade: 1423.828
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 1423.828,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 1423.828,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 569.531
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 569.531 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 711.914,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 284.766 + 1993.359
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 284.766 + 1993.359 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 284.766 + 1993.359,
-              user_id: user_info.id
-            })
+        case 3: No_placement_CUTT_TO_ALL(
+          4,
+          1423.828,
+          user_info.id,
+          Upgrades5,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 4:
-          //upgrade levels
-          await Upgrade.update({
-            level: 5,
-            upgrade: 3203.613
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 3203.613,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 3203.613,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 1281.445
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 1281.445 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 1601.807,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 640.723 + 4485.059
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 640.723 + 4485.059 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 640.723 + 4485.059,
-              user_id: user_info.id
-            })
+        case 4: No_placement_CUTT_TO_ALL(
+          5,
+          3203.613,
+          user_info.id,
+          Upgrades5,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 5:
-          //upgrade levels
-          await Upgrade.update({
-            level: 6,
-            upgrade: 7208.130
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 7208.130,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 7208.130,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 2883.252
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 2883.252 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 3604.065,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 1441.626 + 10091.382
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 1441.626 + 10091.382 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 1441.626 + 10091.382,
-              user_id: user_info.id
-            })
+        case 5: No_placement_CUTT_TO_ALL(
+          6,
+          7208.130,
+          user_info.id,
+          Upgrades5,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 6:
-          //upgrade levels
-          await Upgrade.update({
-            level: 7,
-            upgrade: 16218.292
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 16218.292,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 16218.292,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 6487.317
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 6487.317 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 8109.146,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 3243.658 + 22705.609
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 3243.658 + 22705.609 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 3243.658 + 22705.609,
-              user_id: user_info.id
-            })
+        case 6: No_placement_CUTT_TO_ALL(
+          7,
+          16218.292,
+          user_info.id,
+          Upgrades5,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 7:
-          //upgrade levels
-          await Upgrade.update({
-            level: 8,
-            upgrade: 36491.158
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 36491.158,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 36491.158,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 14596.463
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 14596.463 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 18245.579,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 7298.232 + 51087.621
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 7298.232 + 51087.621 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 7298.232 + 51087.621,
-              user_id: user_info.id
-            })
+        case 7: No_placement_CUTT_TO_ALL(
+          8,
+          36491.158,
+          user_info.id,
+          Upgrades5,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
         default:
           // Handle the default case if needed
@@ -6827,883 +2227,149 @@ const Upgrades = async (req, res) => {
     }
     else {
       switch (Selected.Upgrade.level) {
-        case 0:
-          //upgrade levels
-          await Upgrade.update({
-            level: 1,
-            upgrade: 250
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 250,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 250,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 50
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 50 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 62.500,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 175.00
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 175.00 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_pay,
-              payment: 187.500,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 25.00
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 25.00 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 25.00,
-              user_id: user_info.id
-            })
+        case 0: GotPlacement_CUTT_TO_ALL(
+          1,
+          250,
+          user_info.id,
+          Upgrades5,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 1:
-          //upgrade levels
-          await Upgrade.update({
-            level: 2,
-            upgrade: 281.250
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 281.250,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 281.250,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 112.500
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 112.500 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 140.625,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 393.750
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 393.750 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_pay,
-              payment: 421.875,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 56.250
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 56.250 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 56.250,
-              user_id: user_info.id
-            })
+        case 1: GotPlacement_CUTT_TO_ALL(
+          2,
+          281.250,
+          user_info.id,
+          Upgrades5,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 2:
-          //upgrade levels
-          await Upgrade.update({
-            level: 3,
-            upgrade: 632.813
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 632.813,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 632.813,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 253.125
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 253.125 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 361.409,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 885.338
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 885.338 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_pay,
-              payment: 949.219,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 126.563
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 126.563 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 126.563,
-              user_id: user_info.id
-            })
+        case 2: GotPlacement_CUTT_TO_ALL(
+          3,
+          632.813,
+          user_info.id,
+          Upgrades5,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 3:
-          //upgrade levels
-          await Upgrade.update({
-            level: 4,
-            upgrade: 1423.828
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 1423.828,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 1423.828,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 569.531
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 569.531 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 711.914,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 1993.359
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 1993.359 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 2135.742,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 284.766
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 284.766 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 284.766,
-              user_id: user_info.id
-            })
+        case 3: GotPlacement_CUTT_TO_ALL(
+          4,
+          1423.828,
+          user_info.id,
+          Upgrades5,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 4:
-          //upgrade levels
-          await Upgrade.update({
-            level: 5,
-            upgrade: 3203.613
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 3203.613,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 3203.613,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 1281.445
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 1281.445 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 1601.807,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 4485.059
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 4485.059 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 4805.420,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 640.723
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 640.723 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 640.723,
-              user_id: user_info.id
-            })
+        case 4: GotPlacement_CUTT_TO_ALL(
+          5,
+          3203.613,
+          user_info.id,
+          Upgrades5,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 5:
-          //upgrade levels
-          await Upgrade.update({
-            level: 6,
-            upgrade: 7208.130
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 7208.130,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 7208.130,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 2883.252
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 2883.252 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 3604.065,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 10091.382
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 10091.382 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 10812.195,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 1441.626
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 1441.626 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 1441.626,
-              user_id: user_info.id
-            })
+        case 5: GotPlacement_CUTT_TO_ALL(
+          6,
+          7208.130,
+          user_info.id,
+          Upgrades5,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 6:
-          //upgrade levels
-          await Upgrade.update({
-            level: 7,
-            upgrade: 16218.292
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 16218.292,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 16218.292,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 6487.317
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 6487.317 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 8109.146,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 22705.609
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 22705.609 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 24327.438,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 3243.658
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 3243.658 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 3243.658,
-              user_id: user_info.id
-            })
+        case 6: GotPlacement_CUTT_TO_ALL(
+          7,
+          16218.292,
+          user_info.id,
+          Upgrades5,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 7:
-          //upgrade levels
-          await Upgrade.update({
-            level: 8,
-            upgrade: 36491.158
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 36491.158,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 36491.158,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 14596.463
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 14596.463 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 18245.579,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 51087.621
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 51087.621 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 54736.736,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 7298.232
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 7298.232 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 7298.232,
-              user_id: user_info.id
-            })
+        case 7: GotPlacement_CUTT_TO_ALL(
+          8,
+          36491.158,
+          user_info.id,
+          Upgrades5,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
         default:
           // Handle the default case if needed
@@ -7720,674 +2386,149 @@ const Upgrades = async (req, res) => {
     //user ka level
     if (placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
-        case 0:
-          //upgrade levels
-          await Upgrade.update({
-            level: 1,
-            upgrade: 437.500
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 437.500,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 437.500,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 87.500
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 87.500 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 109.375,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 43.750 + 306.250
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 43.750 + 306.250 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 43.750 + 306.250,
-              user_id: user_info.id
-            })
+        case 0: No_placement_CUTT_TO_ALL(
+          1,
+          437.500,
+          user_info.id,
+          Upgrades6,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 1:
-          //upgrade levels
-          await Upgrade.update({
-            level: 2,
-            upgrade: 984.375
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 984.375,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 984.375,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 196.875
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 196.875 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 246.094,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 98.438 + 689.063
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 98.438 + 689.063 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 98.438 + 689.063,
-              user_id: user_info.id
-            })
+        case 1: No_placement_CUTT_TO_ALL(
+          2,
+          984.375,
+          user_info.id,
+          Upgrades6,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 2:
-          //upgrade levels
-          await Upgrade.update({
-            level: 3,
-            upgrade: 2214.844
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 2214.844,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 2214.844,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 442.969
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 442.969 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 553.711,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 221.484 + 1550.391
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 221.484 + 1550.391 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 221.484 + 1550.391,
-              user_id: user_info.id
-            })
+        case 2: No_placement_CUTT_TO_ALL(
+          3,
+          2214.844,
+          user_info.id,
+          Upgrades6,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 3:
-          //upgrade levels
-          await Upgrade.update({
-            level: 4,
-            upgrade: 4983.398
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 4983.398,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 4983.398,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 996.680
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 996.680 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 1245.850,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 498.340 + 3488.379
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 498.340 + 3488.379 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 498.340 + 3488.379,
-              user_id: user_info.id
-            })
+        case 3: No_placement_CUTT_TO_ALL(
+          4,
+          4983.398,
+          user_info.id,
+          Upgrades6,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 4:
-          //upgrade levels
-          await Upgrade.update({
-            level: 5,
-            upgrade: 11212.646
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 11212.646,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 11212.646,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 2242.529
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 2242.529 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 2803.162,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 1121.265 + 7084.853
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 1121.265 + 7084.853 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 1121.265 + 7084.853,
-              user_id: user_info.id
-            })
+        case 4: No_placement_CUTT_TO_ALL(
+          5,
+          11212.646,
+          user_info.id,
+          Upgrades6,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 5:
-          //upgrade levels
-          await Upgrade.update({
-            level: 6,
-            upgrade: 25228.455
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 25228.455,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 25228.455,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 5045.691
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 5045.691 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 6307.114,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 2522.845 + 17659.918
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 2522.845 + 17659.918 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 2522.845 + 17659.918,
-              user_id: user_info.id
-            })
+        case 5: No_placement_CUTT_TO_ALL(
+          6,
+          25228.455,
+          user_info.id,
+          Upgrades6,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 6:
-          //upgrade levels
-          await Upgrade.update({
-            level: 7,
-            upgrade: 56764.023
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 56764.023,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 56764.023,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 11352.805
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 11352.805 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 14191.006,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 5676.402 + 39734.816
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 5676.402 + 39734.816 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 5676.402 + 39734.816,
-              user_id: user_info.id
-            })
+        case 6: No_placement_CUTT_TO_ALL(
+          7,
+          56764.023,
+          user_info.id,
+          Upgrades6,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
-        case 7:
-          //upgrade levels
-          await Upgrade.update({
-            level: 8,
-            upgrade: 127719.051
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 127719.051,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 127719.051,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 25543.810
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 25543.810 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 31929.763,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 12771.905 + 89403.336
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 12771.905 + 89403.336 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 12771.905 + 89403.336,
-              user_id: user_info.id
-            })
+        case 7: No_placement_CUTT_TO_ALL(
+          8,
+          127719.051,
+          user_info.id,
+          Upgrades6,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom,
+          Reff_pkg,
+          Placementforadminfrom
+        )
           break
         default:
           // Handle the default case if needed
@@ -8397,882 +2538,149 @@ const Upgrades = async (req, res) => {
     }
     else {
       switch (Selected.Upgrade.level) {
-        case 0:
-          //upgrade levels
-          await Upgrade.update({
-            level: 1,
-            upgrade: 437.500
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 437.500,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 437.500,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 87.500
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 87.500 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 109.375,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 306.250
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 306.250 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_pay,
-              payment: 328.125,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 43.750
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 43.750 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 43.750,
-              user_id: user_info.id
-            })
+        case 0: GotPlacement_CUTT_TO_ALL(
+          1,
+          437.500,
+          user_info.id,
+          Upgrades6,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 1:
-          //upgrade levels
-          await Upgrade.update({
-            level: 2,
-            upgrade: 984.375
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 984.375,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 984.375,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 196.875
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 196.875 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 246.094,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 689.063
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 689.063 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_pay,
-              payment: 738.281,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 98.438
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 98.438 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 98.438,
-              user_id: user_info.id
-            })
+        case 1: GotPlacement_CUTT_TO_ALL(
+          2,
+          984.375,
+          user_info.id,
+          Upgrades6,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 2:
-          //upgrade levels
-          await Upgrade.update({
-            level: 3,
-            upgrade: 2214.844
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // //upgrade levels transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_info.id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 2214.844,
-          //     user_id: user_info.id
-          //   })
-          //upgrade levels transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 2214.844,
-              user_id: user_info.id
-            })
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 442.969
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 442.969 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_pkg,
-              payment: 553.711,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 1550.391
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 1550.391 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_pay,
-              payment: 1661.133,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 221.484
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 221.484 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 221.484,
-              user_id: user_info.id
-            })
+        case 2: GotPlacement_CUTT_TO_ALL(
+          3,
+          2214.844,
+          user_info.id,
+          Upgrades6,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 3:
-          //upgrade levels
-          await Upgrade.update({
-            level: 4,
-            upgrade: 4983.398
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 4983.398,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 4983.398,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 996.680
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 996.680 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 1245.850,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 3488.379
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 3488.379 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 3737.549,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 498.340
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 498.340 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 498.340,
-              user_id: user_info.id
-            })
+        case 3: GotPlacement_CUTT_TO_ALL(
+          4,
+          4983.398,
+          user_info.id,
+          Upgrades6,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 4:
-          //upgrade levels
-          await Upgrade.update({
-            level: 5,
-            upgrade: 11212.646
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 11212.646,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 11212.646,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 2242.529
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 2242.529 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 2803.162,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 7084.853
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 7084.853 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 8409.485,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 1121.265
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 1121.265 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 1121.265,
-              user_id: user_info.id
-            })
+        case 4: GotPlacement_CUTT_TO_ALL(
+          5,
+          11212.646,
+          user_info.id,
+          Upgrades6,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 5:
-          //upgrade levels
-          await Upgrade.update({
-            level: 6,
-            upgrade: 25228.455
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 25228.455,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 25228.455,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 5045.691
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 5045.691 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 6307.114,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 17659.918
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 17659.918 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 18921.341,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 2522.845
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 2522.845 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 2522.845,
-              user_id: user_info.id
-            })
+        case 5: GotPlacement_CUTT_TO_ALL(
+          6,
+          25228.455,
+          user_info.id,
+          Upgrades6,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 6:
-          //upgrade levels
-          await Upgrade.update({
-            level: 7,
-            upgrade: 56764.023
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 56764.023,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 56764.023,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 11352.805
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 11352.805 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 14191.006,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 39734.816
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 39734.816 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 42513.017,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 5676.402
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 5676.402 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 5676.402,
-              user_id: user_info.id
-            })
+        case 6: GotPlacement_CUTT_TO_ALL(
+          7,
+          56764.023,
+          user_info.id,
+          Upgrades6,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
-        case 7:
-          //upgrade levels
-          await Upgrade.update({
-            level: 8,
-            upgrade: 127719.051
-          }, {
-            where:
-            {
-              user_id: user_info.id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Upgrade_pkg,
-              payment: 127719.051,
-              user_id: user_info.id
-            })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: user_info.id,
-              reason: Upgrade_pkg,
-              payment: 127719.051,
-              user_id: user_info.id
-            })
-
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 25543.810
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 25543.810 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 31929.763,
-              user_id: user_info.id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 89403.336
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 89403.336 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
-
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 95789.289,
-              user_id: user_info.id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 12771.905
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 12771.905 },
-            { where: { user_id: 1 } }
-          );
-
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_info.id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 12771.905,
-              user_id: user_info.id
-            })
+        case 7: GotPlacement_CUTT_TO_ALL(
+          8,
+          127719.051,
+          user_info.id,
+          Upgrades6,
+          findReff,
+          find_admin,
+          find_income,
+          adminWallet,
+          placement_check,
+          placement_pay,
+          transactionUpgradeToAdmin,
+          transactionFromReff,
+          AllTaxAdmin,
+          Upgrade_pkg,
+          Taxforadminfrom
+        )
           break
         default:
           // Handle the default case if needed
@@ -9283,7 +2691,7 @@ const Upgrades = async (req, res) => {
   }
 };
 
-const Upgrade_Snippet_CUTT_TO_ALL = async (
+const No_placement_CUTT_TO_ALL = async (
   level,
   Upgrade_Price,
   user_id,
@@ -9296,20 +2704,24 @@ const Upgrade_Snippet_CUTT_TO_ALL = async (
   transactionFromReff,
   AllTaxAdmin,
   Upgrade_pkg,
-  Taxforadminfrom
+  Taxforadminfrom,
+  Reff_pkg,
+  Placementforadminfrom
 ) => {
 
-  let IF_ONLY_ADMIN_CUTT, IF_ONLY_ADMIN_REFF_CUTT, IF_ONLY_ADMIN_Direct,IF_ONLY_ADMIN_placement
+  let IF_ONLY_ADMIN_CUTT_transaction, IF_ONLY_ADMIN_REFF_CUTT_transaction, IF_ONLY_ADMIN_Direct, IF_ONLY_ADMIN_placement
 
-  IF_ONLY_ADMIN_Direct = Upgrade_Price * 0.25
-  IF_ONLY_ADMIN_placement = Upgrade_Price * 0.75
-  IF_ONLY_ADMIN_CUTT = Upgrade_Price * 0.80
-  IF_ONLY_ADMIN_REFF_CUTT = Upgrade_Price * 0.20
+  IF_ONLY_ADMIN_Direct = Upgrade_Price * 0.20
+  IF_ONLY_ADMIN_placement = Upgrade_Price * 0.80
+
+  IF_ONLY_ADMIN_CUTT_transaction = Upgrade_Price * 0.80
+  IF_ONLY_ADMIN_REFF_CUTT_transaction = Upgrade_Price * 0.25
+
 
   //upgrade levels
   await Upgrade.update({
-    level: 1,
-    upgrade: 12.5
+    level,
+    upgrade: Upgrade_Price
   }, {
     where:
     {
@@ -9330,7 +2742,7 @@ const Upgrade_Snippet_CUTT_TO_ALL = async (
   //payment to referal
   await wallet.update(
     {
-      payment: findReff.wallet.payment + 2.5
+      payment: findReff.wallet.payment + IF_ONLY_ADMIN_Direct
     }
     ,
     {
@@ -9340,7 +2752,7 @@ const Upgrade_Snippet_CUTT_TO_ALL = async (
     })
   // payment in 
   await TotalIncome.update(
-    { income: find_income.income + 2.5 },
+    { income: find_income.income + IF_ONLY_ADMIN_Direct },
     { where: { user_id: findReff.id } }
   );
   //payment refferal transaction
@@ -9349,13 +2761,13 @@ const Upgrade_Snippet_CUTT_TO_ALL = async (
       from: user_id,
       to: findReff.id,
       reason: Reff_pkg,
-      payment: 3.125,
+      payment: IF_ONLY_ADMIN_REFF_CUTT_transaction,
       user_id: user_id
     })
   // admin wallet
   await wallet.update(
     {
-      payment: adminWallet.wallet.payment + IF_ONLY_ADMIN_CUTT
+      payment: adminWallet.wallet.payment + IF_ONLY_ADMIN_placement
     }
     ,
     {
@@ -9365,7 +2777,7 @@ const Upgrade_Snippet_CUTT_TO_ALL = async (
     })
   //admin total income
   await TotalIncome.update(
-    { income: find_admin.income + IF_ONLY_ADMIN_CUTT },
+    { income: find_admin.income + IF_ONLY_ADMIN_placement },
     { where: { user_id: 1 } }
   );
 
@@ -9375,7 +2787,7 @@ const Upgrade_Snippet_CUTT_TO_ALL = async (
       from: user_id,
       to: 1,
       reason: Taxforadminfrom,
-      payment: IF_ONLY_ADMIN_Direct,
+      payment: IF_ONLY_ADMIN_placement,
       user_id
     })
   // admin wallet transaction
@@ -9385,6 +2797,139 @@ const Upgrade_Snippet_CUTT_TO_ALL = async (
       to: 1,
       reason: Placementforadminfrom,
       payment: IF_ONLY_ADMIN_placement,
+      user_id
+    })
+
+}
+const GotPlacement_CUTT_TO_ALL = async (
+  level,
+  Upgrade_Price,
+  user_id,
+  pkg_price,
+  findReff,
+  find_admin,
+  find_income,
+  adminWallet,
+
+  placement_check,
+  placement_pay,
+
+  transactionUpgradeToAdmin,
+  transactionFromReff,
+  AllTaxAdmin,
+  Upgrade_pkg,
+  Taxforadminfrom
+) => {
+
+  let IF_ONLY_ADMIN_CUTT, IF_ONLY_ADMIN_REFF_CUTT, IF_ONLY_ADMIN_Direct, IF_ONLY_ADMIN_placement, IF_ONLY_ADMIN
+
+  IF_ONLY_ADMIN = Upgrade_Price * 0.10
+  IF_ONLY_ADMIN_Direct = Upgrade_Price * 0.20
+  IF_ONLY_ADMIN_placement = Upgrade_Price * 0.70
+
+  IF_ONLY_ADMIN_Direct_Transaction = Upgrade_Price * 0.25
+  IF_ONLY_ADMIN_placement_Transaction = Upgrade_Price * 0.75
+
+  IF_ONLY_ADMIN_CUTT = Upgrade_Price * 0.80
+  IF_ONLY_ADMIN_REFF_CUTT = Upgrade_Price * 0.20
+
+
+  //upgrade levels
+  await Upgrade.update({
+    level,
+    upgrade: Upgrade_Price
+  }, {
+    where:
+    {
+      user_id,
+      pkg_price
+    }
+  }
+  )
+  //upgrade levels transaction
+  await Transaction.create(
+    {
+      from: user_id,
+      to: user_id,
+      reason: Upgrade_pkg,
+      payment: Upgrade_Price,
+      user_id
+    })
+  //payment to referal
+  await wallet.update(
+    {
+      payment: findReff.wallet.payment + IF_ONLY_ADMIN_Direct
+    }
+    ,
+    {
+      where: {
+        user_id: findReff.id
+      }
+    })
+  // payment in 
+  await TotalIncome.update(
+    { income: find_income.income + IF_ONLY_ADMIN_Direct },
+    { where: { user_id: findReff.id } }
+  );
+  //payment refferal transaction
+  await Transaction.create(
+    {
+      from: user_id,
+      to: findReff.id,
+      reason: Upgrade_pkg,
+      payment: IF_ONLY_ADMIN_Direct_Transaction,
+      user_id
+    })
+  // placement wallet
+  await wallet.update(
+    {
+      payment: placement_check[0].wallet.payment + IF_ONLY_ADMIN_placement
+    }
+    ,
+    {
+      where: {
+        user_id: placement_check[0].user_id
+      }
+    })
+  // placement wala
+  await TotalIncome.update(
+    { income: find_income.income + IF_ONLY_ADMIN_placement },
+    { where: { user_id: placement_check[0].user_id } }
+  );
+
+  // placement transaction
+  await Transaction.create(
+    {
+      from: user_id,
+      to: placement_check[0].user_id,
+      reason: placement_pay,
+      payment: IF_ONLY_ADMIN_placement_Transaction,
+      user_id
+    })
+  // admin wallet
+  await wallet.update(
+    {
+      payment: adminWallet.wallet.payment + IF_ONLY_ADMIN
+    }
+    ,
+    {
+      where: {
+        user_id: 1
+      }
+    })
+  //admin total income
+  await TotalIncome.update(
+    { income: find_admin.income + IF_ONLY_ADMIN },
+    { where: { user_id: 1 } }
+  );
+
+  // admin wallet transaction
+  await Transaction.create(
+    {
+      from: user_id,
+      to: 1,
+      reason: Taxforadminfrom,
+      payment: IF_ONLY_ADMIN,
       user_id
     })
 
@@ -10523,13 +4068,13 @@ async function sendVerificationEmail(email, code, UserID, User) {
     service: 'Gmail',
     port: 587,
     auth: {
-      user: 'waleed.naseem1@gmail.com',
-      pass: 'ualrrsguaiqfzaje',
+      user: 'smartxblockchain@gmail.com',
+      pass: 'xjrqdjwrmyguurqp',
     },
   });
   // Define the email content
   const mailOptions = {
-    from: '"smartxblockchain" <waleed.naseem1@gmail.com>',
+    from: '"smartxblockchain" <smartxblockchain@gmail.com>',
     to: email,
     subject: 'Email Verification',
     // text: `Your verification code is: ${code}`,
@@ -10805,5 +4350,7 @@ module.exports = {
   FindUserPakage,
   findTransac,
   decode,
-  Upgrade_Snippet
+  Upgrade_Snippet,
+  FindUsers,
+  FindUsers_Purchase
 };

@@ -37,6 +37,8 @@ App.get('/finduserpakage', ctrl.FindUserPakage)
 App.post('/ShowReffTrend', ctrl.ShowReff)
 App.post('/trenduser', ctrl.getUserByTrend)
 App.post('/testTrend', ctrl.testTrend)
+App.post('/user_on_upgrade', ctrl.FindUsers)
+App.post('/user_on_purchase', ctrl.FindUsers_Purchase)
 
 
 //mailer

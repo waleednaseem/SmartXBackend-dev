@@ -22,6 +22,12 @@ module.exports = (sequelize, DataTypes) => {
         as:"reff",
         onDelete: 'CASCADE',
       })
+      User.hasOne(models.User_profile,{
+        foreignKey:'user_id',
+        id:'id',
+        // as:"reff",
+        onDelete: 'CASCADE',
+      })
     }
   }
   User.init({
