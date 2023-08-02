@@ -626,7 +626,7 @@ const Upgrades = async (req, res) => {
       switch (Selected.Upgrade.level) {
         case 0: No_placement_CUTT_TO_ALL(
           1,
-          125,
+          126,
           user_info.id,
           Upgrades4,
           findReff,
@@ -778,7 +778,7 @@ const Upgrades = async (req, res) => {
       switch (Selected.Upgrade.level) {
         case 0: GotPlacement_CUTT_TO_ALL(
           1,
-          125,
+          126,
           user_info.id,
           Upgrades4,
           findReff,
@@ -833,7 +833,7 @@ const Upgrades = async (req, res) => {
           break
         case 3: GotPlacement_CUTT_TO_ALL(
           4,
-          1423.28,
+          1423.828,
           user_info.id,
           Upgrades4,
           findReff,
@@ -1766,7 +1766,7 @@ const Upgrades = async (req, res) => {
       switch (Selected.Upgrade.level) {
         case 0: No_placement_CUTT_TO_ALL(
           1,
-          62.500,
+          62.5,
           user_info.id,
           Upgrades3,
           findReff,
@@ -1918,7 +1918,7 @@ const Upgrades = async (req, res) => {
       switch (Selected.Upgrade.level) {
         case 0: GotPlacement_CUTT_TO_ALL(
           1,
-          62.500,
+          62.5,
           user_info.id,
           Upgrades3,
           findReff,
@@ -2095,7 +2095,7 @@ const Upgrades = async (req, res) => {
           break
         case 1: No_placement_CUTT_TO_ALL(
           2,
-          281.250,
+          562.5,
           user_info.id,
           Upgrades5,
           findReff,
@@ -2113,7 +2113,7 @@ const Upgrades = async (req, res) => {
           break
         case 2: No_placement_CUTT_TO_ALL(
           3,
-          632.813,
+          1265.625,
           user_info.id,
           Upgrades5,
           findReff,
@@ -2131,7 +2131,7 @@ const Upgrades = async (req, res) => {
           break
         case 3: No_placement_CUTT_TO_ALL(
           4,
-          1423.828,
+          2847.656,
           user_info.id,
           Upgrades5,
           findReff,
@@ -2149,7 +2149,7 @@ const Upgrades = async (req, res) => {
           break
         case 4: No_placement_CUTT_TO_ALL(
           5,
-          3203.613,
+          6407.227,
           user_info.id,
           Upgrades5,
           findReff,
@@ -2167,7 +2167,7 @@ const Upgrades = async (req, res) => {
           break
         case 5: No_placement_CUTT_TO_ALL(
           6,
-          7208.130,
+          14416.260,
           user_info.id,
           Upgrades5,
           findReff,
@@ -2185,7 +2185,7 @@ const Upgrades = async (req, res) => {
           break
         case 6: No_placement_CUTT_TO_ALL(
           7,
-          16218.292,
+          32436.584,
           user_info.id,
           Upgrades5,
           findReff,
@@ -2203,7 +2203,7 @@ const Upgrades = async (req, res) => {
           break
         case 7: No_placement_CUTT_TO_ALL(
           8,
-          36491.158,
+          72982.315,
           user_info.id,
           Upgrades5,
           findReff,
@@ -2247,7 +2247,7 @@ const Upgrades = async (req, res) => {
           break
         case 1: GotPlacement_CUTT_TO_ALL(
           2,
-          281.250,
+          562.5,
           user_info.id,
           Upgrades5,
           findReff,
@@ -2265,7 +2265,7 @@ const Upgrades = async (req, res) => {
           break
         case 2: GotPlacement_CUTT_TO_ALL(
           3,
-          632.813,
+          1265.625,
           user_info.id,
           Upgrades5,
           findReff,
@@ -2283,7 +2283,7 @@ const Upgrades = async (req, res) => {
           break
         case 3: GotPlacement_CUTT_TO_ALL(
           4,
-          1423.828,
+          2847.565,
           user_info.id,
           Upgrades5,
           findReff,
@@ -2301,7 +2301,7 @@ const Upgrades = async (req, res) => {
           break
         case 4: GotPlacement_CUTT_TO_ALL(
           5,
-          3203.613,
+          6407.227,
           user_info.id,
           Upgrades5,
           findReff,
@@ -2319,7 +2319,7 @@ const Upgrades = async (req, res) => {
           break
         case 5: GotPlacement_CUTT_TO_ALL(
           6,
-          7208.130,
+          14416.260,
           user_info.id,
           Upgrades5,
           findReff,
@@ -2337,7 +2337,7 @@ const Upgrades = async (req, res) => {
           break
         case 6: GotPlacement_CUTT_TO_ALL(
           7,
-          16218.292,
+          32436.584,
           user_info.id,
           Upgrades5,
           findReff,
@@ -2355,7 +2355,7 @@ const Upgrades = async (req, res) => {
           break
         case 7: GotPlacement_CUTT_TO_ALL(
           8,
-          36491.158,
+          72982.315,
           user_info.id,
           Upgrades5,
           findReff,
@@ -2388,7 +2388,7 @@ const Upgrades = async (req, res) => {
       switch (Selected.Upgrade.level) {
         case 0: No_placement_CUTT_TO_ALL(
           1,
-          437.500,
+          438,
           user_info.id,
           Upgrades6,
           findReff,
@@ -2406,7 +2406,7 @@ const Upgrades = async (req, res) => {
           break
         case 1: No_placement_CUTT_TO_ALL(
           2,
-          984.375,
+          984.4,
           user_info.id,
           Upgrades6,
           findReff,
@@ -2540,7 +2540,7 @@ const Upgrades = async (req, res) => {
       switch (Selected.Upgrade.level) {
         case 0: GotPlacement_CUTT_TO_ALL(
           1,
-          437.500,
+          438,
           user_info.id,
           Upgrades6,
           findReff,
@@ -2558,7 +2558,7 @@ const Upgrades = async (req, res) => {
           break
         case 1: GotPlacement_CUTT_TO_ALL(
           2,
-          984.375,
+          984.4,
           user_info.id,
           Upgrades6,
           findReff,
@@ -3618,7 +3618,7 @@ const Pakage_info = async (req, res) => {
   } else if (findUpdate.pkg_price == 50) {
     switch (true) {
       case (findUpdate.level == 0):
-        NextPackage = 62.500;
+        NextPackage = 62.5;
         break;
       case (findUpdate.level == 1):
         NextPackage = 140.625;
@@ -3636,7 +3636,7 @@ const Pakage_info = async (req, res) => {
         NextPackage = 3604.065;
         break;
       case (findUpdate.level == 6):
-        NextPackage = 8109.065;
+        NextPackage = 8109.146;
         break;
       case (findUpdate.level == 7):
         NextPackage = 18245.579;
@@ -3648,7 +3648,7 @@ const Pakage_info = async (req, res) => {
   } else if (findUpdate.pkg_price == 100) {
     switch (true) {
       case (findUpdate.level == 0):
-        NextPackage = 125;
+        NextPackage = 126;
         break;
       case (findUpdate.level == 1):
         NextPackage = 281.250;
@@ -3681,25 +3681,25 @@ const Pakage_info = async (req, res) => {
         NextPackage = 250;
         break;
       case (findUpdate.level == 1):
-        NextPackage = 281.250;
+        NextPackage = 562.5;
         break;
       case (findUpdate.level == 2):
-        NextPackage = 632.813;
+        NextPackage = 1265.625;
         break;
       case (findUpdate.level == 3):
-        NextPackage = 1423.828;
+        NextPackage = 2847.656;
         break;
       case (findUpdate.level == 4):
-        NextPackage = 3203.613;
+        NextPackage = 6407.227;
         break;
       case (findUpdate.level == 5):
-        NextPackage = 7208.130;
+        NextPackage = 14416.260;
         break;
       case (findUpdate.level == 6):
-        NextPackage = 16218.292;
+        NextPackage = 32436.584;
         break;
       case (findUpdate.level == 7):
-        NextPackage = 36491.158;
+        NextPackage = 72982.315;
         break;
       default:
         NextPackage = 250;
@@ -3708,10 +3708,10 @@ const Pakage_info = async (req, res) => {
   } else if (findUpdate.pkg_price == 350) {
     switch (true) {
       case (findUpdate.level == 0):
-        NextPackage = 437.500;
+        NextPackage = 438;
         break;
       case (findUpdate.level == 1):
-        NextPackage = 984.375;
+        NextPackage = 984.4;
         break;
       case (findUpdate.level == 2):
         NextPackage = 2214.844;
@@ -3732,7 +3732,7 @@ const Pakage_info = async (req, res) => {
         NextPackage = 127719.051;
         break;
       default:
-        NextPackage = 437.500;
+        NextPackage = 438;
         break;
     }
   }
