@@ -40,6 +40,8 @@ const level_8 = 800;
 // const user = req.headers.authorization.split(' ')[1]
 //   const user_info = jwt_decode(user)
 
+
+
 const ADMIN = async (req, res) => {
   const admin = await Profile.findOne({ where: { id: 1 } });
 
@@ -53,7 +55,8 @@ const ADMIN = async (req, res) => {
       user_id: 1,
     });
     await Profile.create({
-      refferal: 0,
+      refferal: 1,
+      refferal_code: "sx111",
       user_id: 1,
     });
 
@@ -65,6 +68,11 @@ const ADMIN = async (req, res) => {
 
     await User_Profile.create({
       user_id: 1
+    })
+    await Refferal.create({
+      user_id: 1,
+      refferal: 1,
+      refferal_code: "sx111",
     })
     res.json({ msg: "admin created" });
   } else {
@@ -86,28 +94,58 @@ const FIndUserDetail = async (req, res) => {
     attributes: ['user_id'],
     include: [{
       model: Refferal,
-      attributes: ['refferal', 'user_id'],
+      attributes: ['refferal', 'user_id', "refferal_code"],
       include: [{
         model: User,
         as: 'directReffUser'
       }]
     }],
   });
+  // const ref = await Refferal.findOne({ where: { refferal: user_info.id } })
   const YourRefferalDirect = await Refferal.findAll({
     where: { refferal: user_info.id }
   })
   res.json({ users, placement, DirectReff, YourRefferalDirect });
 };
 
+let referralCode;
+function generateUniqueCode(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const codeArray = [];
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    const randomChar = characters.charAt(randomIndex);
+    codeArray.push(randomChar);
+  }
+
+  return codeArray.join('');
+}
+async function generateUniqueReferralCode() {
+  let isUnique = false;
+  
+
+  while (!isUnique) {
+    referralCode = generateUniqueCode(5);
+    const checkCode = await Refferal.findOne({ where: { refferal_code: referralCode } });
+
+    if (!checkCode) {
+      isUnique = true;
+    }
+  }
+
+  return referralCode;
+}
+
 const Register = async (req, res) => {
-  const { username, password, refferal } = req.body
+  const { username, password, refferal_code } = req.body
 
   const hashedPassword = jwt.sign({ password }, "teriMaaKiChot");
   const USER = await User.findOne({ where: { username: username } });
-  const findReff = await User.findOne({ where: { id: refferal } })
-  // res.json(findReff.username)
-  // return false
-  if (username != '' && password != '' && refferal != '') {
+  const findReff = await Refferal.findOne({ where: { refferal_code } })
+  generateUniqueReferralCode()
+
+  if (username != '' && password != '' && refferal_code != '') {
     if (findReff) {
       if (!USER) {
         const userInfo = await User.create({
@@ -115,7 +153,8 @@ const Register = async (req, res) => {
           password: hashedPassword,
         });
         await Refferal.create({
-          refferal: refferal,
+          refferal: findReff.user_id,
+          refferal_code: referralCode,
           user_id: userInfo.id,
         });
         await wallet.create({
@@ -178,8 +217,9 @@ const userDetail = async (req, res) => {
 };
 
 const showusers = async (req, res) => {
+  const ref = await Refferal.findOne({ where: { refferal: user_info.id } })
   const referral = await Refferal.findAll({
-    where: { refferal: req.body.refferal },
+    where: { refferal_code: ref.refferal },
     include: [
       {
         model: Profile,
@@ -200,7 +240,7 @@ const refferals = async (req, res) => {
       {
         model: Refferal,
         as: "left_placement",
-        attributes: ["user_id", "placement_id"],
+        attributes: ["user_id", "placement_id", "refferal_code"],
         include: [
           {
             model: Profile,
@@ -210,7 +250,7 @@ const refferals = async (req, res) => {
               {
                 model: Refferal,
                 as: "left_placement",
-                attributes: ["user_id", "placement_id"],
+                attributes: ["user_id", "placement_id", "refferal_code"],
                 include: [
                   {
                     model: Profile,
@@ -220,7 +260,7 @@ const refferals = async (req, res) => {
                       {
                         model: Refferal,
                         as: "left_placement",
-                        attributes: ["user_id", "placement_id"],
+                        attributes: ["user_id", "placement_id", "refferal_code"],
                         include: [
                           {
                             model: Profile,
@@ -363,6 +403,7 @@ const refferals = async (req, res) => {
 const FindRefferal = async (req, res) => {
   const user = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(user)
+  // const ref = await Refferal.findOne({ where: { refferal: user_info.id } })
   const refferal = await Refferal.findAll({
     where: { refferal: user_info.id },
     attributes: ['refferal', 'user_id'],
@@ -398,132 +439,179 @@ const FindUsers = async (req, res) => {
   let placements = [];
   let Placement_Upgrade = []
   let placement_check
-  const Selected = await Profile.findOne({
-    where: { user_id: user_info.id, pkg: pkg },
-    include: { model: Upgrade },
+  let Find_placement, Find_Reff
 
-  });
-
-  let placement = await Profile.findOne(
-    {
-      where: {
-        [Sequelize.Op.or]: [
-          { left: Selected.user_id, pkg: pkg },
-          { right: Selected.user_id, pkg: pkg },
-        ],
-      },
-      include: [
-        { model: Pakage, attributes: ["pkg_name", "pkg_price"] },
-        { model: Upgrade },
-        { model: wallet },
-      ],
-    }
-  );
-
-  if (placement) {
-    placements.push(placement);
-  }
-
-  for (let i = 2; i <= 16; i++) {
-
-    if (!placement) {
-      break;
-    }
-    placement = await Profile.findOne({
-      where: {
-        [Sequelize.Op.or]: [
-          { left: placement.user_id, pkg: pkg },
-          { right: placement.user_id, pkg: pkg },
-        ],
-      },
-      include: [
-        { model: Pakage, attributes: ["pkg_name", "pkg_price", "user_id"] },
-        { model: Upgrade },
-        { model: wallet },
-      ],
-    });
-    if (placement) {
-      placements.push(placement);
-    }
-  }
-
-  if (Selected.pkg == pkg) {
-    for (let i = 1; i < placements.length; i += 2) {
-      Placement_Upgrade.push(placements[i]);
-    }
-    placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
-  }
   const FIndUser = await User.findOne({
     where: { id: user_info.id },
     include: { model: Profile }
   })
-  const Only_admin = await User.findOne(
+  const Selected = await Profile.findOne({
+    where: { user_id: user_info.id, pkg: pkg },
+    include: { model: Upgrade },
+  })
+  const FindAdmin = await User.findOne(
     {
       where: { id: 1 },
       include: { model: User_Profile }
     }
   )
 
-  let Find_placement
+  if (Selected == null) {
+    Find_Reff = await User.findOne(
+      {
+        where: { id: FIndUser?.Profile?.refferal },
+        include: { model: User_Profile }
+      }
+    )
+    res.json({
+      placement: FindAdmin.User_profile.wallet_address,
+      Direct_reff: Find_Reff.User_profile.wallet_address
+    })
+  } else {
 
-  Find_placement = await User.findOne(
-    {
-      where: { id: placement_check?.length > 0 ? placement_check[0]?.user_id : Only_admin?.id },
-      include: { model: User_Profile }
+    let placement = await Profile.findOne(
+      {
+        where: {
+          [Sequelize.Op.or]: [
+            { left: Selected?.user_id, pkg: pkg },
+            { right: Selected?.user_id, pkg: pkg },
+          ],
+        },
+        include: [
+          { model: Pakage, attributes: ["pkg_name", "pkg_price"] },
+          { model: Upgrade },
+          { model: wallet },
+        ],
+      }
+    );
+
+    if (placement) {
+      placements.push(placement);
     }
-  )
-  const Find_Reff = await User.findOne(
-    {
-      where: { id: FIndUser.Profile.refferal },
-      include: { model: User_Profile }
+
+    for (let i = 2; i <= 16; i++) {
+
+      if (!placement) {
+        break;
+      }
+      placement = await Profile.findOne({
+        where: {
+          [Sequelize.Op.or]: [
+            { left: placement?.user_id, pkg: pkg },
+            { right: placement?.user_id, pkg: pkg },
+          ],
+        },
+        include: [
+          { model: Pakage, attributes: ["pkg_name", "pkg_price", "user_id"] },
+          { model: Upgrade },
+          { model: wallet },
+        ],
+      });
+
+
+      if (placement) {
+        placements.push(placement);
+      }
     }
-  )
-  res.json({
-    placement: Find_placement.User_profile?.wallet_address,
-    Direct_reff: Find_Reff.User_profile?.wallet_address
-  })
+
+    if (Selected.pkg == pkg) {
+      for (let i = 1; i < placements?.length; i += 2) {
+        Placement_Upgrade?.push(placements[i]);
+      }
+      placement_check = Placement_Upgrade?.filter((placement) => placement?.Upgrade?.level >= Selected?.Upgrade?.level);
+    }
+
+    const Only_admin = await User.findOne(
+      {
+        where: { id: 1 },
+        include: { model: User_Profile }
+      }
+    )
+
+
+
+    Find_placement = await User.findOne(
+      {
+        where: { id: placement_check?.length > 0 ? placement_check[0]?.user_id : Only_admin.id },
+        include: { model: User_Profile }
+      }
+    )
+    Find_Reff = await User.findOne(
+      {
+        where: { id: FIndUser?.Profile?.refferal },
+        include: { model: User_Profile }
+      }
+    )
+    res.json({
+      placement: Find_placement.User_profile.wallet_address,
+      Direct_reff: Find_Reff.User_profile.wallet_address
+    })
+  }
 }
 const FindUsers_Purchase = async (req, res) => {
   const user = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(user)
   const { pkg } = req.body
-  //placement start
-  let placements = [];
-  let Placement_Upgrade = []
-  let placement_check
-  const Selected = await Profile.findOne({
-    where: { user_id: user_info.id, pkg: pkg },
-    include: { model: Upgrade },
 
+  let placement, Direct_reff
+
+  const findRight = await Profile.findOne({
+    where: {
+      left: { [Sequelize.Op.ne]: null },
+      right: null,
+      pkg: pkg,
+    },
   });
-  const FIndUser = await User.findOne({
-    where: { id: user_info.id },
-    include: { model: Profile }
+
+  const Own_account = await Profile.findOne({
+    where: { user_id: user_info.id }
   })
 
-  let placement, find_placement, Direct_reff
 
-  placement = await Profile.findOne(
-    {
+  if (Own_account) {
+    Direct_reff = await User.findOne({
+      where: { id: Own_account.refferal },
+      include: { model: User_Profile }
+    })
+  } else {
+    Direct_reff = await User.findOne({
+      where: { id: 1 },
+      include: { model: User_Profile }
+    })
+  }
+
+
+  if (findRight) {
+    placement = await User.findOne({
+      where: { id: findRight.user_id },
+      include: { model: User_Profile }
+    })
+  } else {
+    const findLeft = await Profile.findOne({
       where: {
-        [Sequelize.Op.or]: [
-          { left: Selected.user_id, pkg: pkg },
-          { right: Selected.user_id, pkg: pkg },
-        ],
-      }
+        left: null,
+        pkg: pkg,
+      },
+    });
+    if (findLeft) {
+      placement = await User.findOne({
+        where: { id: findLeft.user_id },
+        include: { model: User_Profile }
+      })
+
+    } else {
+      placement = await User.findOne({
+        where: { id: 1 },
+        include: { model: User_Profile }
+      })
+
     }
-  );
+  }
 
-  find_placement = await User.findOne({
-    where: { id: placement.user_id },
-    include: { model: User_Profile }
-  })
-  Direct_reff = await User.findOne({
-    where: { id: FIndUser.Profile.refferal },
-    include: { model: User_Profile }
-  })
-
-  res.json({ placement: find_placement.User_profile.wallet_address, Direct_reff: Direct_reff.User_profile.wallet_address })
+  res.json({
+    placement: placement?.User_profile?.wallet_address,
+    Direct_reff: Direct_reff?.User_profile?.wallet_address
+  });
 
 }
 
@@ -2991,11 +3079,11 @@ const Withdraw = async (req, res) => {
 }
 const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
   let ReffkWallets1, reffKharcha, placementKharcha
-
+  generateUniqueReferralCode()
   const SearchUser = await User.findOne({ where: { id: user_info.id } })
+  const find_Admin_income = await TotalIncome.findOne({ where: { user_id: 1 } })
   const Real_profile = await Profile.findOne({ where: { user_id: user_info.id, pkg: pkg } })
 
-  const find_Admin_income = await TotalIncome.findOne({ where: { user_id: 1 } })
   let find_income
   if (Real_profile) {
     res.json('Package Found!')
@@ -3045,6 +3133,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
       });
       const usermake = await Profile.create({
         refferal: Reff.directReffUser.id,
+        refferal_code: referralCode,
         pkg: pkg,
         user_id: user_info.id,
         username: SearchUser.username,
@@ -3243,6 +3332,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         });
         const usermake = await Profile.create({
           refferal: Reff.directReffUser.id,
+          refferal_code: referralCode,
           pkg: pkg,
           user_id: user_info.id,
           username: SearchUser.username,
@@ -3431,6 +3521,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         });
         const usermake = await Profile.create({
           refferal: Reff.directReffUser.id,
+          refferal_code: referralCode,
           pkg: pkg,
           user_id: user_info.id,
           username: SearchUser.username,
@@ -3534,6 +3625,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
     }
   }
 }
+
 
 const placementInvest = async (req, res) => {
   const { pkg, pkg_name } = req.body;

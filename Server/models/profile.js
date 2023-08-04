@@ -101,6 +101,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: true
     },
+    refferal_code: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     pkg: {
       type: DataTypes.INTEGER,
       allowNull: true

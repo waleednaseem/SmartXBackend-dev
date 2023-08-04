@@ -58,6 +58,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Refferal.init({
     refferal: DataTypes.INTEGER,
+    refferal_code: DataTypes.STRING,
     user_id: DataTypes.INTEGER,
     level_id: DataTypes.INTEGER,
     placement_id: DataTypes.INTEGER

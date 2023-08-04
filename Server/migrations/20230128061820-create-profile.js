@@ -37,6 +37,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull:true
       },
+      refferal_code: {
+        type: Sequelize.STRING,
+        allowNull:true
+      },
       pkg: {
         type: Sequelize.INTEGER,
         allowNull:false
