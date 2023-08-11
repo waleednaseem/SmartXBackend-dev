@@ -123,7 +123,7 @@ function generateUniqueCode(length) {
 }
 async function generateUniqueReferralCode() {
   let isUnique = false;
-  
+
 
   while (!isUnique) {
     referralCode = generateUniqueCode(5);
@@ -2779,6 +2779,14 @@ const Upgrades = async (req, res) => {
   }
 };
 
+const ReffID = async (req, res) => {
+  const user = req.headers.authorization.split(' ')[1]
+  const user_info = jwt_decode(user)
+  const Reff = await Refferal.findOne({ where: { user_id: user_info.id } })
+
+  res.json(Reff)
+}
+
 const No_placement_CUTT_TO_ALL = async (
   level,
   Upgrade_Price,
@@ -2879,15 +2887,6 @@ const No_placement_CUTT_TO_ALL = async (
       user_id
     })
   // admin wallet transaction
-  await Transaction.create(
-    {
-      from: user_id,
-      to: 1,
-      reason: Placementforadminfrom,
-      payment: IF_ONLY_ADMIN_placement,
-      user_id
-    })
-
 }
 const GotPlacement_CUTT_TO_ALL = async (
   level,
@@ -3133,7 +3132,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
       });
       const usermake = await Profile.create({
         refferal: Reff.directReffUser.id,
-        refferal_code: referralCode,
+        // refferal_code: referralCode,
         pkg: pkg,
         user_id: user_info.id,
         username: SearchUser.username,
@@ -3332,7 +3331,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         });
         const usermake = await Profile.create({
           refferal: Reff.directReffUser.id,
-          refferal_code: referralCode,
+          // refferal_code: referralCode,
           pkg: pkg,
           user_id: user_info.id,
           username: SearchUser.username,
@@ -3521,7 +3520,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         });
         const usermake = await Profile.create({
           refferal: Reff.directReffUser.id,
-          refferal_code: referralCode,
+          // refferal_code: referralCode,
           pkg: pkg,
           user_id: user_info.id,
           username: SearchUser.username,
@@ -3625,7 +3624,6 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
     }
   }
 }
-
 
 const placementInvest = async (req, res) => {
   const { pkg, pkg_name } = req.body;
@@ -4412,6 +4410,181 @@ const decode = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+const CountPlacements = async (req, res) => {
+  try {
+    let CountAll = 0,
+      Count10 = 0,
+      Count100 = 0,
+      Count20 = 0,
+      Count50 = 0,
+      Count200 = 0,
+      Count350 = 0,
+      my_Count10,
+      my_Count20,
+      my_Count50,
+      my_Count100,
+      my_Count200,
+      my_Count350,
+      Last_Count10,
+      Last_Count20,
+      Last_Count50,
+      Last_Count100,
+      Last_Count200,
+      Last_Count350,
+      Total_Reff;
+
+    const user = req.headers.authorization.split(' ')[1];
+    const user_info = jwt_decode(user);
+
+    // my profile
+    my_Count10 = await Profile.findOne({
+      where: { pkg: 10, user_id: user_info.id },
+      attributes: ['username', 'id'],
+    })
+    // i want to search last profile 
+    Last_Count10 = await Profile.findOne({
+      where: { pkg: 10 },
+      attributes: ['username', 'id'],
+      order: [['id', 'DESC']],
+    })
+    // now i want to count all profiles between last_count and my_count
+    if (my_Count10 && Last_Count10) {
+      Count10 = await Profile.count({
+        where: {
+          pkg: 10,
+          id: {
+            [Sequelize.Op.between]: [my_Count10.id, Last_Count10.id],
+          },
+        },
+      });
+    }
+    // my profile
+    my_Count20 = await Profile.findOne({
+      where: { pkg: 20, user_id: user_info.id },
+      attributes: ['username', 'id'],
+    })
+    // i want to search last profile 
+    Last_Count20 = await Profile.findOne({
+      where: { pkg: 20 },
+      attributes: ['username', 'id'],
+      order: [['id', 'DESC']],
+    })
+    // now i want to count all profiles between last_count and my_count
+
+    if (my_Count20 && Last_Count20) {
+      Count20 = await Profile.count({
+        where: {
+          pkg: 20,
+          id: {
+            [Sequelize.Op.between]: [my_Count20.id, Last_Count20.id],
+          },
+        },
+      });
+    }
+    // my profile
+    my_Count50 = await Profile.findOne({
+      where: { pkg: 50, user_id: user_info.id },
+      attributes: ['username', 'id'],
+    })
+    // i want to search last profile 
+    Last_Count50 = await Profile.findOne({
+      where: { pkg: 50 },
+      attributes: ['username', 'id'],
+      order: [['id', 'DESC']],
+    })
+    // now i want to count all profiles between last_count and my_count
+
+    if (my_Count50 && Last_Count50) {
+      Count50 = await Profile.count({
+        where: {
+          pkg: 50,
+          id: {
+            [Sequelize.Op.between]: [my_Count50.id, Last_Count50.id],
+          },
+        },
+      });
+    }
+    // my profile
+    my_Count100 = await Profile.findOne({
+      where: { pkg: 100, user_id: user_info.id },
+      attributes: ['username', 'id'],
+    })
+    // i want to search last profile 
+    Last_Count100 = await Profile.findOne({
+      where: { pkg: 100 },
+      attributes: ['username', 'id'],
+      order: [['id', 'DESC']],
+    })
+    // now i want to count all profiles between last_count and my_count
+
+    if (my_Count100 && Last_Count100) {
+      Count100 = await Profile.count({
+        where: {
+          pkg: 100,
+          id: {
+            [Sequelize.Op.between]: [my_Count100.id, Last_Count100.id],
+          },
+        },
+      });
+    }
+    // my profile
+    my_Count200 = await Profile.findOne({
+      where: { pkg: 200, user_id: user_info.id },
+      attributes: ['username', 'id'],
+    })
+    // i want to search last profile 
+    Last_Count200 = await Profile.findOne({
+      where: { pkg: 200 },
+      attributes: ['username', 'id'],
+      order: [['id', 'DESC']],
+    })
+    // now i want to count all profiles between last_count and my_count
+
+    if (my_Count200 && Last_Count200) {
+      Count200 = await Profile.count({
+        where: {
+          pkg: 200,
+          id: {
+            [Sequelize.Op.between]: [my_Count200.id, Last_Count200.id],
+          },
+        },
+      });
+    }
+    // my profile
+    my_Count350 = await Profile.findOne({
+      where: { pkg: 350, user_id: user_info.id },
+      attributes: ['username', 'id'],
+    })
+    // i want to search last profile 
+    Last_Count350 = await Profile.findOne({
+      where: { pkg: 350 },
+      attributes: ['username', 'id'],
+      order: [['id', 'DESC']],
+    })
+    // now i want to count all profiles between last_count and my_count
+
+    if (my_Count350 && Last_Count350) {
+      Count350 = await Profile.count({
+        where: {
+          pkg: 350,
+          id: {
+            [Sequelize.Op.between]: [my_Count350.id, Last_Count350.id],
+          },
+        },
+      });
+    }
+
+    const Reff= await Refferal.findAll({where:{refferal:user_info.id}})
+    Total_Reff = Reff.length
+
+    // Similarly, perform similar operations for other package sizes
+    CountAll = Count10 + Count100 +Count20+Count50+Count200+Count350
+    res.json({ Count10, Count100, Count20, Count50, Count200, Count350,CountAll,Total_Reff });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred.' });
+  }
+};
 
 module.exports = {
   ADMIN,
@@ -4444,5 +4617,7 @@ module.exports = {
   decode,
   Upgrade_Snippet,
   FindUsers,
-  FindUsers_Purchase
+  FindUsers_Purchase,
+  ReffID,
+  CountPlacements
 };
