@@ -4000,7 +4000,11 @@ const profileInfo = async (req, res) => {
   total_income = await TotalIncome.findOne({ where: { user_id: user_info.id } })
   total_withdrawal = await TotalWithdraw.findOne({ where: { user_id: user_info.id } })
   date_register = await User.findOne({ where: { id: user_info.id } })
-  Last_withdraw_time = total_withdrawal.updatedAt
+  const withdrawals= await Transaction.findOne({
+    where:{from:user_info.id},
+    order: [['id', 'DESC']]
+  })
+  Last_withdraw_time = withdrawals?.createdAt || null
 
   res.json({ total_income: total_income.income, total_withdrawal: total_withdrawal.withdraw, date_register: date_register.createdAt, Last_withdraw_time })
 };
