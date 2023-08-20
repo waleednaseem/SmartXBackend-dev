@@ -3118,6 +3118,69 @@ const GotPlacement_CUTT_TO_ALL = async (
       { income: find_admin.income + IF_ONLY_ADMIN },
       { where: { user_id: 1 } }
     );
+  } else if (findReff.id == 1) {
+    // placement wallet
+    await wallet.update(
+      {
+        payment: placement_check[0].wallet.payment + IF_ONLY_ADMIN_placement
+      }
+      ,
+      {
+        where: {
+          user_id: placement_check[0].user_id
+        }
+      })
+    // placement wala
+    await TotalIncome.update(
+      { income: find_income.income + IF_ONLY_ADMIN_placement },
+      { where: { user_id: placement_check[0].user_id } }
+    );
+    // REFF wallet
+    const REFF1 = await wallet.update(
+      {
+        payment: findReff.wallet.payment + IF_ONLY_ADMIN_Direct
+      }
+      ,
+      {
+        where: {
+          user_id: findReff.user_id
+        }
+      })
+    const ReFF_totalIncome = await TotalIncome.update(
+      { income: find_income.income + IF_ONLY_ADMIN_Direct },
+      { where: { user_id: findReff.user_id } }
+    );
+    if (REFF1) {
+      const calculate = await wallet.findOne(
+        {
+          where: {
+            user_id: findReff.user_id
+          }
+        })
+      // admin wallet
+      await wallet.update(
+        {
+          payment: calculate.payment + IF_ONLY_ADMIN
+        }
+        ,
+        {
+          where: {
+            user_id: findReff.user_id
+          }
+        })
+
+    }
+    if (ReFF_totalIncome) {
+      const totalIncome = await TotalIncome.findOne(
+        { where: { user_id: findReff.user_id } }
+      );
+      //admin total income
+      await TotalIncome.update(
+        { income: totalIncome.income + IF_ONLY_ADMIN },
+        { where: { user_id: 1 } }
+      );
+    }
+
   } else {
     // placement wallet
     await wallet.update(
