@@ -78,6 +78,7 @@ App.get('/snippet', ctrl.Upgrade_Snippet)
 
 //find last profile
 App.get('/get_count',ctrl.CountPlacements)
+App.get('/timers',ctrl.Timers)
 
 
 App.post('/check', (req, res) => {
