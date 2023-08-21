@@ -698,7 +698,7 @@ const Upgrades = async (req, res) => {
       placements.push(placement);
     }
   }
-
+  // transactionUpgraded
   const transactionUpgradeToAdmin = `Upgraded tax for admin from ${SearchUser.username}`
   const transactionFromReff = `Your Refferal  ${SearchUser.username} Upgraded a Package`
   const transactionUpgraded = `Package Upgraded from ${SearchUser.username}`
@@ -715,8 +715,9 @@ const Upgrades = async (req, res) => {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
     }
-    placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level > Selected?.Upgrade?.level);
-
+    placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level > Selected?.Upgrade?.level);
+    // res.json(placement_check)
+    // return false
     if (placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
         case 0: No_placement_CUTT_TO_ALL(
@@ -887,7 +888,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 1: GotPlacement_CUTT_TO_ALL(
@@ -905,7 +908,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
 
           break
@@ -924,7 +929,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 3: GotPlacement_CUTT_TO_ALL(
@@ -942,7 +949,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 4: GotPlacement_CUTT_TO_ALL(
@@ -960,7 +969,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 5: GotPlacement_CUTT_TO_ALL(
@@ -978,7 +989,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 6: GotPlacement_CUTT_TO_ALL(
@@ -996,7 +1009,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 7: GotPlacement_CUTT_TO_ALL(
@@ -1014,7 +1029,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           //upgrade levels
           await Upgrade.update({
@@ -1135,8 +1152,9 @@ const Upgrades = async (req, res) => {
     for (let i = 1; i < placements.length; i += 2) {
       Placement_Upgrade.push(placements[i]);
     }
-    placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level >= Selected.Upgrade.level);
-
+    placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level > Selected?.Upgrade?.level);
+    // res.json(placement_check)
+    // return false
     if (placement_check.length === 0) {
       switch (Selected.Upgrade.level) {
         case 0: No_placement_CUTT_TO_ALL(
@@ -1290,7 +1308,7 @@ const Upgrades = async (req, res) => {
       res.status(200).json('Updated successfully!');
     }
     else {
-      switch (Selected.Upgrade.level) {
+      switch (Selected?.Upgrade?.level) {
         case 0: GotPlacement_CUTT_TO_ALL(
           1,
           12.5,
@@ -1306,7 +1324,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 1: GotPlacement_CUTT_TO_ALL(
@@ -1324,7 +1344,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 2: GotPlacement_CUTT_TO_ALL(
@@ -1342,7 +1364,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 3: GotPlacement_CUTT_TO_ALL(
@@ -1360,7 +1384,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 4: GotPlacement_CUTT_TO_ALL(
@@ -1378,7 +1404,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 5: GotPlacement_CUTT_TO_ALL(
@@ -1396,7 +1424,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           //upgrade levels
           await Upgrade.update({
@@ -1513,7 +1543,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 7: GotPlacement_CUTT_TO_ALL(
@@ -1531,7 +1563,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         default:
@@ -1716,7 +1750,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 1: GotPlacement_CUTT_TO_ALL(
@@ -1734,7 +1770,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 2: GotPlacement_CUTT_TO_ALL(
@@ -1752,7 +1790,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 3: GotPlacement_CUTT_TO_ALL(
@@ -1770,7 +1810,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 4: GotPlacement_CUTT_TO_ALL(
@@ -1788,7 +1830,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 5: GotPlacement_CUTT_TO_ALL(
@@ -1806,7 +1850,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 6: GotPlacement_CUTT_TO_ALL(
@@ -1824,7 +1870,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 7: GotPlacement_CUTT_TO_ALL(
@@ -1842,7 +1890,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         default:
@@ -2027,7 +2077,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 1: GotPlacement_CUTT_TO_ALL(
@@ -2045,7 +2097,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 2: GotPlacement_CUTT_TO_ALL(
@@ -2063,7 +2117,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 3: GotPlacement_CUTT_TO_ALL(
@@ -2081,7 +2137,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 4: GotPlacement_CUTT_TO_ALL(
@@ -2099,7 +2157,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 5: GotPlacement_CUTT_TO_ALL(
@@ -2117,7 +2177,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 6: GotPlacement_CUTT_TO_ALL(
@@ -2135,7 +2197,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 7: GotPlacement_CUTT_TO_ALL(
@@ -2153,7 +2217,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         default:
@@ -2338,7 +2404,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 1: GotPlacement_CUTT_TO_ALL(
@@ -2356,7 +2424,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 2: GotPlacement_CUTT_TO_ALL(
@@ -2374,7 +2444,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 3: GotPlacement_CUTT_TO_ALL(
@@ -2392,7 +2464,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 4: GotPlacement_CUTT_TO_ALL(
@@ -2410,7 +2484,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 5: GotPlacement_CUTT_TO_ALL(
@@ -2428,7 +2504,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 6: GotPlacement_CUTT_TO_ALL(
@@ -2446,7 +2524,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 7: GotPlacement_CUTT_TO_ALL(
@@ -2464,7 +2544,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         default:
@@ -2649,7 +2731,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 1: GotPlacement_CUTT_TO_ALL(
@@ -2667,7 +2751,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 2: GotPlacement_CUTT_TO_ALL(
@@ -2685,7 +2771,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 3: GotPlacement_CUTT_TO_ALL(
@@ -2703,7 +2791,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 4: GotPlacement_CUTT_TO_ALL(
@@ -2721,7 +2811,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 5: GotPlacement_CUTT_TO_ALL(
@@ -2739,7 +2831,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 6: GotPlacement_CUTT_TO_ALL(
@@ -2757,7 +2851,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         case 7: GotPlacement_CUTT_TO_ALL(
@@ -2775,7 +2871,9 @@ const Upgrades = async (req, res) => {
           transactionFromReff,
           AllTaxAdmin,
           Upgrade_pkg,
-          Taxforadminfrom, res
+          Taxforadminfrom,
+          Reff_pkg,
+          res
         )
           break
         default:
@@ -2846,31 +2944,23 @@ const No_placement_CUTT_TO_ALL = async (
   IF_ONLY_ADMIN_Direct = Upgrade_Price * 0.20
   IF_ONLY_ADMIN_placement = Upgrade_Price * 0.80
 
-  IF_ONLY_ADMIN_CUTT_transaction = Upgrade_Price * 0.80
+  IF_ONLY_ADMIN_CUTT_transaction = Upgrade_Price * 0.75
   IF_ONLY_ADMIN_REFF_CUTT_transaction = Upgrade_Price * 0.25
 
 
   // upgrade levels
-  await Upgrade.update({
-    level,
-    upgrade: Upgrade_Price
-  }, {
-    where:
-    {
-      user_id,
-      pkg_price
-    }
-  }
-  )
-  //upgrade levels transaction
-  await Transaction.create(
-    {
-      from: user_id,
-      to: user_id,
-      reason: Upgrade_pkg,
-      payment: Upgrade_Price,
-      user_id: user_id
-    })
+  // await Upgrade.update({
+  //   level,
+  //   upgrade: Upgrade_Price
+  // }, {
+  //   where:
+  //   {
+  //     user_id,
+  //     pkg_price
+  //   }
+  // }
+  // )
+
   // admin wallet
   await wallet.update(
     {
@@ -2886,6 +2976,22 @@ const No_placement_CUTT_TO_ALL = async (
   await TotalIncome.update(
     { income: find_admin.income + IF_ONLY_ADMIN_placement },
     { where: { user_id: 1 } }
+  );
+  // REFF wallet
+  await wallet.update(
+    {
+      payment: findReff.wallet.payment + IF_ONLY_ADMIN_Direct
+    }
+    ,
+    {
+      where: {
+        user_id: findReff.user_id
+      }
+    })
+  //REFF total income
+  await TotalIncome.update(
+    { income: find_income.income + IF_ONLY_ADMIN_Direct },
+    { where: { user_id: find_income.user_id } }
   );
 
   if (findReff.id == 1) {
@@ -2964,6 +3070,16 @@ const No_placement_CUTT_TO_ALL = async (
 
   }
 
+  //upgrade levels transaction
+  await Transaction.create(
+    {
+      from: user_id,
+      to: 1,
+      reason: Upgrade_pkg,
+      payment: Upgrade_Price,
+      user_id: user_id
+    })
+
   //payment refferal transaction
   await Transaction.create(
     {
@@ -2980,7 +3096,7 @@ const No_placement_CUTT_TO_ALL = async (
       from: user_id,
       to: 1,
       reason: Taxforadminfrom,
-      payment: IF_ONLY_ADMIN_placement,
+      payment: IF_ONLY_ADMIN_CUTT_transaction,
       user_id
     })
 }
@@ -3002,6 +3118,7 @@ const GotPlacement_CUTT_TO_ALL = async (
   AllTaxAdmin,
   Upgrade_pkg,
   Taxforadminfrom,
+  Reff_pkg,
   res
 ) => {
 
@@ -3017,8 +3134,10 @@ const GotPlacement_CUTT_TO_ALL = async (
   IF_ONLY_ADMIN_CUTT = Upgrade_Price * 0.80
   IF_ONLY_ADMIN_REFF_CUTT = Upgrade_Price * 0.20
 
+  // res.json({findReff,find_income})
+  // return false
 
-  //upgrade levels
+  // upgrade levels
   // await Upgrade.update({
   //   level,
   //   upgrade: Upgrade_Price
@@ -3030,27 +3149,10 @@ const GotPlacement_CUTT_TO_ALL = async (
   //   }
   // }
   // )
-  //upgrade levels transaction
-  await Transaction.create(
-    {
-      from: user_id,
-      to: user_id,
-      reason: Upgrade_pkg,
-      payment: Upgrade_Price,
-      user_id
-    })
+  const find_income_Placement = await TotalIncome.findOne({ where: { user_id: placement_check[0].user_id } })
+  const find_income_Reff = await TotalIncome.findOne({ where: { user_id: findReff.user_id } })
 
-  //payment refferal transaction
-  await Transaction.create(
-    {
-      from: user_id,
-      to: findReff.id,
-      reason: Upgrade_pkg,
-      payment: IF_ONLY_ADMIN_Direct_Transaction,
-      user_id
-    })
-
-  if (findReff.id == placement_check[0].user_id) {
+  if (findReff.user_id == placement_check[0].user_id) {
     // placement wallet
     const walletx_Placement = await wallet.update(
       {
@@ -3063,9 +3165,9 @@ const GotPlacement_CUTT_TO_ALL = async (
         }
       })
 
-    // placement wala
+    // placement TotalIncome
     const walletXx_Placement = await TotalIncome.update(
-      { income: find_income.income + IF_ONLY_ADMIN_placement },
+      { income: find_income_Placement.income + IF_ONLY_ADMIN_placement },
       { where: { user_id: placement_check[0].user_id } }
     );
 
@@ -3073,7 +3175,7 @@ const GotPlacement_CUTT_TO_ALL = async (
       const findWallet = await wallet.findOne(
         {
           where: {
-            user_id: findReff.id
+            user_id: findReff.user_id
           }
         })
       // referal Wallet
@@ -3084,7 +3186,7 @@ const GotPlacement_CUTT_TO_ALL = async (
         ,
         {
           where: {
-            user_id: findReff.id
+            user_id: findReff.user_id
           }
         })
 
@@ -3093,32 +3195,56 @@ const GotPlacement_CUTT_TO_ALL = async (
       const findWalletx = await TotalIncome.findOne(
         {
           where: {
-            user_id: findReff.id
+            user_id: findReff.user_id
           }
         })
+
       // payment in referal
       await TotalIncome.update(
-        { income: findWalletx.income + IF_ONLY_ADMIN_Direct },
-        { where: { user_id: findReff.id } }
+        { income: find_income_Reff.income + IF_ONLY_ADMIN_Direct },
+        { where: { user_id: findReff.user_id } }
       );
     }
-    // admin wallet
-    await wallet.update(
+    //upgrade levels transaction
+    await Transaction.create(
       {
-        payment: adminWallet.wallet.payment + IF_ONLY_ADMIN
-      }
-      ,
-      {
-        where: {
-          user_id: 1
-        }
+        from: user_id,
+        to: placement_check[0].user_id,
+        reason: Upgrade_pkg,
+        payment: Upgrade_Price,
+        user_id
       })
-    //admin total income
-    await TotalIncome.update(
-      { income: find_admin.income + IF_ONLY_ADMIN },
-      { where: { user_id: 1 } }
-    );
-  } else if (findReff.id == 1) {
+
+    // refferal payment transaction
+    await Transaction.create(
+      {
+        from: user_id,
+        to: findReff.user_id,
+        reason: Reff_pkg,
+        payment: IF_ONLY_ADMIN_Direct_Transaction,
+        user_id
+      })
+
+    // placement transaction
+    await Transaction.create(
+      {
+        from: user_id,
+        to: placement_check[0].user_id,
+        reason: placement_pay,
+        payment: IF_ONLY_ADMIN_placement_Transaction,
+        user_id
+      })
+    // admin wallet transaction
+    await Transaction.create(
+      {
+        from: user_id,
+        to: 1,
+        reason: Taxforadminfrom,
+        payment: IF_ONLY_ADMIN,
+        user_id
+      })
+   
+  } else if (findReff.user_id == 1) {
     // placement wallet
     await wallet.update(
       {
@@ -3132,7 +3258,7 @@ const GotPlacement_CUTT_TO_ALL = async (
       })
     // placement wala
     await TotalIncome.update(
-      { income: find_income.income + IF_ONLY_ADMIN_placement },
+      { income: find_income_Placement.income + IF_ONLY_ADMIN_placement },
       { where: { user_id: placement_check[0].user_id } }
     );
     // REFF wallet
@@ -3147,7 +3273,7 @@ const GotPlacement_CUTT_TO_ALL = async (
         }
       })
     const ReFF_totalIncome = await TotalIncome.update(
-      { income: find_income.income + IF_ONLY_ADMIN_Direct },
+      { income: find_income_Reff.income + IF_ONLY_ADMIN_Direct },
       { where: { user_id: findReff.user_id } }
     );
     if (REFF1) {
@@ -3181,7 +3307,64 @@ const GotPlacement_CUTT_TO_ALL = async (
       );
     }
 
+    //upgrade levels transaction
+    await Transaction.create(
+      {
+        from: user_id,
+        to: placement_check[0].user_id,
+        reason: Upgrade_pkg,
+        payment: Upgrade_Price,
+        user_id
+      })
+
+    // refferal payment transaction
+    await Transaction.create(
+      {
+        from: user_id,
+        to: findReff.user_id,
+        reason: Reff_pkg,
+        payment: IF_ONLY_ADMIN_Direct_Transaction,
+        user_id
+      })
+
+    // placement transaction
+    await Transaction.create(
+      {
+        from: user_id,
+        to: placement_check[0].user_id,
+        reason: placement_pay,
+        payment: IF_ONLY_ADMIN_placement_Transaction,
+        user_id
+      })
+    // admin wallet transaction
+    await Transaction.create(
+      {
+        from: user_id,
+        to: 1,
+        reason: Taxforadminfrom,
+        payment: IF_ONLY_ADMIN,
+        user_id
+      })
+
   } else {
+
+    //..................
+    // referal Wallet
+    await wallet.update(
+      {
+        payment: findReff.wallet.payment + IF_ONLY_ADMIN_Direct
+      }
+      ,
+      {
+        where: {
+          user_id: findReff.user_id
+        }
+      })
+    //  referal TotalIncome
+    await TotalIncome.update(
+      { income: find_income_Reff.income + IF_ONLY_ADMIN_Direct },
+      { where: { user_id: findReff.user_id } }
+    );
     // placement wallet
     await wallet.update(
       {
@@ -3193,27 +3376,13 @@ const GotPlacement_CUTT_TO_ALL = async (
           user_id: placement_check[0].user_id
         }
       })
-    // placement wala
+
+    // placement TotalIncome
     await TotalIncome.update(
-      { income: find_income.income + IF_ONLY_ADMIN_placement },
+      { income: find_income_Placement.income + IF_ONLY_ADMIN_placement },
       { where: { user_id: placement_check[0].user_id } }
     );
-    // REFF wallet
-    await wallet.update(
-      {
-        payment: findReff.wallet.payment + IF_ONLY_ADMIN_Direct
-      }
-      ,
-      {
-        where: {
-          user_id: findReff.user_id
-        }
-      })
-    // REFF wala TotalIncome
-    await TotalIncome.update(
-      { income: find_income.income + IF_ONLY_ADMIN_Direct },
-      { where: { user_id: findReff.user_id } }
-    );
+
     // admin wallet
     await wallet.update(
       {
@@ -3230,26 +3399,47 @@ const GotPlacement_CUTT_TO_ALL = async (
       { income: find_admin.income + IF_ONLY_ADMIN },
       { where: { user_id: 1 } }
     );
-  }
+    //............................
 
-  // placement transaction
-  await Transaction.create(
-    {
-      from: user_id,
-      to: placement_check[0].user_id,
-      reason: placement_pay,
-      payment: IF_ONLY_ADMIN_placement_Transaction,
-      user_id
-    })
-  // admin wallet transaction
-  await Transaction.create(
-    {
-      from: user_id,
-      to: 1,
-      reason: Taxforadminfrom,
-      payment: IF_ONLY_ADMIN,
-      user_id
-    })
+    //upgrade levels transaction
+    await Transaction.create(
+      {
+        from: user_id,
+        to: placement_check[0].user_id,
+        reason: Upgrade_pkg,
+        payment: Upgrade_Price,
+        user_id
+      })
+
+    // refferal payment transaction
+    await Transaction.create(
+      {
+        from: user_id,
+        to: findReff.user_id,
+        reason: Reff_pkg,
+        payment: IF_ONLY_ADMIN_Direct_Transaction,
+        user_id
+      })
+
+    // placement transaction
+    await Transaction.create(
+      {
+        from: user_id,
+        to: placement_check[0].user_id,
+        reason: placement_pay,
+        payment: IF_ONLY_ADMIN_placement_Transaction,
+        user_id
+      })
+    // admin wallet transaction
+    await Transaction.create(
+      {
+        from: user_id,
+        to: 1,
+        reason: Taxforadminfrom,
+        payment: IF_ONLY_ADMIN,
+        user_id
+      })
+  }
 
 }
 
@@ -3344,6 +3534,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
     const percentage45 = pkg * 0.45
     const percentage55 = pkg * 0.55
     const percentage90 = pkg * 0.90
+    const transactionpercentage50 = pkg * 0.50
 
     if (findRight) {
       // xx-------------------xx------------------------------xx---------------------xxx
@@ -3435,7 +3626,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           from: user_info.id,
           to: findRight.user_id,
           reason: `Placement Fund from ${SearchUser.username}`,
-          payment: percentage45,
+          payment: transactionpercentage50,
           user_id: findRight.user_id,
         });
 
@@ -3476,7 +3667,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           from: user_info.id,
           to: Reff.directReffUser.id,
           reason: `Refferal Fund from ${SearchUser.username}`,
-          payment: percentage45,
+          payment: transactionpercentage50,
           user_id: Reff.directReffUser.id,
         });
         placementKharcha = await wallet.update(
@@ -3520,7 +3711,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           from: user_info.id,
           to: findRight.user_id,
           reason: `placement Fund from ${SearchUser.username}`,
-          payment: percentage45,
+          payment: transactionpercentage50,
           user_id: findRight.user_id,
         });
 
@@ -3631,7 +3822,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
             from: user_info.id,
             to: findLeft.user_id,
             reason: `Placement Fund from ${SearchUser.username}`,
-            payment: percentage45,
+            payment: transactionpercentage50,
             user_id: findLeft.user_id,
           });
 
@@ -3673,7 +3864,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
             from: user_info.id,
             to: Reff.directReffUser.id,
             reason: `Refferal Fund from ${SearchUser.username}`,
-            payment: percentage45,
+            payment: transactionpercentage50,
             user_id: Reff.directReffUser.id,
           });
           placementKharcha = await wallet.update(
@@ -3718,7 +3909,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
             from: user_info.id,
             to: findLeft.user_id,
             reason: `Placement Fund from ${SearchUser.username}`,
-            payment: percentage45,
+            payment: transactionpercentage50,
             user_id: findLeft.user_id,
           });
 
@@ -3837,7 +4028,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
             from: user_info.id,
             to: Reff.directReffUser.id,
             reason: `Your Refferal ${SearchUser.username} Purchased a package for ${pkg}`,
-            payment: percentage45,
+            payment: transactionpercentage50,
             user_id: user_info.id,
           });
 
@@ -4229,13 +4420,13 @@ const profileInfo = async (req, res) => {
   let total_income, total_withdrawal, date_register, Last_withdraw_time
 
   total_income = await TotalIncome.findOne({ where: { user_id: user_info.id } })
-  total_withdrawal = await TotalWithdraw.findOne({ where: { user_id: user_info.id } })
+  total_withdrawal = await TotalIncome.findOne({ where: { user_id: user_info.id }, order: [['id', 'DESC']] })
   date_register = await User.findOne({ where: { id: user_info.id } })
   const withdrawals = await Transaction.findOne({
     where: { from: user_info.id },
     order: [['id', 'DESC']]
   })
-  Last_withdraw_time = withdrawals?.createdAt || null
+  Last_withdraw_time = total_withdrawal?.updatedAt || null
 
   res.json({ total_income: total_income.income, total_withdrawal: total_withdrawal.withdraw, date_register: date_register.createdAt, Last_withdraw_time })
 };
