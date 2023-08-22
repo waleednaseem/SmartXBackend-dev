@@ -2946,20 +2946,21 @@ const No_placement_CUTT_TO_ALL = async (
 
   IF_ONLY_ADMIN_CUTT_transaction = Upgrade_Price * 0.75
   IF_ONLY_ADMIN_REFF_CUTT_transaction = Upgrade_Price * 0.25
+  const find_income_REFF = await TotalIncome.findOne({ where: { user_id: findReff.user_id } })
 
 
   // upgrade levels
-  // await Upgrade.update({
-  //   level,
-  //   upgrade: Upgrade_Price
-  // }, {
-  //   where:
-  //   {
-  //     user_id,
-  //     pkg_price
-  //   }
-  // }
-  // )
+  await Upgrade.update({
+    level,
+    upgrade: Upgrade_Price
+  }, {
+    where:
+    {
+      user_id,
+      pkg_price
+    }
+  }
+  )
 
   // admin wallet
   await wallet.update(
@@ -2980,7 +2981,7 @@ const No_placement_CUTT_TO_ALL = async (
   // REFF wallet
   await wallet.update(
     {
-      payment: findReff.wallet.payment + IF_ONLY_ADMIN_Direct
+      payment: find_income_REFF.payment + IF_ONLY_ADMIN_Direct
     }
     ,
     {
@@ -2990,14 +2991,14 @@ const No_placement_CUTT_TO_ALL = async (
     })
   //REFF total income
   await TotalIncome.update(
-    { income: find_income.income + IF_ONLY_ADMIN_Direct },
-    { where: { user_id: find_income.user_id } }
+    { income: find_income_REFF.income + IF_ONLY_ADMIN_Direct },
+    { where: { user_id: findReff.user_id } }
   );
 
-  if (findReff.id == 1) {
+  if (findReff.user_id == 1) {
     // payment in TotalIncome
     const walletXxFind = await TotalIncome.findOne(
-      { where: { user_id: findReff.id } }
+      { where: { user_id: findReff.user_id } }
     );
 
     //referal payment to referal
@@ -3008,20 +3009,20 @@ const No_placement_CUTT_TO_ALL = async (
       ,
       {
         where: {
-          user_id: findReff.id
+          user_id: findReff.user_id
         }
       })
     //referal payment to TotalIncome
     const walletXx = await TotalIncome.update(
       { income: walletXxFind.income + IF_ONLY_ADMIN_Direct },
-      { where: { user_id: findReff.id } }
+      { where: { user_id: findReff.user_id } }
     );
 
     if (walletX) {
       const findWallet = await wallet.findOne(
         {
           where: {
-            user_id: findReff.id
+            user_id: findReff.user_id
           }
         })
       await wallet.update(
@@ -3031,7 +3032,7 @@ const No_placement_CUTT_TO_ALL = async (
         ,
         {
           where: {
-            user_id: findReff.id
+            user_id: findReff.user_id
           }
         })
     }
@@ -3039,14 +3040,14 @@ const No_placement_CUTT_TO_ALL = async (
       const findIncome = await TotalIncome.findOne(
         {
           where: {
-            user_id: findReff.id
+            user_id: findReff.user_id
           }
         })
 
       //admin total income
       await TotalIncome.update(
         { income: findIncome.income + IF_ONLY_ADMIN_placement },
-        { where: { user_id: findReff.id } }
+        { where: { user_id: findReff.user_id } }
       );
     }
 
@@ -3059,13 +3060,13 @@ const No_placement_CUTT_TO_ALL = async (
       ,
       {
         where: {
-          user_id: findReff.id
+          user_id: findReff.user_id
         }
       })
     // referal payment in TotalIncome
     await TotalIncome.update(
-      { income: find_income.income + IF_ONLY_ADMIN_Direct },
-      { where: { user_id: findReff.id } }
+      { income: find_income_REFF.income + IF_ONLY_ADMIN_Direct },
+      { where: { user_id: findReff.user_id } }
     );
 
   }
@@ -3074,7 +3075,7 @@ const No_placement_CUTT_TO_ALL = async (
   await Transaction.create(
     {
       from: user_id,
-      to: 1,
+      to: user_id,
       reason: Upgrade_pkg,
       payment: Upgrade_Price,
       user_id: user_id
@@ -3084,7 +3085,7 @@ const No_placement_CUTT_TO_ALL = async (
   await Transaction.create(
     {
       from: user_id,
-      to: findReff.id,
+      to: findReff.user_id,
       reason: Reff_pkg,
       payment: IF_ONLY_ADMIN_REFF_CUTT_transaction,
       user_id: user_id
@@ -3138,17 +3139,17 @@ const GotPlacement_CUTT_TO_ALL = async (
   // return false
 
   // upgrade levels
-  // await Upgrade.update({
-  //   level,
-  //   upgrade: Upgrade_Price
-  // }, {
-  //   where:
-  //   {
-  //     user_id,
-  //     pkg_price
-  //   }
-  // }
-  // )
+  await Upgrade.update({
+    level,
+    upgrade: Upgrade_Price
+  }, {
+    where:
+    {
+      user_id,
+      pkg_price
+    }
+  }
+  )
   const find_income_Placement = await TotalIncome.findOne({ where: { user_id: placement_check[0].user_id } })
   const find_income_Reff = await TotalIncome.findOne({ where: { user_id: findReff.user_id } })
 
