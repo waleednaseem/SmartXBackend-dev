@@ -49,6 +49,10 @@ module.exports = {
         type: Sequelize.FLOAT,
         allowNull:false
       },
+      count: {
+        type: Sequelize.INTEGER,
+        allowNull:false
+      },
       user_id: {
         type: Sequelize.INTEGER,
         allowNull:false

@@ -80,6 +80,7 @@ App.get('/snippet', ctrl.Upgrade_Snippet)
 App.get('/get_count',ctrl.CountPlacements)
 App.get('/timers',ctrl.Timers)
 
+App.get('/counting',ctrl.placement_counting)
 
 App.post('/check', (req, res) => {
     res.status(200).send('Api is working properly')

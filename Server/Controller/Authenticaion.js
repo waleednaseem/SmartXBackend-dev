@@ -586,15 +586,16 @@ const FindUsers_Purchase = async (req, res) => {
   // Find profile with neither left nor right
   const NoSpace = await Profile.findOne({
     where: {
-      left: null,
+        left: null,
       right: null,
-      pkg: pkg,
+      pkg: pkg
     },
   });
+  
 
-  if (findRight) {
+ if (findRight) {
     const placements = await User.findOne({
-      where: { id: findRight.user_id },
+      where: { id: findRight?.user_id },
       include: { model: User_Profile },
     });
     placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C";
@@ -602,7 +603,7 @@ const FindUsers_Purchase = async (req, res) => {
 
     if (findLeft) {
       const placements = await User.findOne({
-        where: { id: findLeft.user_id },
+        where: { id: findLeft?.user_id },
         include: { model: User_Profile },
       });
       placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C";
@@ -614,7 +615,7 @@ const FindUsers_Purchase = async (req, res) => {
       placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C";
     }
   }
-
+  
   const Own_account = await Refferal.findOne({
     where: { user_id: user_info.id }
   })
@@ -2912,21 +2913,51 @@ let users = 0;
 let visitors = 0;
 
 // Middleware to add users every 24 hours
-const addUserJob = () => schedule.scheduleJob('0 0 * * *', async () => {
-  users += 100;
-  await Timer.update({
-    user: users
-  }, { where: { id: 1 } })
-})
+const addUserJob = () => schedule.scheduleJob('0 */12 * * *', async () => {
+  const minUsers = 20;
+  const maxUsers = 300;
+
+  // Generate a random number of users within the range
+  const randomUserCount = Math.floor(Math.random() * (maxUsers - minUsers + 1)) + minUsers;
+
+  // Fetch the current user count from the database or wherever it's stored
+  const timer = await Timer.findOne({ where: { id: 1 } });
+
+  if (timer) {
+    const updatedUserCount = timer.user + randomUserCount;
+
+    // Update the user count in the database
+    await Timer.update(
+      { user: updatedUserCount },
+      { where: { id: 1 } }
+    );
+  }
+});
+
 
 
 // Middleware to add visitors every hour
-const addVisitorJob = () => schedule.scheduleJob('0 * * * *', async () => {
-  visitors += 300;
-  await Timer.update({
-    visitor: visitors
-  }, { where: { id: 1 } })
+const addVisitorJob = () => schedule.scheduleJob('0 */6 * * *', async () => {
+  const minVisitors = 300;
+  const maxVisitors = 600;
+
+  // Generate a random number of visitors within the range
+  const randomVisitorCount = Math.floor(Math.random() * (maxVisitors - minVisitors + 1)) + minVisitors;
+
+  // Fetch the current visitor count from the database or wherever it's stored
+  const timer = await Timer.findOne({ where: { id: 1 } });
+
+  if (timer) {
+    const updatedVisitorCount = timer.visitor + randomVisitorCount;
+
+    // Update the visitor count in the database
+    await Timer.update(
+      { visitor: updatedVisitorCount },
+      { where: { id: 1 } }
+    );
+  }
 });
+
 addUserJob()
 addVisitorJob()
 
@@ -3587,7 +3618,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           pkg_price: pkg,
         }
       });
-      await Profile.update({
+      const check = await Profile.update({
         right: usermake.user_id
       }, {
         where: {
@@ -3595,7 +3626,10 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           pkg: pkg,
         }
       });
-
+      if (check) {
+        const counting = await Profile.findOne({ where: { user_id: findRight.user_id, pkg: pkg } })
+        await Profile.update({ count: counting.count + 1 }, { where: { user_id: findRight.user_id, pkg: pkg } })
+      }
       await Pakage.create({
         user_id: user_info.id,
         pkg_price: pkg,
@@ -3741,6 +3775,8 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
       }
 
+
+
       res.status(200).json({ msg: `from Right of ${pkg}`, findRight, reffKharcha });
 
       // xx-------------------xx------------------------------xx---------------------xxx
@@ -3785,7 +3821,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
             pkg_price: pkg,
           }
         });
-        await Profile.update({
+        const check = await Profile.update({
           left: usermake.user_id
         }, {
           where: {
@@ -3793,6 +3829,10 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
             pkg: pkg,
           }
         });
+        if (check) {
+          const counting = await Profile.findOne({ where: { user_id: findLeft.user_id, pkg: pkg } })
+          await Profile.update({ count: counting.count + 1 }, { where: { user_id: findLeft.user_id, pkg: pkg } })
+        }
         await Pakage.create({
           user_id: user_info.id,
           pkg_price: pkg,
@@ -3938,6 +3978,8 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
             user_id: user_info.id,
           });
         }
+
+
 
         res.json({ msg: `from Left of ${pkg}`, findLeft, reffKharcha });
         // xx-------------------xx------------------------------xx---------------------xxx
@@ -5028,6 +5070,82 @@ const CountPlacements = async (req, res) => {
   }
 };
 
+// kam karta hoa code part 1
+// const placement_counting = async (req, res) => {
+//   let placements = 0;
+
+//   const user = req.headers.authorization.split(' ')[1];
+//   const user_info = jwt_decode(user);
+
+//   const profile = await Profile.findOne({ where: { user_id: user_info.id } });
+
+//   if (profile) {
+//     placements = profile.count || 0;
+
+//     if (profile.left !== null) {
+//       const user1 = await Profile.findOne({ where: { user_id: profile.left } });
+//       if (user1) {
+//         placements += user1.count || 0;
+//       }
+//     }
+
+//     if (profile.right !== null) {
+//       const user2 = await Profile.findOne({ where: { user_id: profile.right } });
+//       if (user2) {
+//         placements += user2.count || 0;
+//       }
+//     }
+//   }
+
+//   res.json(placements);
+// };
+
+const placement_counting = async (req, res) => {
+  let placements = 0,Total_Reff
+
+  const user = req.headers.authorization.split(' ')[1];
+  const user_info = jwt_decode(user);
+
+  const profile = await Profile.findOne({ where: { user_id: user_info.id } });
+
+  if (profile) {
+    const levels = 16; // Change this to the desired number of levels
+
+    // Call the recursive function to count placements
+    placements = await countPlacements(profile, levels);
+  }
+
+  const Reff = await Refferal.findAll({ where: { refferal: user_info.id } })
+    Total_Reff = Reff.length
+
+  res.json({placements,Total_Reff});
+};
+
+const countPlacements = async (profile, remainingLevels) => {
+  if (remainingLevels === 0) {
+    return profile.count || 0;
+  }
+
+  let placements = profile.count || 0;
+
+  if (profile.left !== null) {
+    const user1 = await Profile.findOne({ where: { user_id: profile.left } });
+    if (user1) {
+      placements += await countPlacements(user1, remainingLevels - 1);
+    }
+  }
+
+  if (profile.right !== null) {
+    const user2 = await Profile.findOne({ where: { user_id: profile.right } });
+    if (user2) {
+      placements += await countPlacements(user2, remainingLevels - 1);
+    }
+  }
+
+  return placements;
+};
+
+
 module.exports = {
   ADMIN,
   Register,
@@ -5062,5 +5180,6 @@ module.exports = {
   FindUsers,
   FindUsers_Purchase,
   ReffID,
-  CountPlacements
+  CountPlacements,
+  placement_counting
 };

@@ -113,6 +113,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: true
     },
+    count: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: true
