@@ -549,11 +549,13 @@ const FindUsers = async (req, res) => {
       }
     )
     res.json({
+      // Placement_Upgrade
       placement: Find_placement.User_profile.wallet_address,
       Direct_reff: Find_Reff.User_profile.wallet_address
     })
   }
 }
+
 const FindUsers_Purchase = async (req, res) => {
   const user = req.headers.authorization.split(' ')[1]
   const user_info = jwt_decode(user)
@@ -561,6 +563,19 @@ const FindUsers_Purchase = async (req, res) => {
 
   let placement, Direct_reff
 
+  // res.json({user_info})
+  // return false
+
+  // Find profile with left but no right
+  const findLeft = await Profile.findOne({
+    where: {
+      left: null,
+      right: { [Sequelize.Op.ne]: null },
+      pkg: pkg,
+    },
+  });
+
+  // Find profile with right but no left
   const findRight = await Profile.findOne({
     where: {
       left: { [Sequelize.Op.ne]: null },
@@ -569,54 +584,55 @@ const FindUsers_Purchase = async (req, res) => {
     },
   });
 
-  const Own_account = await Profile.findOne({
-    where: { user_id: user_info.id }
-  })
-
-
-  if (Own_account) {
-    Direct_reff = await User.findOne({
-      where: { id: Own_account.refferal },
-      include: { model: User_Profile }
-    })
-  } else {
-    Direct_reff = await User.findOne({
-      where: { id: 1 },
-      include: { model: User_Profile }
-    })
-  }
-
+  // Find profile with neither left nor right
+  const NoSpace = await Profile.findOne({
+    where: {
+      left: null,
+      right: null,
+      pkg: pkg,
+    },
+  });
 
   if (findRight) {
-    placement = await User.findOne({
+    const placements = await User.findOne({
       where: { id: findRight.user_id },
-      include: { model: User_Profile }
-    })
-  } else {
-    const findLeft = await Profile.findOne({
-      where: {
-        left: null,
-        pkg: pkg,
-      },
+      include: { model: User_Profile },
     });
+    placement = placements?.User_profile?.wallet_address || "Not found";
+  } else {
+
     if (findLeft) {
-      placement = await User.findOne({
+      const placements = await User.findOne({
         where: { id: findLeft.user_id },
-        include: { model: User_Profile }
-      })
-
+        include: { model: User_Profile },
+      });
+      placement = placements?.User_profile?.wallet_address || "Not found";
     } else {
-      placement = await User.findOne({
-        where: { id: 1 },
-        include: { model: User_Profile }
-      })
-
+      const placements = await User.findOne({
+        where: { id: NoSpace.user_id },
+        include: { model: User_Profile },
+      });
+      placement = placements?.User_profile?.wallet_address || "Not found";
     }
   }
 
+  const Own_account = await Refferal.findOne({
+    where: { user_id: user_info.id }
+  })
+
+  if (Own_account) {
+    const Direct_reffx = await User.findOne({
+      where: { id: Own_account.refferal },
+      include: { model: User_Profile }
+    })
+    Direct_reff = Direct_reffx?.User_profile?.wallet_address
+  } else {
+    Direct_reff = "0x556499eda344C4E27c793f7249339f3FAf12Bc2C"
+  }
+
   res.json({
-    placement: placement?.User_profile?.wallet_address,
-    Direct_reff: Direct_reff?.User_profile?.wallet_address
+    placement,
+    Direct_reff
   });
 
 }
@@ -3244,7 +3260,7 @@ const GotPlacement_CUTT_TO_ALL = async (
         payment: IF_ONLY_ADMIN,
         user_id
       })
-   
+
   } else if (findReff.user_id == 1) {
     // placement wallet
     await wallet.update(
