@@ -549,7 +549,6 @@ const FindUsers = async (req, res) => {
       }
     )
     res.json({
-      // Placement_Upgrade
       placement: Find_placement.User_profile.wallet_address,
       Direct_reff: Find_Reff.User_profile.wallet_address
     })
@@ -598,7 +597,7 @@ const FindUsers_Purchase = async (req, res) => {
       where: { id: findRight.user_id },
       include: { model: User_Profile },
     });
-    placement = placements?.User_profile?.wallet_address || "Not found";
+    placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C";
   } else {
 
     if (findLeft) {
@@ -606,13 +605,13 @@ const FindUsers_Purchase = async (req, res) => {
         where: { id: findLeft.user_id },
         include: { model: User_Profile },
       });
-      placement = placements?.User_profile?.wallet_address || "Not found";
+      placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C";
     } else {
       const placements = await User.findOne({
-        where: { id: NoSpace.user_id },
+        where: { id: NoSpace?.user_id },
         include: { model: User_Profile },
       });
-      placement = placements?.User_profile?.wallet_address || "Not found";
+      placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C";
     }
   }
 
