@@ -560,7 +560,7 @@ const FindUsers_Purchase = async (req, res) => {
   const user_info = jwt_decode(user)
   const { pkg } = req.body
 
-  let placement, Direct_reff
+  let placement, Direct_reff 
 
   // res.json({user_info})
   // return false
@@ -608,11 +608,16 @@ const FindUsers_Purchase = async (req, res) => {
       });
       placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C";
     } else {
-      const placements = await User.findOne({
+        
+        if(NoSpace){
+           const placements = await User.findOne({
         where: { id: NoSpace?.user_id },
         include: { model: User_Profile },
       });
-      placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C";
+      placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C"; 
+        }else{
+            placement = "0x556499eda344C4E27c793f7249339f3FAf12Bc2C"
+        }
     }
   }
   
@@ -2912,10 +2917,10 @@ const ReffID = async (req, res) => {
 let users = 0;
 let visitors = 0;
 
-// Middleware to add users every 24 hours
-const addUserJob = () => schedule.scheduleJob('0 */12 * * *', async () => {
-  const minUsers = 20;
-  const maxUsers = 300;
+// Middleware should add users every 10 minutes between 4 - 10
+const addUserJob = () => schedule.scheduleJob('*/10 * * *', async () => {
+  const minUsers = 4;
+  const maxUsers = 10;
 
   // Generate a random number of users within the range
   const randomUserCount = Math.floor(Math.random() * (maxUsers - minUsers + 1)) + minUsers;
@@ -2934,12 +2939,10 @@ const addUserJob = () => schedule.scheduleJob('0 */12 * * *', async () => {
   }
 });
 
-
-
-// Middleware to add visitors every hour
-const addVisitorJob = () => schedule.scheduleJob('0 */6 * * *', async () => {
-  const minVisitors = 300;
-  const maxVisitors = 600;
+// Middleware should add visitors every 10 minutes between 20 - 35
+const addVisitorJob = () => schedule.scheduleJob('0 */10 * * *', async () => {
+  const minVisitors = 20;
+  const maxVisitors = 35;
 
   // Generate a random number of visitors within the range
   const randomVisitorCount = Math.floor(Math.random() * (maxVisitors - minVisitors + 1)) + minVisitors;
