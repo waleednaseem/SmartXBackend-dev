@@ -47,10 +47,6 @@ const level_8 = 800;
 const ADMIN = async (req, res) => {
   const admin = await Profile.findOne({ where: { id: 1 } });
 
-  await Timer.create({
-    user: 0,
-    visitor: 0
-  })
   if (!admin) {
     // Create the admin user if it doesn't exist
     await User.create({
@@ -79,6 +75,10 @@ const ADMIN = async (req, res) => {
       user_id: 1,
       refferal: 1,
       refferal_code: "sx111",
+    })
+    await Timer.create({
+      user: 0,
+      visitor: 0
     })
     res.json({ msg: "admin created" });
   } else {
@@ -560,7 +560,7 @@ const FindUsers_Purchase = async (req, res) => {
   const user_info = jwt_decode(user)
   const { pkg } = req.body
 
-  let placement, Direct_reff 
+  let placement, Direct_reff
 
   // res.json({user_info})
   // return false
@@ -586,14 +586,14 @@ const FindUsers_Purchase = async (req, res) => {
   // Find profile with neither left nor right
   const NoSpace = await Profile.findOne({
     where: {
-        left: null,
+      left: null,
       right: null,
       pkg: pkg
     },
   });
-  
 
- if (findRight) {
+
+  if (findRight) {
     const placements = await User.findOne({
       where: { id: findRight?.user_id },
       include: { model: User_Profile },
@@ -608,19 +608,19 @@ const FindUsers_Purchase = async (req, res) => {
       });
       placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C";
     } else {
-        
-        if(NoSpace){
-           const placements = await User.findOne({
-        where: { id: NoSpace?.user_id },
-        include: { model: User_Profile },
-      });
-      placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C"; 
-        }else{
-            placement = "0x556499eda344C4E27c793f7249339f3FAf12Bc2C"
-        }
+
+      if (NoSpace) {
+        const placements = await User.findOne({
+          where: { id: NoSpace?.user_id },
+          include: { model: User_Profile },
+        });
+        placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C";
+      } else {
+        placement = "0x556499eda344C4E27c793f7249339f3FAf12Bc2C"
+      }
     }
   }
-  
+
   const Own_account = await Refferal.findOne({
     where: { user_id: user_info.id }
   })
@@ -2940,7 +2940,7 @@ const addUserJob = () => schedule.scheduleJob('*/10 * * *', async () => {
 });
 
 // Middleware should add visitors every 10 minutes between 20 - 35
-const addVisitorJob = () => schedule.scheduleJob('0 */10 * * *', async () => {
+const addVisitorJob = () => schedule.scheduleJob('*/10 * * *', async () => {
   const minVisitors = 20;
   const maxVisitors = 35;
 
@@ -2965,7 +2965,7 @@ addUserJob()
 addVisitorJob()
 
 const Timers = async (req, res) => {
-  const USERS = await Timer.findOne()
+  const USERS = await Timer.findOne({where:{id:1}})
   res.json({ users: USERS.user, visitor: USERS.visitor })
 }
 
@@ -5104,7 +5104,7 @@ const CountPlacements = async (req, res) => {
 // };
 
 const placement_counting = async (req, res) => {
-  let placements = 0,Total_Reff
+  let placements = 0, Total_Reff
 
   const user = req.headers.authorization.split(' ')[1];
   const user_info = jwt_decode(user);
@@ -5119,9 +5119,9 @@ const placement_counting = async (req, res) => {
   }
 
   const Reff = await Refferal.findAll({ where: { refferal: user_info.id } })
-    Total_Reff = Reff.length
+  Total_Reff = Reff.length
 
-  res.json({placements,Total_Reff});
+  res.json({ placements, Total_Reff });
 };
 
 const countPlacements = async (profile, remainingLevels) => {
