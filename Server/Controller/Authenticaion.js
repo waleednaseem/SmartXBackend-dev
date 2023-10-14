@@ -45,7 +45,8 @@ const level_8 = 800;
 
 
 const ADMIN = async (req, res) => {
-  const admin = await Profile.findOne({ where: { id: 1 } });
+  const admin = await User.findOne({ where: { username:"admin"} });
+const userAgent = req.headers['user-agent']
 
   if (!admin) {
     // Create the admin user if it doesn't exist
@@ -82,6 +83,7 @@ const ADMIN = async (req, res) => {
     })
     res.json({ msg: "admin created" });
   } else {
+      
     res.json({ msg: "admin found" });
   }
 };
@@ -743,7 +745,7 @@ const Upgrades = async (req, res) => {
       switch (Selected.Upgrade.level) {
         case 0: No_placement_CUTT_TO_ALL(
           1,
-          126,
+          125,
           user_info.id,
           Upgrades4,
           findReff,
@@ -4113,8 +4115,12 @@ const placementInvest = async (req, res) => {
 
   const userx = req.headers.authorization.split(" ")[1];
   const user_info = jwt_decode(userx);
-  purchase_PKG(pkg, user_info, pkg_name, res)
-
+  if (pkg === 10 || pkg === 20 || pkg === 50 || pkg === 100 || pkg === 200 || pkg === 350)  {
+    purchase_PKG(pkg, user_info, pkg_name, res);
+  } else {
+    res.status(400).json({ error: 'Invalid pkg value' });
+  }
+ 
 };
 
 const Pakage_info = async (req, res) => {

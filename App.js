@@ -10,7 +10,7 @@ const Authentication = require('./Server/Middleware/Authentication')
 
 
 App.use(cors({
-    origin: '*'
+  origin: '*'
 }))
 
 App.use(bodyparser.urlencoded({ extended: false }))
