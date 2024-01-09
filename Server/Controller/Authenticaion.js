@@ -45,8 +45,8 @@ const level_8 = 800;
 
 
 const ADMIN = async (req, res) => {
-  const admin = await User.findOne({ where: { username:"admin"} });
-const userAgent = req.headers['user-agent']
+  const admin = await User.findOne({ where: { username: "admin" } });
+  const userAgent = req.headers['user-agent']
 
   if (!admin) {
     // Create the admin user if it doesn't exist
@@ -83,7 +83,7 @@ const userAgent = req.headers['user-agent']
     })
     res.json({ msg: "admin created" });
   } else {
-      
+
     res.json({ msg: "admin found" });
   }
 };
@@ -193,26 +193,30 @@ const Login = async (req, res) => {
       username: username
     },
   });
-  const hashPassword = await jwt_decode(user.password);
+  if (user) {
+    const hashPassword = await jwt_decode(user.password);
 
-  if (hashPassword.password == password) {
-    const payload = {
-      id: user.id,
-    };
+    if (hashPassword.password == password) {
+      const payload = {
+        id: user.id,
+      };
 
-    const token = jwt.sign(payload, "teriMaaKiChot");
+      const token = jwt.sign(payload, "teriMaaKiChot");
 
-    if (!token) {
-      return res.status(401).send("Invalid password");
-    }
+      if (!token) {
+        return res.status(401).send("Invalid password");
+      }
 
-    try {
-      res.status(200).send({ message: "Logged in successfully", token });
-    } catch (err) {
-      res.status(500).send({ message: "Error creating token" });
+      try {
+        res.status(200).send({ message: "Logged in successfully", token });
+      } catch (err) {
+        res.status(500).send({ message: "Error creating token" });
+      }
+    } else {
+      return res.status(200).send("User not found");
     }
   } else {
-    return res.status(200).send("User not found");
+    res.json('User not found!')
   }
 
 };
@@ -440,9 +444,9 @@ const ResetPassword = async (req, res) => {
 }
 
 const FindUsers = async (req, res) => {
-  const user = req.headers.authorization.split(' ')[1]
-  const user_info = jwt_decode(user)
-  const { pkg } = req.body
+  // const user = req.headers.authorization.split(' ')[1]
+  // const user_info = jwt_decode(user)
+  const { pkg,user_id } = req.body
   //placement start
   let placements = [];
   let Placement_Upgrade = []
@@ -450,11 +454,11 @@ const FindUsers = async (req, res) => {
   let Find_placement, Find_Reff
 
   const FIndUser = await User.findOne({
-    where: { id: user_info.id },
+    where: { id: user_id },
     include: { model: Profile }
   })
   const Selected = await Profile.findOne({
-    where: { user_id: user_info.id, pkg: pkg },
+    where: { user_id, pkg: pkg },
     include: { model: Upgrade },
   })
   const FindAdmin = await User.findOne(
@@ -645,7 +649,7 @@ const FindUsers_Purchase = async (req, res) => {
 }
 
 const Upgrades = async (req, res) => {
-  const { pkg } = req.body
+  const { pkg,user_id } = req.body
   const Upgrades1 = 10;
   const Upgrades2 = 20;
   const Upgrades3 = 50;
@@ -653,17 +657,17 @@ const Upgrades = async (req, res) => {
   const Upgrades5 = 200;
   const Upgrades6 = 350;
 
-  const userx = req.headers.authorization.split(" ")[1];
-  const user_info = jwt_decode(userx);
-  const find_income = await TotalIncome.findOne({ where: { user_id: user_info.id } })
+  // const userx = req.headers.authorization.split(" ")[1];
+  // const user_info = jwt_decode(userx);
+  const find_income = await TotalIncome.findOne({ where: { user_id } })
   const find_admin = await TotalIncome.findOne({ where: { user_id: 1 } })
   const Selected = await Profile.findOne({
-    where: { user_id: user_info.id, pkg: pkg },
+    where: { user_id, pkg: pkg },
     include: { model: Upgrade }
   });
   //   res.json(Selected)
   // return false
-  const SearchUser = await User.findOne({ where: { id: user_info.id } })
+  const SearchUser = await User.findOne({ where: { id: user_id } })
 
   const findReff = await Profile.findOne({
     where: { user_id: Selected.refferal },
@@ -746,7 +750,7 @@ const Upgrades = async (req, res) => {
         case 0: No_placement_CUTT_TO_ALL(
           1,
           125,
-          user_info.id,
+          user_id,
           Upgrades4,
           findReff,
           find_admin,
@@ -765,7 +769,7 @@ const Upgrades = async (req, res) => {
         case 1: No_placement_CUTT_TO_ALL(
           2,
           281.250,
-          user_info.id,
+          user_id,
           Upgrades4,
           findReff,
           find_admin,
@@ -783,7 +787,7 @@ const Upgrades = async (req, res) => {
         case 2: No_placement_CUTT_TO_ALL(
           3,
           632.813,
-          user_info.id,
+          user_id,
           Upgrades4,
           findReff,
           find_admin,
@@ -801,7 +805,7 @@ const Upgrades = async (req, res) => {
         case 3: No_placement_CUTT_TO_ALL(
           4,
           1423.828,
-          user_info.id,
+          user_id,
           Upgrades4,
           findReff,
           find_admin,
@@ -819,7 +823,7 @@ const Upgrades = async (req, res) => {
         case 4: No_placement_CUTT_TO_ALL(
           5,
           3203.613,
-          user_info.id,
+          user_id,
           Upgrades4,
           findReff,
           find_admin,
@@ -837,7 +841,7 @@ const Upgrades = async (req, res) => {
         case 5: No_placement_CUTT_TO_ALL(
           6,
           7208.130,
-          user_info.id,
+          user_id,
           Upgrades4,
           findReff,
           find_admin,
@@ -855,7 +859,7 @@ const Upgrades = async (req, res) => {
         case 6: No_placement_CUTT_TO_ALL(
           7,
           16218.292,
-          user_info.id,
+          user_id,
           Upgrades4,
           findReff,
           find_admin,
@@ -873,7 +877,7 @@ const Upgrades = async (req, res) => {
         case 7: No_placement_CUTT_TO_ALL(
           8,
           36491.158,
-          user_info.id,
+          user_id,
           Upgrades4,
           findReff,
           find_admin,
@@ -899,7 +903,7 @@ const Upgrades = async (req, res) => {
         case 0: GotPlacement_CUTT_TO_ALL(
           1,
           126,
-          user_info.id,
+          user_id,
           Upgrades4,
           findReff,
           find_admin,
@@ -919,7 +923,7 @@ const Upgrades = async (req, res) => {
         case 1: GotPlacement_CUTT_TO_ALL(
           2,
           281.250,
-          user_info.id,
+          user_id,
           Upgrades4,
           findReff,
           find_admin,
@@ -940,7 +944,7 @@ const Upgrades = async (req, res) => {
         case 2: GotPlacement_CUTT_TO_ALL(
           3,
           632.813,
-          user_info.id,
+          user_id,
           Upgrades4,
           findReff,
           find_admin,
@@ -960,7 +964,7 @@ const Upgrades = async (req, res) => {
         case 3: GotPlacement_CUTT_TO_ALL(
           4,
           1423.828,
-          user_info.id,
+          user_id,
           Upgrades4,
           findReff,
           find_admin,
@@ -980,7 +984,7 @@ const Upgrades = async (req, res) => {
         case 4: GotPlacement_CUTT_TO_ALL(
           5,
           3203.613,
-          user_info.id,
+          user_id,
           Upgrades4,
           findReff,
           find_admin,
@@ -1000,7 +1004,7 @@ const Upgrades = async (req, res) => {
         case 5: GotPlacement_CUTT_TO_ALL(
           6,
           7208.130,
-          user_info.id,
+          user_id,
           Upgrades4,
           findReff,
           find_admin,
@@ -1020,7 +1024,7 @@ const Upgrades = async (req, res) => {
         case 6: GotPlacement_CUTT_TO_ALL(
           7,
           16218.292,
-          user_info.id,
+          user_id,
           Upgrades4,
           findReff,
           find_admin,
@@ -1040,7 +1044,7 @@ const Upgrades = async (req, res) => {
         case 7: GotPlacement_CUTT_TO_ALL(
           8,
           36491.158,
-          user_info.id,
+          user_id,
           Upgrades4,
           findReff,
           find_admin,
@@ -1063,7 +1067,7 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id,
+              user_id: user_id,
               pkg_price: pkg
             }
           }
@@ -1071,20 +1075,20 @@ const Upgrades = async (req, res) => {
           // // upradde transaction
           // await Transaction.create(
           //   {
-          //     from: user_info.id,
+          //     from: user_id,
           //     to: 1,
           //     reason: Upgrade_pkg,
           //     payment: 36491.158,
-          //     user_id: user_info.id
+          //     user_id: user_id
           //   })
           // upradde transaction
           await Transaction.create(
             {
-              from: user_info.id,
-              to: user_info.id,
+              from: user_id,
+              to: user_id,
               reason: Upgrade_pkg,
               payment: 36491.158,
-              user_id: user_info.id
+              user_id: user_id
             })
 
           //payment to referal
@@ -1106,11 +1110,11 @@ const Upgrades = async (req, res) => {
           //payment refferal transaction
           await Transaction.create(
             {
-              from: user_info.id,
+              from: user_id,
               to: findReff.id,
               reason: Reff_transac,
               payment: 9122.789,
-              user_id: user_info.id
+              user_id: user_id
             })
           // placement wallet
           await wallet.update(
@@ -1132,11 +1136,11 @@ const Upgrades = async (req, res) => {
           // placement transaction
           await Transaction.create(
             {
-              from: user_info.id,
+              from: user_id,
               to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 27368.368,
-              user_id: user_info.id
+              user_id: user_id
             })
           // admin wallet
           await wallet.update(
@@ -1158,11 +1162,11 @@ const Upgrades = async (req, res) => {
           // admin wallet transaction
           await Transaction.create(
             {
-              from: user_info.id,
+              from: user_id,
               to: 1,
               reason: Taxforadminfrom,
               payment: 3649.116,
-              user_id: user_info.id
+              user_id: user_id
             })
           break
         default:
@@ -1183,7 +1187,7 @@ const Upgrades = async (req, res) => {
         case 0: No_placement_CUTT_TO_ALL(
           1,
           12.5,
-          user_info.id,
+          user_id,
           Upgrades1,
           findReff,
           find_admin,
@@ -1201,7 +1205,7 @@ const Upgrades = async (req, res) => {
         case 1: No_placement_CUTT_TO_ALL(
           2,
           28.125,
-          user_info.id,
+          user_id,
           Upgrades1,
           findReff,
           find_admin,
@@ -1219,7 +1223,7 @@ const Upgrades = async (req, res) => {
         case 2: No_placement_CUTT_TO_ALL(
           3,
           63.281,
-          user_info.id,
+          user_id,
           Upgrades1,
           findReff,
           find_admin,
@@ -1237,7 +1241,7 @@ const Upgrades = async (req, res) => {
         case 3: No_placement_CUTT_TO_ALL(
           4,
           142.383,
-          user_info.id,
+          user_id,
           Upgrades1,
           findReff,
           find_admin,
@@ -1255,7 +1259,7 @@ const Upgrades = async (req, res) => {
         case 4: No_placement_CUTT_TO_ALL(
           5,
           320.361,
-          user_info.id,
+          user_id,
           Upgrades1,
           findReff,
           find_admin,
@@ -1273,7 +1277,7 @@ const Upgrades = async (req, res) => {
         case 5: No_placement_CUTT_TO_ALL(
           6,
           720.813,
-          user_info.id,
+          user_id,
           Upgrades1,
           findReff,
           find_admin,
@@ -1291,7 +1295,7 @@ const Upgrades = async (req, res) => {
         case 6: No_placement_CUTT_TO_ALL(
           7,
           1621.829,
-          user_info.id,
+          user_id,
           Upgrades1,
           findReff,
           find_admin,
@@ -1309,7 +1313,7 @@ const Upgrades = async (req, res) => {
         case 7: No_placement_CUTT_TO_ALL(
           8,
           3649.116,
-          user_info.id,
+          user_id,
           Upgrades1,
           findReff,
           find_admin,
@@ -1335,7 +1339,7 @@ const Upgrades = async (req, res) => {
         case 0: GotPlacement_CUTT_TO_ALL(
           1,
           12.5,
-          user_info.id,
+          user_id,
           Upgrades1,
           findReff,
           find_admin,
@@ -1355,7 +1359,7 @@ const Upgrades = async (req, res) => {
         case 1: GotPlacement_CUTT_TO_ALL(
           2,
           28.125,
-          user_info.id,
+          user_id,
           Upgrades1,
           findReff,
           find_admin,
@@ -1375,7 +1379,7 @@ const Upgrades = async (req, res) => {
         case 2: GotPlacement_CUTT_TO_ALL(
           3,
           63.281,
-          user_info.id,
+          user_id,
           Upgrades1,
           findReff,
           find_admin,
@@ -1395,7 +1399,7 @@ const Upgrades = async (req, res) => {
         case 3: GotPlacement_CUTT_TO_ALL(
           4,
           142.383,
-          user_info.id,
+          user_id,
           Upgrades1,
           findReff,
           find_admin,
@@ -1415,7 +1419,7 @@ const Upgrades = async (req, res) => {
         case 4: GotPlacement_CUTT_TO_ALL(
           5,
           320.361,
-          user_info.id,
+          user_id,
           Upgrades1,
           findReff,
           find_admin,
@@ -1435,7 +1439,7 @@ const Upgrades = async (req, res) => {
         case 5: GotPlacement_CUTT_TO_ALL(
           6,
           720.813,
-          user_info.id,
+          user_id,
           Upgrades1,
           findReff,
           find_admin,
@@ -1458,7 +1462,7 @@ const Upgrades = async (req, res) => {
           }, {
             where:
             {
-              user_id: user_info.id,
+              user_id: user_id,
               pkg_price: pkg
             }
           }
@@ -1466,11 +1470,11 @@ const Upgrades = async (req, res) => {
           // upradde transaction
           await Transaction.create(
             {
-              from: user_info.id,
-              to: user_info.id,
+              from: user_id,
+              to: user_id,
               reason: Upgrade_pkg,
               payment: 720.813,
-              user_id: user_info.id
+              user_id: user_id
             })
 
           //payment to referal
@@ -1492,11 +1496,11 @@ const Upgrades = async (req, res) => {
           //payment refferal transaction
           await Transaction.create(
             {
-              from: user_info.id,
+              from: user_id,
               to: findReff.id,
               reason: Reff_transac,
               payment: 180.203,
-              user_id: user_info.id
+              user_id: user_id
             })
           // placement wallet
           await wallet.update(
@@ -1518,11 +1522,11 @@ const Upgrades = async (req, res) => {
           // placement transaction
           await Transaction.create(
             {
-              from: user_info.id,
+              from: user_id,
               to: placement_check[0].user_id,
               reason: placement_Transaction,
               payment: 540.610,
-              user_id: user_info.id
+              user_id: user_id
             })
           // admin wallet
           await wallet.update(
@@ -1544,17 +1548,17 @@ const Upgrades = async (req, res) => {
           // admin wallet transaction
           await Transaction.create(
             {
-              from: user_info.id,
+              from: user_id,
               to: 1,
               reason: Taxforadminfrom,
               payment: 72.081,
-              user_id: user_info.id
+              user_id: user_id
             })
           break
         case 6: GotPlacement_CUTT_TO_ALL(
           7,
           1621.829,
-          user_info.id,
+          user_id,
           Upgrades1,
           findReff,
           find_admin,
@@ -1574,7 +1578,7 @@ const Upgrades = async (req, res) => {
         case 7: GotPlacement_CUTT_TO_ALL(
           8,
           3649.116,
-          user_info.id,
+          user_id,
           Upgrades1,
           findReff,
           find_admin,
@@ -1609,7 +1613,7 @@ const Upgrades = async (req, res) => {
         case 0: No_placement_CUTT_TO_ALL(
           1,
           25,
-          user_info.id,
+          user_id,
           Upgrades2,
           findReff,
           find_admin,
@@ -1627,7 +1631,7 @@ const Upgrades = async (req, res) => {
         case 1: No_placement_CUTT_TO_ALL(
           2,
           56.250,
-          user_info.id,
+          user_id,
           Upgrades2,
           findReff,
           find_admin,
@@ -1645,7 +1649,7 @@ const Upgrades = async (req, res) => {
         case 2: No_placement_CUTT_TO_ALL(
           3,
           126.563,
-          user_info.id,
+          user_id,
           Upgrades2,
           findReff,
           find_admin,
@@ -1663,7 +1667,7 @@ const Upgrades = async (req, res) => {
         case 3: No_placement_CUTT_TO_ALL(
           4,
           284.766,
-          user_info.id,
+          user_id,
           Upgrades2,
           findReff,
           find_admin,
@@ -1681,7 +1685,7 @@ const Upgrades = async (req, res) => {
         case 4: No_placement_CUTT_TO_ALL(
           5,
           640.723,
-          user_info.id,
+          user_id,
           Upgrades2,
           findReff,
           find_admin,
@@ -1699,7 +1703,7 @@ const Upgrades = async (req, res) => {
         case 5: No_placement_CUTT_TO_ALL(
           6,
           1441.626,
-          user_info.id,
+          user_id,
           Upgrades2,
           findReff,
           find_admin,
@@ -1717,7 +1721,7 @@ const Upgrades = async (req, res) => {
         case 6: No_placement_CUTT_TO_ALL(
           7,
           3243.658,
-          user_info.id,
+          user_id,
           Upgrades2,
           findReff,
           find_admin,
@@ -1735,7 +1739,7 @@ const Upgrades = async (req, res) => {
         case 7: No_placement_CUTT_TO_ALL(
           8,
           7298.232,
-          user_info.id,
+          user_id,
           Upgrades2,
           findReff,
           find_admin,
@@ -1761,7 +1765,7 @@ const Upgrades = async (req, res) => {
         case 0: GotPlacement_CUTT_TO_ALL(
           1,
           25,
-          user_info.id,
+          user_id,
           Upgrades2,
           findReff,
           find_admin,
@@ -1781,7 +1785,7 @@ const Upgrades = async (req, res) => {
         case 1: GotPlacement_CUTT_TO_ALL(
           2,
           56.250,
-          user_info.id,
+          user_id,
           Upgrades2,
           findReff,
           find_admin,
@@ -1801,7 +1805,7 @@ const Upgrades = async (req, res) => {
         case 2: GotPlacement_CUTT_TO_ALL(
           3,
           126.563,
-          user_info.id,
+          user_id,
           Upgrades2,
           findReff,
           find_admin,
@@ -1821,7 +1825,7 @@ const Upgrades = async (req, res) => {
         case 3: GotPlacement_CUTT_TO_ALL(
           4,
           284.766,
-          user_info.id,
+          user_id,
           Upgrades2,
           findReff,
           find_admin,
@@ -1841,7 +1845,7 @@ const Upgrades = async (req, res) => {
         case 4: GotPlacement_CUTT_TO_ALL(
           5,
           640.723,
-          user_info.id,
+          user_id,
           Upgrades2,
           findReff,
           find_admin,
@@ -1861,7 +1865,7 @@ const Upgrades = async (req, res) => {
         case 5: GotPlacement_CUTT_TO_ALL(
           6,
           1441.626,
-          user_info.id,
+          user_id,
           Upgrades2,
           findReff,
           find_admin,
@@ -1881,7 +1885,7 @@ const Upgrades = async (req, res) => {
         case 6: GotPlacement_CUTT_TO_ALL(
           7,
           3243.658,
-          user_info.id,
+          user_id,
           Upgrades2,
           findReff,
           find_admin,
@@ -1901,7 +1905,7 @@ const Upgrades = async (req, res) => {
         case 7: GotPlacement_CUTT_TO_ALL(
           8,
           7298.232,
-          user_info.id,
+          user_id,
           Upgrades2,
           findReff,
           find_admin,
@@ -1936,7 +1940,7 @@ const Upgrades = async (req, res) => {
         case 0: No_placement_CUTT_TO_ALL(
           1,
           62.5,
-          user_info.id,
+          user_id,
           Upgrades3,
           findReff,
           find_admin,
@@ -1954,7 +1958,7 @@ const Upgrades = async (req, res) => {
         case 1: No_placement_CUTT_TO_ALL(
           2,
           140.625,
-          user_info.id,
+          user_id,
           Upgrades3,
           findReff,
           find_admin,
@@ -1972,7 +1976,7 @@ const Upgrades = async (req, res) => {
         case 2: No_placement_CUTT_TO_ALL(
           3,
           316.406,
-          user_info.id,
+          user_id,
           Upgrades3,
           findReff,
           find_admin,
@@ -1990,7 +1994,7 @@ const Upgrades = async (req, res) => {
         case 3: No_placement_CUTT_TO_ALL(
           4,
           711.914,
-          user_info.id,
+          user_id,
           Upgrades3,
           findReff,
           find_admin,
@@ -2008,7 +2012,7 @@ const Upgrades = async (req, res) => {
         case 4: No_placement_CUTT_TO_ALL(
           5,
           1601.807,
-          user_info.id,
+          user_id,
           Upgrades3,
           findReff,
           find_admin,
@@ -2026,7 +2030,7 @@ const Upgrades = async (req, res) => {
         case 5: No_placement_CUTT_TO_ALL(
           6,
           3604.065,
-          user_info.id,
+          user_id,
           Upgrades3,
           findReff,
           find_admin,
@@ -2044,7 +2048,7 @@ const Upgrades = async (req, res) => {
         case 6: No_placement_CUTT_TO_ALL(
           7,
           8109.146,
-          user_info.id,
+          user_id,
           Upgrades3,
           findReff,
           find_admin,
@@ -2062,7 +2066,7 @@ const Upgrades = async (req, res) => {
         case 7: No_placement_CUTT_TO_ALL(
           8,
           18245.579,
-          user_info.id,
+          user_id,
           Upgrades3,
           findReff,
           find_admin,
@@ -2088,7 +2092,7 @@ const Upgrades = async (req, res) => {
         case 0: GotPlacement_CUTT_TO_ALL(
           1,
           62.5,
-          user_info.id,
+          user_id,
           Upgrades3,
           findReff,
           find_admin,
@@ -2108,7 +2112,7 @@ const Upgrades = async (req, res) => {
         case 1: GotPlacement_CUTT_TO_ALL(
           2,
           140.625,
-          user_info.id,
+          user_id,
           Upgrades3,
           findReff,
           find_admin,
@@ -2128,7 +2132,7 @@ const Upgrades = async (req, res) => {
         case 2: GotPlacement_CUTT_TO_ALL(
           3,
           316.406,
-          user_info.id,
+          user_id,
           Upgrades3,
           findReff,
           find_admin,
@@ -2148,7 +2152,7 @@ const Upgrades = async (req, res) => {
         case 3: GotPlacement_CUTT_TO_ALL(
           4,
           711.914,
-          user_info.id,
+          user_id,
           Upgrades3,
           findReff,
           find_admin,
@@ -2168,7 +2172,7 @@ const Upgrades = async (req, res) => {
         case 4: GotPlacement_CUTT_TO_ALL(
           5,
           1601.807,
-          user_info.id,
+          user_id,
           Upgrades3,
           findReff,
           find_admin,
@@ -2188,7 +2192,7 @@ const Upgrades = async (req, res) => {
         case 5: GotPlacement_CUTT_TO_ALL(
           6,
           3604.065,
-          user_info.id,
+          user_id,
           Upgrades3,
           findReff,
           find_admin,
@@ -2208,7 +2212,7 @@ const Upgrades = async (req, res) => {
         case 6: GotPlacement_CUTT_TO_ALL(
           7,
           8109.146,
-          user_info.id,
+          user_id,
           Upgrades3,
           findReff,
           find_admin,
@@ -2228,7 +2232,7 @@ const Upgrades = async (req, res) => {
         case 7: GotPlacement_CUTT_TO_ALL(
           8,
           18245.579,
-          user_info.id,
+          user_id,
           Upgrades3,
           findReff,
           find_admin,
@@ -2263,7 +2267,7 @@ const Upgrades = async (req, res) => {
         case 0: No_placement_CUTT_TO_ALL(
           1,
           250,
-          user_info.id,
+          user_id,
           Upgrades5,
           findReff,
           find_admin,
@@ -2281,7 +2285,7 @@ const Upgrades = async (req, res) => {
         case 1: No_placement_CUTT_TO_ALL(
           2,
           562.5,
-          user_info.id,
+          user_id,
           Upgrades5,
           findReff,
           find_admin,
@@ -2299,7 +2303,7 @@ const Upgrades = async (req, res) => {
         case 2: No_placement_CUTT_TO_ALL(
           3,
           1265.625,
-          user_info.id,
+          user_id,
           Upgrades5,
           findReff,
           find_admin,
@@ -2317,7 +2321,7 @@ const Upgrades = async (req, res) => {
         case 3: No_placement_CUTT_TO_ALL(
           4,
           2847.656,
-          user_info.id,
+          user_id,
           Upgrades5,
           findReff,
           find_admin,
@@ -2335,7 +2339,7 @@ const Upgrades = async (req, res) => {
         case 4: No_placement_CUTT_TO_ALL(
           5,
           6407.227,
-          user_info.id,
+          user_id,
           Upgrades5,
           findReff,
           find_admin,
@@ -2353,7 +2357,7 @@ const Upgrades = async (req, res) => {
         case 5: No_placement_CUTT_TO_ALL(
           6,
           14416.260,
-          user_info.id,
+          user_id,
           Upgrades5,
           findReff,
           find_admin,
@@ -2371,7 +2375,7 @@ const Upgrades = async (req, res) => {
         case 6: No_placement_CUTT_TO_ALL(
           7,
           32436.584,
-          user_info.id,
+          user_id,
           Upgrades5,
           findReff,
           find_admin,
@@ -2389,7 +2393,7 @@ const Upgrades = async (req, res) => {
         case 7: No_placement_CUTT_TO_ALL(
           8,
           72982.315,
-          user_info.id,
+          user_id,
           Upgrades5,
           findReff,
           find_admin,
@@ -2415,7 +2419,7 @@ const Upgrades = async (req, res) => {
         case 0: GotPlacement_CUTT_TO_ALL(
           1,
           250,
-          user_info.id,
+          user_id,
           Upgrades5,
           findReff,
           find_admin,
@@ -2435,7 +2439,7 @@ const Upgrades = async (req, res) => {
         case 1: GotPlacement_CUTT_TO_ALL(
           2,
           562.5,
-          user_info.id,
+          user_id,
           Upgrades5,
           findReff,
           find_admin,
@@ -2455,7 +2459,7 @@ const Upgrades = async (req, res) => {
         case 2: GotPlacement_CUTT_TO_ALL(
           3,
           1265.625,
-          user_info.id,
+          user_id,
           Upgrades5,
           findReff,
           find_admin,
@@ -2475,7 +2479,7 @@ const Upgrades = async (req, res) => {
         case 3: GotPlacement_CUTT_TO_ALL(
           4,
           2847.565,
-          user_info.id,
+          user_id,
           Upgrades5,
           findReff,
           find_admin,
@@ -2495,7 +2499,7 @@ const Upgrades = async (req, res) => {
         case 4: GotPlacement_CUTT_TO_ALL(
           5,
           6407.227,
-          user_info.id,
+          user_id,
           Upgrades5,
           findReff,
           find_admin,
@@ -2515,7 +2519,7 @@ const Upgrades = async (req, res) => {
         case 5: GotPlacement_CUTT_TO_ALL(
           6,
           14416.260,
-          user_info.id,
+          user_id,
           Upgrades5,
           findReff,
           find_admin,
@@ -2535,7 +2539,7 @@ const Upgrades = async (req, res) => {
         case 6: GotPlacement_CUTT_TO_ALL(
           7,
           32436.584,
-          user_info.id,
+          user_id,
           Upgrades5,
           findReff,
           find_admin,
@@ -2555,7 +2559,7 @@ const Upgrades = async (req, res) => {
         case 7: GotPlacement_CUTT_TO_ALL(
           8,
           72982.315,
-          user_info.id,
+          user_id,
           Upgrades5,
           findReff,
           find_admin,
@@ -2590,7 +2594,7 @@ const Upgrades = async (req, res) => {
         case 0: No_placement_CUTT_TO_ALL(
           1,
           438,
-          user_info.id,
+          user_id,
           Upgrades6,
           findReff,
           find_admin,
@@ -2608,7 +2612,7 @@ const Upgrades = async (req, res) => {
         case 1: No_placement_CUTT_TO_ALL(
           2,
           984.4,
-          user_info.id,
+          user_id,
           Upgrades6,
           findReff,
           find_admin,
@@ -2626,7 +2630,7 @@ const Upgrades = async (req, res) => {
         case 2: No_placement_CUTT_TO_ALL(
           3,
           2214.844,
-          user_info.id,
+          user_id,
           Upgrades6,
           findReff,
           find_admin,
@@ -2644,7 +2648,7 @@ const Upgrades = async (req, res) => {
         case 3: No_placement_CUTT_TO_ALL(
           4,
           4983.398,
-          user_info.id,
+          user_id,
           Upgrades6,
           findReff,
           find_admin,
@@ -2662,7 +2666,7 @@ const Upgrades = async (req, res) => {
         case 4: No_placement_CUTT_TO_ALL(
           5,
           11212.646,
-          user_info.id,
+          user_id,
           Upgrades6,
           findReff,
           find_admin,
@@ -2680,7 +2684,7 @@ const Upgrades = async (req, res) => {
         case 5: No_placement_CUTT_TO_ALL(
           6,
           25228.455,
-          user_info.id,
+          user_id,
           Upgrades6,
           findReff,
           find_admin,
@@ -2698,7 +2702,7 @@ const Upgrades = async (req, res) => {
         case 6: No_placement_CUTT_TO_ALL(
           7,
           56764.023,
-          user_info.id,
+          user_id,
           Upgrades6,
           findReff,
           find_admin,
@@ -2716,7 +2720,7 @@ const Upgrades = async (req, res) => {
         case 7: No_placement_CUTT_TO_ALL(
           8,
           127719.051,
-          user_info.id,
+          user_id,
           Upgrades6,
           findReff,
           find_admin,
@@ -2742,7 +2746,7 @@ const Upgrades = async (req, res) => {
         case 0: GotPlacement_CUTT_TO_ALL(
           1,
           438,
-          user_info.id,
+          user_id,
           Upgrades6,
           findReff,
           find_admin,
@@ -2762,7 +2766,7 @@ const Upgrades = async (req, res) => {
         case 1: GotPlacement_CUTT_TO_ALL(
           2,
           984.4,
-          user_info.id,
+          user_id,
           Upgrades6,
           findReff,
           find_admin,
@@ -2782,7 +2786,7 @@ const Upgrades = async (req, res) => {
         case 2: GotPlacement_CUTT_TO_ALL(
           3,
           2214.844,
-          user_info.id,
+          user_id,
           Upgrades6,
           findReff,
           find_admin,
@@ -2802,7 +2806,7 @@ const Upgrades = async (req, res) => {
         case 3: GotPlacement_CUTT_TO_ALL(
           4,
           4983.398,
-          user_info.id,
+          user_id,
           Upgrades6,
           findReff,
           find_admin,
@@ -2822,7 +2826,7 @@ const Upgrades = async (req, res) => {
         case 4: GotPlacement_CUTT_TO_ALL(
           5,
           11212.646,
-          user_info.id,
+          user_id,
           Upgrades6,
           findReff,
           find_admin,
@@ -2842,7 +2846,7 @@ const Upgrades = async (req, res) => {
         case 5: GotPlacement_CUTT_TO_ALL(
           6,
           25228.455,
-          user_info.id,
+          user_id,
           Upgrades6,
           findReff,
           find_admin,
@@ -2862,7 +2866,7 @@ const Upgrades = async (req, res) => {
         case 6: GotPlacement_CUTT_TO_ALL(
           7,
           56764.023,
-          user_info.id,
+          user_id,
           Upgrades6,
           findReff,
           find_admin,
@@ -2882,7 +2886,7 @@ const Upgrades = async (req, res) => {
         case 7: GotPlacement_CUTT_TO_ALL(
           8,
           127719.051,
-          user_info.id,
+          user_id,
           Upgrades6,
           findReff,
           find_admin,
@@ -2967,7 +2971,7 @@ addUserJob()
 addVisitorJob()
 
 const Timers = async (req, res) => {
-  const USERS = await Timer.findOne({where:{id:1}})
+  const USERS = await Timer.findOne({ where: { id: 1 } })
   res.json({ users: USERS.user, visitor: USERS.visitor })
 }
 
@@ -3552,9 +3556,9 @@ const Withdraw = async (req, res) => {
 const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
   let ReffkWallets1, reffKharcha, placementKharcha
   generateUniqueReferralCode()
-  const SearchUser = await User.findOne({ where: { id: user_info.id } })
+  const SearchUser = await User.findOne({ where: { id: user_info } })
   const find_Admin_income = await TotalIncome.findOne({ where: { user_id: 1 } })
-  const Real_profile = await Profile.findOne({ where: { user_id: user_info.id, pkg: pkg } })
+  const Real_profile = await Profile.findOne({ where: { user_id: user_info, pkg: pkg } })
 
   let find_income
   if (Real_profile) {
@@ -3569,7 +3573,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
     });
 
     ReffkWallets1 = await Refferal.findOne({
-      where: { user_id: user_info.id },
+      where: { user_id: user_info },
       attributes: ['user_id', 'refferal'],
       include: {
         model: User,
@@ -3591,7 +3595,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
     if (findRight) {
       // xx-------------------xx------------------------------xx---------------------xxx
       const Reff = await Refferal.findOne({
-        where: { user_id: user_info.id },
+        where: { user_id: user_info },
         attributes: ['user_id', 'refferal'],
         include: {
           model: User,
@@ -3608,7 +3612,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         refferal: Reff.directReffUser.id,
         // refferal_code: referralCode,
         pkg: pkg,
-        user_id: user_info.id,
+        user_id: user_info,
         username: SearchUser.username,
       });
 
@@ -3619,7 +3623,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         package: true
       }, {
         where: {
-          user_id: user_info.id,
+          user_id: user_info,
           pkg_price: pkg,
         }
       });
@@ -3636,7 +3640,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         await Profile.update({ count: counting.count + 1 }, { where: { user_id: findRight.user_id, pkg: pkg } })
       }
       await Pakage.create({
-        user_id: user_info.id,
+        user_id: user_info,
         pkg_price: pkg,
         pkg_name: pkg_name,
       });
@@ -3660,25 +3664,25 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
         // 55% to admin
         await Transaction.create({
-          from: user_info.id,
+          from: user_info,
           to: 1,
           reason: `commision with tax from ${SearchUser.username}`,
           payment: percentage55,
-          user_id: user_info.id,
+          user_id: user_info,
         });
 
         //own transaction
         await Transaction.create({
-          from: user_info.id,
-          to: user_info.id,
+          from: user_info,
+          to: user_info,
           reason: "Purchased Package",
           payment: pkg,
-          user_id: user_info.id,
+          user_id: user_info,
         });
 
         //transaction
         await Transaction.create({
-          from: user_info.id,
+          from: user_info,
           to: findRight.user_id,
           reason: `Placement Fund from ${SearchUser.username}`,
           payment: transactionpercentage50,
@@ -3710,7 +3714,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
         //transactions
         await Transaction.create({
-          from: user_info.id,
+          from: user_info,
           to: 1,
           reason: `tax for admin ${SearchUser.username}`,
           payment: percentage10,
@@ -3719,7 +3723,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
         //transactions
         await Transaction.create({
-          from: user_info.id,
+          from: user_info,
           to: Reff.directReffUser.id,
           reason: `Refferal Fund from ${SearchUser.username}`,
           payment: transactionpercentage50,
@@ -3735,7 +3739,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         );
         if (placementKharcha) {
           const innerReff = await Refferal.findOne({
-            where: { user_id: user_info.id },
+            where: { user_id: user_info },
             attributes: ['user_id', 'refferal'],
             include: {
               model: User,
@@ -3763,7 +3767,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
         //transactions
         await Transaction.create({
-          from: user_info.id,
+          from: user_info,
           to: findRight.user_id,
           reason: `placement Fund from ${SearchUser.username}`,
           payment: transactionpercentage50,
@@ -3772,10 +3776,10 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
         await Transaction.create({
           from: "Blockchain Wallet",
-          to: user_info.id,
+          to: user_info,
           reason: "you purchased pakage",
           payment: pkg,
-          user_id: user_info.id,
+          user_id: user_info,
         });
 
       }
@@ -3795,7 +3799,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
       if (findLeft) {
         // xx-------------------xx------------------------------xx---------------------xxx
         const Reff = await Refferal.findOne({
-          where: { user_id: user_info.id },
+          where: { user_id: user_info },
           attributes: ['user_id', 'refferal'],
           include: {
             model: User,
@@ -3812,7 +3816,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           refferal: Reff.directReffUser.id,
           // refferal_code: referralCode,
           pkg: pkg,
-          user_id: user_info.id,
+          user_id: user_info,
           username: SearchUser.username,
         });
         await Upgrade.update({
@@ -3822,7 +3826,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           package: true
         }, {
           where: {
-            user_id: user_info.id,
+            user_id: user_info,
             pkg_price: pkg,
           }
         });
@@ -3839,7 +3843,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           await Profile.update({ count: counting.count + 1 }, { where: { user_id: findLeft.user_id, pkg: pkg } })
         }
         await Pakage.create({
-          user_id: user_info.id,
+          user_id: user_info,
           pkg_price: pkg,
           pkg_name: pkg_name,
         });
@@ -3863,24 +3867,24 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
           // 55% to admin
           await Transaction.create({
-            from: user_info.id,
+            from: user_info,
             to: 1,
             reason: `commision with tax from ${SearchUser.username}`,
             payment: percentage55,
-            user_id: user_info.id,
+            user_id: user_info,
           });
 
           //own transaction
           await Transaction.create({
-            from: user_info.id,
-            to: user_info.id,
+            from: user_info,
+            to: user_info,
             reason: "Purchased Package",
             payment: pkg,
-            user_id: user_info.id,
+            user_id: user_info,
           });
           //transaction
           await Transaction.create({
-            from: user_info.id,
+            from: user_info,
             to: findLeft.user_id,
             reason: `Placement Fund from ${SearchUser.username}`,
             payment: transactionpercentage50,
@@ -3913,7 +3917,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
           //transaction
           await Transaction.create({
-            from: user_info.id,
+            from: user_info,
             to: 1,
             reason: `Tax to admin ${SearchUser.username}`,
             payment: percentage10,
@@ -3922,7 +3926,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
           //transaction
           await Transaction.create({
-            from: user_info.id,
+            from: user_info,
             to: Reff.directReffUser.id,
             reason: `Refferal Fund from ${SearchUser.username}`,
             payment: transactionpercentage50,
@@ -3940,7 +3944,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
           if (placementKharcha) {
             const innerReff = await Refferal.findOne({
-              where: { user_id: user_info.id },
+              where: { user_id: user_info },
               attributes: ['user_id', 'refferal'],
               include: {
                 model: User,
@@ -3967,7 +3971,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
           //transaction
           await Transaction.create({
-            from: user_info.id,
+            from: user_info,
             to: findLeft.user_id,
             reason: `Placement Fund from ${SearchUser.username}`,
             payment: transactionpercentage50,
@@ -3977,10 +3981,10 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 
           await Transaction.create({
             from: "Blockchain Wallet",
-            to: user_info.id,
+            to: user_info,
             reason: "you purchased pakage",
             payment: pkg,
-            user_id: user_info.id,
+            user_id: user_info,
           });
         }
 
@@ -3990,7 +3994,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
         // xx-------------------xx------------------------------xx---------------------xxx
       } else {
         const Reff = await Refferal.findOne({
-          where: { user_id: user_info.id },
+          where: { user_id: user_info },
           attributes: ['user_id', 'refferal'],
           include: {
             model: User,
@@ -4007,11 +4011,11 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           refferal: Reff.directReffUser.id,
           // refferal_code: referralCode,
           pkg: pkg,
-          user_id: user_info.id,
+          user_id: user_info,
           username: SearchUser.username,
         });
         await Pakage.create({
-          user_id: user_info.id,
+          user_id: user_info,
           pkg_price: pkg,
           pkg_name: pkg_name,
         });
@@ -4022,7 +4026,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           package: true
         }, {
           where: {
-            user_id: user_info.id,
+            user_id: user_info,
             pkg_price: pkg,
           }
         });
@@ -4044,18 +4048,18 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
             { where: { user_id: find_income_admin.user_id } }
           );
           await Transaction.create({
-            from: user_info.id,
+            from: user_info,
             to: 1,
             reason: `commision with tax from ${SearchUser.username}`,
             payment: pkg,
-            user_id: user_info.id,
+            user_id: user_info,
           });
           await Transaction.create({
-            from: user_info.id,
-            to: user_info.id,
+            from: user_info,
+            to: user_info,
             reason: "Package Purchased",
             payment: pkg,
-            user_id: user_info.id,
+            user_id: user_info,
           })
 
         } else {
@@ -4080,7 +4084,7 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           );
 
           await Transaction.create({
-            from: user_info.id,
+            from: user_info,
             to: 1,
             reason: `tax for admin from ${SearchUser.username} for package ${pkg}`,
             payment: percentage55,
@@ -4088,19 +4092,19 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
           });
 
           await Transaction.create({
-            from: user_info.id,
+            from: user_info,
             to: Reff.directReffUser.id,
             reason: `Your Refferal ${SearchUser.username} Purchased a package for ${pkg}`,
             payment: transactionpercentage50,
-            user_id: user_info.id,
+            user_id: user_info,
           });
 
           await Transaction.create({
             from: "Blockchain Wallet",
-            to: user_info.id,
+            to: user_info,
             reason: "you purchased pakage",
             payment: pkg,
-            user_id: user_info.id,
+            user_id: user_info,
           });
         }
 
@@ -4111,16 +4115,16 @@ const purchase_PKG = async (pkg, user_info, pkg_name, res) => {
 }
 
 const placementInvest = async (req, res) => {
-  const { pkg, pkg_name } = req.body;
+  const { pkg, pkg_name,user_id } = req.body;
 
-  const userx = req.headers.authorization.split(" ")[1];
-  const user_info = jwt_decode(userx);
-  if (pkg === 10 || pkg === 20 || pkg === 50 || pkg === 100 || pkg === 200 || pkg === 350)  {
-    purchase_PKG(pkg, user_info, pkg_name, res);
+  // const userx = req.headers.authorization.split(" ")[1];
+  // const user_info = jwt_decode(userx);
+  if (pkg === 10 || pkg === 20 || pkg === 50 || pkg === 100 || pkg === 200 || pkg === 350) {
+    purchase_PKG(pkg, user_id, pkg_name, res);
   } else {
     res.status(400).json({ error: 'Invalid pkg value' });
   }
- 
+
 };
 
 const Pakage_info = async (req, res) => {
@@ -4370,10 +4374,7 @@ const ShowReff = async (req, res) => {
 };
 const getUserByTrend = async (req, res) => {
   const pkg = req.body.pkg;
-  const UserID = req.body.UserID;
-  const Users = req.headers.authorization.split(' ')[1]
-  const user_info = jwt_decode(Users)
-
+  const UserID = req.body.UserID
 
   const user = await Profile.findOne({
     where: { user_id: UserID, pkg: pkg },
