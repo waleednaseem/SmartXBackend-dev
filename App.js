@@ -28,7 +28,7 @@ App.post('/register', ctrl.Register)
 App.post('/login', ctrl.Login)
 App.post('/refferals', ctrl.refferals)
 
-App.post('/upgrade', ctrl.Upgrades)
+// App.post('/upgrade', ctrl.Upgrades)
 App.post('/purchase_package', ctrl.placementInvest)
 
 App.post('/Pakage_info', ctrl.Pakage_info)
@@ -37,8 +37,8 @@ App.get('/finduserpakage', ctrl.FindUserPakage)
 App.post('/ShowReffTrend', ctrl.ShowReff)
 App.post('/trenduser', ctrl.getUserByTrend)
 App.post('/testTrend', ctrl.testTrend)
-App.post('/user_on_upgrade', ctrl.FindUsers)
-App.post('/user_on_purchase', ctrl.FindUsers_Purchase)
+// App.post('/user_on_upgrade', ctrl.FindUsers)
+// App.post('/user_on_purchase', ctrl.FindUsers_Purchase)
 
 
 //mailer
