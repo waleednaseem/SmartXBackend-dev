@@ -4,7 +4,7 @@ const jwt_decode = require("jwt-decode");
 const { Sequelize } = require("sequelize");
 const { sequelize } = require("../models");
 const nodemailer = require('nodemailer');
-const client = require('twilio')('AC4148bda9be96f980d55d67df8c2f2853', '719e1a252dc5fd233f5658e86629eecd')
+// const client = require('twilio')('AC4148bda9be96f980d55d67df8c2f2853', '719e1a252dc5fd233f5658e86629eecd')
 const schedule = require('node-schedule');
 
 //finding user
