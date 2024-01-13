@@ -4494,7 +4494,7 @@ const profileInfo = async (req, res) => {
     where: { from: user_info.id },
     order: [['id', 'DESC']]
   })
-  Last_withdraw_time = total_withdrawal?.updatedAt || null
+  // Last_withdraw_time = total_withdrawal?.updatedAt || null
 
   res.json({ total_income: total_income.income, total_withdrawal: total_withdrawal.withdraw, date_register: date_register.createdAt, Last_withdraw_time })
 };
