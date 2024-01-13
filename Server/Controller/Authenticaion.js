@@ -443,2474 +443,2474 @@ const ResetPassword = async (req, res) => {
   }
 }
 
-const FindUsers = async (req, res) => {
-  // const user = req.headers.authorization.split(' ')[1]
-  // const user_info = jwt_decode(user)
-  const { pkg,user_id } = req.body
-  //placement start
-  let placements = [];
-  let Placement_Upgrade = []
-  let placement_check
-  let Find_placement, Find_Reff
+// const FindUsers = async (req, res) => {
+//   // const user = req.headers.authorization.split(' ')[1]
+//   // const user_info = jwt_decode(user)
+//   const { pkg,user_id } = req.body
+//   //placement start
+//   let placements = [];
+//   let Placement_Upgrade = []
+//   let placement_check
+//   let Find_placement, Find_Reff
 
-  const FIndUser = await User.findOne({
-    where: { id: user_id },
-    include: { model: Profile }
-  })
-  const Selected = await Profile.findOne({
-    where: { user_id, pkg: pkg },
-    include: { model: Upgrade },
-  })
-  const FindAdmin = await User.findOne(
-    {
-      where: { id: 1 },
-      include: { model: User_Profile }
-    }
-  )
+//   const FIndUser = await User.findOne({
+//     where: { id: user_id },
+//     include: { model: Profile }
+//   })
+//   const Selected = await Profile.findOne({
+//     where: { user_id, pkg: pkg },
+//     include: { model: Upgrade },
+//   })
+//   const FindAdmin = await User.findOne(
+//     {
+//       where: { id: 1 },
+//       include: { model: User_Profile }
+//     }
+//   )
 
-  if (Selected == null) {
-    Find_Reff = await User.findOne(
-      {
-        where: { id: FIndUser?.Profile?.refferal },
-        include: { model: User_Profile }
-      }
-    )
-    res.json({
-      placement: FindAdmin.User_profile.wallet_address,
-      Direct_reff: Find_Reff.User_profile.wallet_address
-    })
-  } else {
+//   if (Selected == null) {
+//     Find_Reff = await User.findOne(
+//       {
+//         where: { id: FIndUser?.Profile?.refferal },
+//         include: { model: User_Profile }
+//       }
+//     )
+//     res.json({
+//       placement: FindAdmin.User_profile.wallet_address,
+//       Direct_reff: Find_Reff.User_profile.wallet_address
+//     })
+//   } else {
 
-    let placement = await Profile.findOne(
-      {
-        where: {
-          [Sequelize.Op.or]: [
-            { left: Selected?.user_id, pkg: pkg },
-            { right: Selected?.user_id, pkg: pkg },
-          ],
-        },
-        include: [
-          { model: Pakage, attributes: ["pkg_name", "pkg_price"] },
-          { model: Upgrade },
-          { model: wallet },
-        ],
-      }
-    );
+//     let placement = await Profile.findOne(
+//       {
+//         where: {
+//           [Sequelize.Op.or]: [
+//             { left: Selected?.user_id, pkg: pkg },
+//             { right: Selected?.user_id, pkg: pkg },
+//           ],
+//         },
+//         include: [
+//           { model: Pakage, attributes: ["pkg_name", "pkg_price"] },
+//           { model: Upgrade },
+//           { model: wallet },
+//         ],
+//       }
+//     );
 
-    if (placement) {
-      placements.push(placement);
-    }
+//     if (placement) {
+//       placements.push(placement);
+//     }
 
-    for (let i = 2; i <= 16; i++) {
+//     for (let i = 2; i <= 16; i++) {
 
-      if (!placement) {
-        break;
-      }
-      placement = await Profile.findOne({
-        where: {
-          [Sequelize.Op.or]: [
-            { left: placement?.user_id, pkg: pkg },
-            { right: placement?.user_id, pkg: pkg },
-          ],
-        },
-        include: [
-          { model: Pakage, attributes: ["pkg_name", "pkg_price", "user_id"] },
-          { model: Upgrade },
-          { model: wallet },
-        ],
-      });
-
-
-      if (placement) {
-        placements.push(placement);
-      }
-    }
-
-    if (Selected.pkg == pkg) {
-      for (let i = 1; i < placements?.length; i += 2) {
-        Placement_Upgrade?.push(placements[i]);
-      }
-      placement_check = Placement_Upgrade?.filter((placement) => placement?.Upgrade?.level > Selected?.Upgrade?.level);
-    }
-
-    const Only_admin = await User.findOne(
-      {
-        where: { id: 1 },
-        include: { model: User_Profile }
-      }
-    )
+//       if (!placement) {
+//         break;
+//       }
+//       placement = await Profile.findOne({
+//         where: {
+//           [Sequelize.Op.or]: [
+//             { left: placement?.user_id, pkg: pkg },
+//             { right: placement?.user_id, pkg: pkg },
+//           ],
+//         },
+//         include: [
+//           { model: Pakage, attributes: ["pkg_name", "pkg_price", "user_id"] },
+//           { model: Upgrade },
+//           { model: wallet },
+//         ],
+//       });
 
 
+//       if (placement) {
+//         placements.push(placement);
+//       }
+//     }
 
-    Find_placement = await User.findOne(
-      {
-        where: { id: placement_check?.length > 0 ? placement_check[0]?.user_id : Only_admin.id },
-        include: { model: User_Profile }
-      }
-    )
-    Find_Reff = await User.findOne(
-      {
-        where: { id: FIndUser?.Profile?.refferal },
-        include: { model: User_Profile }
-      }
-    )
-    res.json({
-      placement: Find_placement.User_profile.wallet_address,
-      Direct_reff: Find_Reff.User_profile.wallet_address
-    })
-  }
-}
+//     if (Selected.pkg == pkg) {
+//       for (let i = 1; i < placements?.length; i += 2) {
+//         Placement_Upgrade?.push(placements[i]);
+//       }
+//       placement_check = Placement_Upgrade?.filter((placement) => placement?.Upgrade?.level > Selected?.Upgrade?.level);
+//     }
 
-const FindUsers_Purchase = async (req, res) => {
-  const user = req.headers.authorization.split(' ')[1]
-  const user_info = jwt_decode(user)
-  const { pkg } = req.body
-
-  let placement, Direct_reff
-
-  // res.json({user_info})
-  // return false
-
-  // Find profile with left but no right
-  const findLeft = await Profile.findOne({
-    where: {
-      left: null,
-      right: { [Sequelize.Op.ne]: null },
-      pkg: pkg,
-    },
-  });
-
-  // Find profile with right but no left
-  const findRight = await Profile.findOne({
-    where: {
-      left: { [Sequelize.Op.ne]: null },
-      right: null,
-      pkg: pkg,
-    },
-  });
-
-  // Find profile with neither left nor right
-  const NoSpace = await Profile.findOne({
-    where: {
-      left: null,
-      right: null,
-      pkg: pkg
-    },
-  });
+//     const Only_admin = await User.findOne(
+//       {
+//         where: { id: 1 },
+//         include: { model: User_Profile }
+//       }
+//     )
 
 
-  if (findRight) {
-    const placements = await User.findOne({
-      where: { id: findRight?.user_id },
-      include: { model: User_Profile },
-    });
-    placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C";
-  } else {
 
-    if (findLeft) {
-      const placements = await User.findOne({
-        where: { id: findLeft?.user_id },
-        include: { model: User_Profile },
-      });
-      placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C";
-    } else {
+//     Find_placement = await User.findOne(
+//       {
+//         where: { id: placement_check?.length > 0 ? placement_check[0]?.user_id : Only_admin.id },
+//         include: { model: User_Profile }
+//       }
+//     )
+//     Find_Reff = await User.findOne(
+//       {
+//         where: { id: FIndUser?.Profile?.refferal },
+//         include: { model: User_Profile }
+//       }
+//     )
+//     res.json({
+//       placement: Find_placement.User_profile.wallet_address,
+//       Direct_reff: Find_Reff.User_profile.wallet_address
+//     })
+//   }
+// }
 
-      if (NoSpace) {
-        const placements = await User.findOne({
-          where: { id: NoSpace?.user_id },
-          include: { model: User_Profile },
-        });
-        placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C";
-      } else {
-        placement = "0x556499eda344C4E27c793f7249339f3FAf12Bc2C"
-      }
-    }
-  }
+// const FindUsers_Purchase = async (req, res) => {
+//   const user = req.headers.authorization.split(' ')[1]
+//   const user_info = jwt_decode(user)
+//   const { pkg } = req.body
 
-  const Own_account = await Refferal.findOne({
-    where: { user_id: user_info.id }
-  })
+//   let placement, Direct_reff
 
-  if (Own_account) {
-    const Direct_reffx = await User.findOne({
-      where: { id: Own_account.refferal },
-      include: { model: User_Profile }
-    })
-    Direct_reff = Direct_reffx?.User_profile?.wallet_address
-  } else {
-    Direct_reff = "0x556499eda344C4E27c793f7249339f3FAf12Bc2C"
-  }
+//   // res.json({user_info})
+//   // return false
 
-  res.json({
-    placement,
-    Direct_reff
-  });
+//   // Find profile with left but no right
+//   const findLeft = await Profile.findOne({
+//     where: {
+//       left: null,
+//       right: { [Sequelize.Op.ne]: null },
+//       pkg: pkg,
+//     },
+//   });
 
-}
+//   // Find profile with right but no left
+//   const findRight = await Profile.findOne({
+//     where: {
+//       left: { [Sequelize.Op.ne]: null },
+//       right: null,
+//       pkg: pkg,
+//     },
+//   });
 
-const Upgrades = async (req, res) => {
-  const { pkg,user_id } = req.body
-  const Upgrades1 = 10;
-  const Upgrades2 = 20;
-  const Upgrades3 = 50;
-  const Upgrades4 = 100;
-  const Upgrades5 = 200;
-  const Upgrades6 = 350;
+//   // Find profile with neither left nor right
+//   const NoSpace = await Profile.findOne({
+//     where: {
+//       left: null,
+//       right: null,
+//       pkg: pkg
+//     },
+//   });
 
-  // const userx = req.headers.authorization.split(" ")[1];
-  // const user_info = jwt_decode(userx);
-  const find_income = await TotalIncome.findOne({ where: { user_id } })
-  const find_admin = await TotalIncome.findOne({ where: { user_id: 1 } })
-  const Selected = await Profile.findOne({
-    where: { user_id, pkg: pkg },
-    include: { model: Upgrade }
-  });
-  //   res.json(Selected)
-  // return false
-  const SearchUser = await User.findOne({ where: { id: user_id } })
 
-  const findReff = await Profile.findOne({
-    where: { user_id: Selected.refferal },
-    include: { model: wallet }
-  });
-  const adminWallet = await Profile.findOne({
-    where: { user_id: 1 },
-    include: { model: wallet }
-  });
+//   if (findRight) {
+//     const placements = await User.findOne({
+//       where: { id: findRight?.user_id },
+//       include: { model: User_Profile },
+//     });
+//     placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C";
+//   } else {
 
-  //placement start
-  let placements = [];
-  let Placement_Upgrade = []
-  let placement_check
+//     if (findLeft) {
+//       const placements = await User.findOne({
+//         where: { id: findLeft?.user_id },
+//         include: { model: User_Profile },
+//       });
+//       placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C";
+//     } else {
 
-  let placement = await Profile.findOne(
-    {
-      where: {
-        [Sequelize.Op.or]: [
-          { left: Selected.user_id, pkg: pkg },
-          { right: Selected.user_id, pkg: pkg },
-        ],
-      },
-      include: [
-        { model: Pakage, attributes: ["pkg_name", "pkg_price"] },
-        { model: Upgrade },
-        { model: wallet },
-      ],
-    }
-  );
+//       if (NoSpace) {
+//         const placements = await User.findOne({
+//           where: { id: NoSpace?.user_id },
+//           include: { model: User_Profile },
+//         });
+//         placement = placements?.User_profile?.wallet_address || "0x556499eda344C4E27c793f7249339f3FAf12Bc2C";
+//       } else {
+//         placement = "0x556499eda344C4E27c793f7249339f3FAf12Bc2C"
+//       }
+//     }
+//   }
 
-  if (placement) {
-    placements.push(placement);
-  }
+//   const Own_account = await Refferal.findOne({
+//     where: { user_id: user_info.id }
+//   })
 
-  for (let i = 2; i <= 16; i++) {
+//   if (Own_account) {
+//     const Direct_reffx = await User.findOne({
+//       where: { id: Own_account.refferal },
+//       include: { model: User_Profile }
+//     })
+//     Direct_reff = Direct_reffx?.User_profile?.wallet_address
+//   } else {
+//     Direct_reff = "0x556499eda344C4E27c793f7249339f3FAf12Bc2C"
+//   }
 
-    if (!placement) {
-      break;
-    }
-    placement = await Profile.findOne({
-      where: {
-        [Sequelize.Op.or]: [
-          { left: placement.user_id, pkg: pkg },
-          { right: placement.user_id, pkg: pkg },
-        ],
-      },
-      include: [
-        { model: Pakage, attributes: ["pkg_name", "pkg_price", "user_id"] },
-        { model: Upgrade },
-        { model: wallet },
-      ],
-    });
-    if (placement) {
-      placements.push(placement);
-    }
-  }
-  // transactionUpgraded
-  const transactionUpgradeToAdmin = `Upgraded tax for admin from ${SearchUser.username}`
-  const transactionFromReff = `Your Refferal  ${SearchUser.username} Upgraded a Package`
-  const transactionUpgraded = `Package Upgraded from ${SearchUser.username}`
-  const AllTaxAdmin = `All Tax's to Admin from ${SearchUser.username}`
-  const Upgrade_pkg = `Upgraded package from ${SearchUser.username}`
-  const Reff_pkg = `Referal fund from ${SearchUser.username}`
-  const Taxforadminfrom = `Tax for admin from ${SearchUser.username}`
-  const Placementforadminfrom = `Placement for admin from ${SearchUser.username}`
-  const Reff_transac = `Refferal trasaction from ${SearchUser.username}`
-  const placement_pay = `Placement payment from ${SearchUser.username}`
-  const placement_Transaction = `Placement payment Transaction from ${SearchUser.username}`
+//   res.json({
+//     placement,
+//     Direct_reff
+//   });
 
-  if (Selected.pkg == Upgrades4) {
-    for (let i = 1; i < placements.length; i += 2) {
-      Placement_Upgrade.push(placements[i]);
-    }
-    placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level > Selected?.Upgrade?.level);
-    // res.json(placement_check)
-    // return false
-    if (placement_check.length === 0) {
-      switch (Selected.Upgrade.level) {
-        case 0: No_placement_CUTT_TO_ALL(
-          1,
-          125,
-          user_id,
-          Upgrades4,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom,
-          res
-        )
-          break
-        case 1: No_placement_CUTT_TO_ALL(
-          2,
-          281.250,
-          user_id,
-          Upgrades4,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 2: No_placement_CUTT_TO_ALL(
-          3,
-          632.813,
-          user_id,
-          Upgrades4,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 3: No_placement_CUTT_TO_ALL(
-          4,
-          1423.828,
-          user_id,
-          Upgrades4,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 4: No_placement_CUTT_TO_ALL(
-          5,
-          3203.613,
-          user_id,
-          Upgrades4,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 5: No_placement_CUTT_TO_ALL(
-          6,
-          7208.130,
-          user_id,
-          Upgrades4,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 6: No_placement_CUTT_TO_ALL(
-          7,
-          16218.292,
-          user_id,
-          Upgrades4,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 7: No_placement_CUTT_TO_ALL(
-          8,
-          36491.158,
-          user_id,
-          Upgrades4,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        default:
-          // Handle the default case if needed
-          break;
-      }
-      res.status(200).json('Upgraded successfully!');
-    } //Upgrades4
-    else {
-      switch (Selected.Upgrade.level) {
-        case 0: GotPlacement_CUTT_TO_ALL(
-          1,
-          126,
-          user_id,
-          Upgrades4,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 1: GotPlacement_CUTT_TO_ALL(
-          2,
-          281.250,
-          user_id,
-          Upgrades4,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
+// }
 
-          break
-        case 2: GotPlacement_CUTT_TO_ALL(
-          3,
-          632.813,
-          user_id,
-          Upgrades4,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 3: GotPlacement_CUTT_TO_ALL(
-          4,
-          1423.828,
-          user_id,
-          Upgrades4,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 4: GotPlacement_CUTT_TO_ALL(
-          5,
-          3203.613,
-          user_id,
-          Upgrades4,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 5: GotPlacement_CUTT_TO_ALL(
-          6,
-          7208.130,
-          user_id,
-          Upgrades4,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 6: GotPlacement_CUTT_TO_ALL(
-          7,
-          16218.292,
-          user_id,
-          Upgrades4,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 7: GotPlacement_CUTT_TO_ALL(
-          8,
-          36491.158,
-          user_id,
-          Upgrades4,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          //upgrade levels
-          await Upgrade.update({
-            level: 8,
-            upgrade: 36491.158
-          }, {
-            where:
-            {
-              user_id: user_id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // // upradde transaction
-          // await Transaction.create(
-          //   {
-          //     from: user_id,
-          //     to: 1,
-          //     reason: Upgrade_pkg,
-          //     payment: 36491.158,
-          //     user_id: user_id
-          //   })
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_id,
-              to: user_id,
-              reason: Upgrade_pkg,
-              payment: 36491.158,
-              user_id: user_id
-            })
+// const Upgrades = async (req, res) => {
+//   const { pkg,user_id } = req.body
+//   const Upgrades1 = 10;
+//   const Upgrades2 = 20;
+//   const Upgrades3 = 50;
+//   const Upgrades4 = 100;
+//   const Upgrades5 = 200;
+//   const Upgrades6 = 350;
 
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 7298.232
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 7298.232 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 9122.789,
-              user_id: user_id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 25549.810
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 25549.810 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
+//   // const userx = req.headers.authorization.split(" ")[1];
+//   // const user_info = jwt_decode(userx);
+//   const find_income = await TotalIncome.findOne({ where: { user_id } })
+//   const find_admin = await TotalIncome.findOne({ where: { user_id: 1 } })
+//   const Selected = await Profile.findOne({
+//     where: { user_id, pkg: pkg },
+//     include: { model: Upgrade }
+//   });
+//   //   res.json(Selected)
+//   // return false
+//   const SearchUser = await User.findOne({ where: { id: user_id } })
 
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 27368.368,
-              user_id: user_id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 3649.116
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 3649.116 },
-            { where: { user_id: 1 } }
-          );
+//   const findReff = await Profile.findOne({
+//     where: { user_id: Selected.refferal },
+//     include: { model: wallet }
+//   });
+//   const adminWallet = await Profile.findOne({
+//     where: { user_id: 1 },
+//     include: { model: wallet }
+//   });
 
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 3649.116,
-              user_id: user_id
-            })
-          break
-        default:
-          // Handle the default case if needed
-          break;
-      }
-      res.status(200).json('Upgraded successfully!'); // Send a success response
-    }
-  } else if (Selected.pkg == Upgrades1) {
-    for (let i = 1; i < placements.length; i += 2) {
-      Placement_Upgrade.push(placements[i]);
-    }
-    placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level > Selected?.Upgrade?.level);
-    // res.json(placement_check)
-    // return false
-    if (placement_check.length === 0) {
-      switch (Selected.Upgrade.level) {
-        case 0: No_placement_CUTT_TO_ALL(
-          1,
-          12.5,
-          user_id,
-          Upgrades1,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 1: No_placement_CUTT_TO_ALL(
-          2,
-          28.125,
-          user_id,
-          Upgrades1,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 2: No_placement_CUTT_TO_ALL(
-          3,
-          63.281,
-          user_id,
-          Upgrades1,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 3: No_placement_CUTT_TO_ALL(
-          4,
-          142.383,
-          user_id,
-          Upgrades1,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 4: No_placement_CUTT_TO_ALL(
-          5,
-          320.361,
-          user_id,
-          Upgrades1,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 5: No_placement_CUTT_TO_ALL(
-          6,
-          720.813,
-          user_id,
-          Upgrades1,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 6: No_placement_CUTT_TO_ALL(
-          7,
-          1621.829,
-          user_id,
-          Upgrades1,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 7: No_placement_CUTT_TO_ALL(
-          8,
-          3649.116,
-          user_id,
-          Upgrades1,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        default:
-          // Handle the default case if needed
-          break;
-      }
-      res.status(200).json('Updated successfully!');
-    }
-    else {
-      switch (Selected?.Upgrade?.level) {
-        case 0: GotPlacement_CUTT_TO_ALL(
-          1,
-          12.5,
-          user_id,
-          Upgrades1,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 1: GotPlacement_CUTT_TO_ALL(
-          2,
-          28.125,
-          user_id,
-          Upgrades1,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 2: GotPlacement_CUTT_TO_ALL(
-          3,
-          63.281,
-          user_id,
-          Upgrades1,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 3: GotPlacement_CUTT_TO_ALL(
-          4,
-          142.383,
-          user_id,
-          Upgrades1,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 4: GotPlacement_CUTT_TO_ALL(
-          5,
-          320.361,
-          user_id,
-          Upgrades1,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 5: GotPlacement_CUTT_TO_ALL(
-          6,
-          720.813,
-          user_id,
-          Upgrades1,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          //upgrade levels
-          await Upgrade.update({
-            level: 6,
-            upgrade: 720.813
-          }, {
-            where:
-            {
-              user_id: user_id,
-              pkg_price: pkg
-            }
-          }
-          )
-          // upradde transaction
-          await Transaction.create(
-            {
-              from: user_id,
-              to: user_id,
-              reason: Upgrade_pkg,
-              payment: 720.813,
-              user_id: user_id
-            })
+//   //placement start
+//   let placements = [];
+//   let Placement_Upgrade = []
+//   let placement_check
 
-          //payment to referal
-          await wallet.update(
-            {
-              payment: findReff.wallet.payment + 144.163
-            }
-            ,
-            {
-              where: {
-                user_id: findReff.id
-              }
-            })
-          // payment in 
-          await TotalIncome.update(
-            { income: find_income.income + 144.163 },
-            { where: { user_id: findReff.id } }
-          );
-          //payment refferal transaction
-          await Transaction.create(
-            {
-              from: user_id,
-              to: findReff.id,
-              reason: Reff_transac,
-              payment: 180.203,
-              user_id: user_id
-            })
-          // placement wallet
-          await wallet.update(
-            {
-              payment: placement_check[0].wallet.payment + 504.569
-            }
-            ,
-            {
-              where: {
-                user_id: placement_check[0].user_id
-              }
-            })
-          // placement wala
-          await TotalIncome.update(
-            { income: find_income.income + 504.569 },
-            { where: { user_id: placement_check[0].user_id } }
-          );
+//   let placement = await Profile.findOne(
+//     {
+//       where: {
+//         [Sequelize.Op.or]: [
+//           { left: Selected.user_id, pkg: pkg },
+//           { right: Selected.user_id, pkg: pkg },
+//         ],
+//       },
+//       include: [
+//         { model: Pakage, attributes: ["pkg_name", "pkg_price"] },
+//         { model: Upgrade },
+//         { model: wallet },
+//       ],
+//     }
+//   );
 
-          // placement transaction
-          await Transaction.create(
-            {
-              from: user_id,
-              to: placement_check[0].user_id,
-              reason: placement_Transaction,
-              payment: 540.610,
-              user_id: user_id
-            })
-          // admin wallet
-          await wallet.update(
-            {
-              payment: adminWallet.wallet.payment + 72.081
-            }
-            ,
-            {
-              where: {
-                user_id: 1
-              }
-            })
-          //admin total income
-          await TotalIncome.update(
-            { income: find_admin.income + 72.081 },
-            { where: { user_id: 1 } }
-          );
+//   if (placement) {
+//     placements.push(placement);
+//   }
 
-          // admin wallet transaction
-          await Transaction.create(
-            {
-              from: user_id,
-              to: 1,
-              reason: Taxforadminfrom,
-              payment: 72.081,
-              user_id: user_id
-            })
-          break
-        case 6: GotPlacement_CUTT_TO_ALL(
-          7,
-          1621.829,
-          user_id,
-          Upgrades1,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 7: GotPlacement_CUTT_TO_ALL(
-          8,
-          3649.116,
-          user_id,
-          Upgrades1,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        default:
-          // Handle the default case if needed
-          break;
-      }
-      res.status(200).json('Upgrade successful'); // Send a success response
-    }
-  } else if (Selected.pkg == Upgrades2) {
-    for (let i = 1; i < placements.length; i += 2) {
-      Placement_Upgrade.push(placements[i]);
-    }
-    placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level > Selected?.Upgrade?.level);
+//   for (let i = 2; i <= 16; i++) {
 
-    //user ka level
-    if (placement_check.length === 0) {
-      switch (Selected.Upgrade.level) {
-        case 0: No_placement_CUTT_TO_ALL(
-          1,
-          25,
-          user_id,
-          Upgrades2,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 1: No_placement_CUTT_TO_ALL(
-          2,
-          56.250,
-          user_id,
-          Upgrades2,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 2: No_placement_CUTT_TO_ALL(
-          3,
-          126.563,
-          user_id,
-          Upgrades2,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 3: No_placement_CUTT_TO_ALL(
-          4,
-          284.766,
-          user_id,
-          Upgrades2,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 4: No_placement_CUTT_TO_ALL(
-          5,
-          640.723,
-          user_id,
-          Upgrades2,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 5: No_placement_CUTT_TO_ALL(
-          6,
-          1441.626,
-          user_id,
-          Upgrades2,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 6: No_placement_CUTT_TO_ALL(
-          7,
-          3243.658,
-          user_id,
-          Upgrades2,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 7: No_placement_CUTT_TO_ALL(
-          8,
-          7298.232,
-          user_id,
-          Upgrades2,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        default:
-          // Handle the default case if needed
-          break;
-      }
-      res.status(200).json('Updated successfully!');
-    }
-    else {
-      switch (Selected.Upgrade.level) {
-        case 0: GotPlacement_CUTT_TO_ALL(
-          1,
-          25,
-          user_id,
-          Upgrades2,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 1: GotPlacement_CUTT_TO_ALL(
-          2,
-          56.250,
-          user_id,
-          Upgrades2,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 2: GotPlacement_CUTT_TO_ALL(
-          3,
-          126.563,
-          user_id,
-          Upgrades2,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 3: GotPlacement_CUTT_TO_ALL(
-          4,
-          284.766,
-          user_id,
-          Upgrades2,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 4: GotPlacement_CUTT_TO_ALL(
-          5,
-          640.723,
-          user_id,
-          Upgrades2,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 5: GotPlacement_CUTT_TO_ALL(
-          6,
-          1441.626,
-          user_id,
-          Upgrades2,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 6: GotPlacement_CUTT_TO_ALL(
-          7,
-          3243.658,
-          user_id,
-          Upgrades2,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 7: GotPlacement_CUTT_TO_ALL(
-          8,
-          7298.232,
-          user_id,
-          Upgrades2,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        default:
-          // Handle the default case if needed
-          break;
-      }
-      res.status(200).json('Upgrade successful'); // Send a success response
-    }
-  } else if (Selected.pkg == Upgrades3) {
-    for (let i = 1; i < placements.length; i += 2) {
-      Placement_Upgrade.push(placements[i]);
-    }
-    placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level > Selected?.Upgrade?.level);
+//     if (!placement) {
+//       break;
+//     }
+//     placement = await Profile.findOne({
+//       where: {
+//         [Sequelize.Op.or]: [
+//           { left: placement.user_id, pkg: pkg },
+//           { right: placement.user_id, pkg: pkg },
+//         ],
+//       },
+//       include: [
+//         { model: Pakage, attributes: ["pkg_name", "pkg_price", "user_id"] },
+//         { model: Upgrade },
+//         { model: wallet },
+//       ],
+//     });
+//     if (placement) {
+//       placements.push(placement);
+//     }
+//   }
+//   // transactionUpgraded
+//   const transactionUpgradeToAdmin = `Upgraded tax for admin from ${SearchUser.username}`
+//   const transactionFromReff = `Your Refferal  ${SearchUser.username} Upgraded a Package`
+//   const transactionUpgraded = `Package Upgraded from ${SearchUser.username}`
+//   const AllTaxAdmin = `All Tax's to Admin from ${SearchUser.username}`
+//   const Upgrade_pkg = `Upgraded package from ${SearchUser.username}`
+//   const Reff_pkg = `Referal fund from ${SearchUser.username}`
+//   const Taxforadminfrom = `Tax for admin from ${SearchUser.username}`
+//   const Placementforadminfrom = `Placement for admin from ${SearchUser.username}`
+//   const Reff_transac = `Refferal trasaction from ${SearchUser.username}`
+//   const placement_pay = `Placement payment from ${SearchUser.username}`
+//   const placement_Transaction = `Placement payment Transaction from ${SearchUser.username}`
 
-    //user ka level
-    if (placement_check.length === 0) {
-      switch (Selected.Upgrade.level) {
-        case 0: No_placement_CUTT_TO_ALL(
-          1,
-          62.5,
-          user_id,
-          Upgrades3,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 1: No_placement_CUTT_TO_ALL(
-          2,
-          140.625,
-          user_id,
-          Upgrades3,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 2: No_placement_CUTT_TO_ALL(
-          3,
-          316.406,
-          user_id,
-          Upgrades3,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 3: No_placement_CUTT_TO_ALL(
-          4,
-          711.914,
-          user_id,
-          Upgrades3,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 4: No_placement_CUTT_TO_ALL(
-          5,
-          1601.807,
-          user_id,
-          Upgrades3,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 5: No_placement_CUTT_TO_ALL(
-          6,
-          3604.065,
-          user_id,
-          Upgrades3,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 6: No_placement_CUTT_TO_ALL(
-          7,
-          8109.146,
-          user_id,
-          Upgrades3,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 7: No_placement_CUTT_TO_ALL(
-          8,
-          18245.579,
-          user_id,
-          Upgrades3,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        default:
-          // Handle the default case if needed
-          break;
-      }
-      res.status(200).json('Updated successfully!');
-    }
-    else {
-      switch (Selected.Upgrade.level) {
-        case 0: GotPlacement_CUTT_TO_ALL(
-          1,
-          62.5,
-          user_id,
-          Upgrades3,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 1: GotPlacement_CUTT_TO_ALL(
-          2,
-          140.625,
-          user_id,
-          Upgrades3,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 2: GotPlacement_CUTT_TO_ALL(
-          3,
-          316.406,
-          user_id,
-          Upgrades3,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 3: GotPlacement_CUTT_TO_ALL(
-          4,
-          711.914,
-          user_id,
-          Upgrades3,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 4: GotPlacement_CUTT_TO_ALL(
-          5,
-          1601.807,
-          user_id,
-          Upgrades3,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 5: GotPlacement_CUTT_TO_ALL(
-          6,
-          3604.065,
-          user_id,
-          Upgrades3,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 6: GotPlacement_CUTT_TO_ALL(
-          7,
-          8109.146,
-          user_id,
-          Upgrades3,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 7: GotPlacement_CUTT_TO_ALL(
-          8,
-          18245.579,
-          user_id,
-          Upgrades3,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        default:
-          // Handle the default case if needed
-          break;
-      }
-      res.status(200).json('Upgrade successful'); // Send a success response
-    }
-  } else if (Selected.pkg == Upgrades5) {
-    for (let i = 1; i < placements.length; i += 2) {
-      Placement_Upgrade.push(placements[i]);
-    }
-    placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level > Selected?.Upgrade?.level);
+//   if (Selected.pkg == Upgrades4) {
+//     for (let i = 1; i < placements.length; i += 2) {
+//       Placement_Upgrade.push(placements[i]);
+//     }
+//     placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level > Selected?.Upgrade?.level);
+//     // res.json(placement_check)
+//     // return false
+//     if (placement_check.length === 0) {
+//       switch (Selected.Upgrade.level) {
+//         case 0: No_placement_CUTT_TO_ALL(
+//           1,
+//           125,
+//           user_id,
+//           Upgrades4,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom,
+//           res
+//         )
+//           break
+//         case 1: No_placement_CUTT_TO_ALL(
+//           2,
+//           281.250,
+//           user_id,
+//           Upgrades4,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 2: No_placement_CUTT_TO_ALL(
+//           3,
+//           632.813,
+//           user_id,
+//           Upgrades4,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 3: No_placement_CUTT_TO_ALL(
+//           4,
+//           1423.828,
+//           user_id,
+//           Upgrades4,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 4: No_placement_CUTT_TO_ALL(
+//           5,
+//           3203.613,
+//           user_id,
+//           Upgrades4,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 5: No_placement_CUTT_TO_ALL(
+//           6,
+//           7208.130,
+//           user_id,
+//           Upgrades4,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 6: No_placement_CUTT_TO_ALL(
+//           7,
+//           16218.292,
+//           user_id,
+//           Upgrades4,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 7: No_placement_CUTT_TO_ALL(
+//           8,
+//           36491.158,
+//           user_id,
+//           Upgrades4,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         default:
+//           // Handle the default case if needed
+//           break;
+//       }
+//       res.status(200).json('Upgraded successfully!');
+//     } //Upgrades4
+//     else {
+//       switch (Selected.Upgrade.level) {
+//         case 0: GotPlacement_CUTT_TO_ALL(
+//           1,
+//           126,
+//           user_id,
+//           Upgrades4,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 1: GotPlacement_CUTT_TO_ALL(
+//           2,
+//           281.250,
+//           user_id,
+//           Upgrades4,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
 
-    //user ka level
-    if (placement_check.length === 0) {
-      switch (Selected.Upgrade.level) {
-        case 0: No_placement_CUTT_TO_ALL(
-          1,
-          250,
-          user_id,
-          Upgrades5,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 1: No_placement_CUTT_TO_ALL(
-          2,
-          562.5,
-          user_id,
-          Upgrades5,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 2: No_placement_CUTT_TO_ALL(
-          3,
-          1265.625,
-          user_id,
-          Upgrades5,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 3: No_placement_CUTT_TO_ALL(
-          4,
-          2847.656,
-          user_id,
-          Upgrades5,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 4: No_placement_CUTT_TO_ALL(
-          5,
-          6407.227,
-          user_id,
-          Upgrades5,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 5: No_placement_CUTT_TO_ALL(
-          6,
-          14416.260,
-          user_id,
-          Upgrades5,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 6: No_placement_CUTT_TO_ALL(
-          7,
-          32436.584,
-          user_id,
-          Upgrades5,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 7: No_placement_CUTT_TO_ALL(
-          8,
-          72982.315,
-          user_id,
-          Upgrades5,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        default:
-          // Handle the default case if needed
-          break;
-      }
-      res.status(200).json('Updated successfully!');
-    }
-    else {
-      switch (Selected.Upgrade.level) {
-        case 0: GotPlacement_CUTT_TO_ALL(
-          1,
-          250,
-          user_id,
-          Upgrades5,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 1: GotPlacement_CUTT_TO_ALL(
-          2,
-          562.5,
-          user_id,
-          Upgrades5,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 2: GotPlacement_CUTT_TO_ALL(
-          3,
-          1265.625,
-          user_id,
-          Upgrades5,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 3: GotPlacement_CUTT_TO_ALL(
-          4,
-          2847.565,
-          user_id,
-          Upgrades5,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 4: GotPlacement_CUTT_TO_ALL(
-          5,
-          6407.227,
-          user_id,
-          Upgrades5,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 5: GotPlacement_CUTT_TO_ALL(
-          6,
-          14416.260,
-          user_id,
-          Upgrades5,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 6: GotPlacement_CUTT_TO_ALL(
-          7,
-          32436.584,
-          user_id,
-          Upgrades5,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 7: GotPlacement_CUTT_TO_ALL(
-          8,
-          72982.315,
-          user_id,
-          Upgrades5,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        default:
-          // Handle the default case if needed
-          break;
-      }
-      res.status(200).json('Upgrade successful'); // Send a success response
-    }
-  } else if (Selected.pkg == Upgrades6) {
-    for (let i = 1; i < placements.length; i += 2) {
-      Placement_Upgrade.push(placements[i]);
-    }
-    placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level > Selected?.Upgrade?.level);
+//           break
+//         case 2: GotPlacement_CUTT_TO_ALL(
+//           3,
+//           632.813,
+//           user_id,
+//           Upgrades4,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 3: GotPlacement_CUTT_TO_ALL(
+//           4,
+//           1423.828,
+//           user_id,
+//           Upgrades4,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 4: GotPlacement_CUTT_TO_ALL(
+//           5,
+//           3203.613,
+//           user_id,
+//           Upgrades4,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 5: GotPlacement_CUTT_TO_ALL(
+//           6,
+//           7208.130,
+//           user_id,
+//           Upgrades4,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 6: GotPlacement_CUTT_TO_ALL(
+//           7,
+//           16218.292,
+//           user_id,
+//           Upgrades4,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 7: GotPlacement_CUTT_TO_ALL(
+//           8,
+//           36491.158,
+//           user_id,
+//           Upgrades4,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           //upgrade levels
+//           await Upgrade.update({
+//             level: 8,
+//             upgrade: 36491.158
+//           }, {
+//             where:
+//             {
+//               user_id: user_id,
+//               pkg_price: pkg
+//             }
+//           }
+//           )
+//           // // upradde transaction
+//           // await Transaction.create(
+//           //   {
+//           //     from: user_id,
+//           //     to: 1,
+//           //     reason: Upgrade_pkg,
+//           //     payment: 36491.158,
+//           //     user_id: user_id
+//           //   })
+//           // upradde transaction
+//           await Transaction.create(
+//             {
+//               from: user_id,
+//               to: user_id,
+//               reason: Upgrade_pkg,
+//               payment: 36491.158,
+//               user_id: user_id
+//             })
 
-    //user ka level
-    if (placement_check.length === 0) {
-      switch (Selected.Upgrade.level) {
-        case 0: No_placement_CUTT_TO_ALL(
-          1,
-          438,
-          user_id,
-          Upgrades6,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 1: No_placement_CUTT_TO_ALL(
-          2,
-          984.4,
-          user_id,
-          Upgrades6,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 2: No_placement_CUTT_TO_ALL(
-          3,
-          2214.844,
-          user_id,
-          Upgrades6,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 3: No_placement_CUTT_TO_ALL(
-          4,
-          4983.398,
-          user_id,
-          Upgrades6,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 4: No_placement_CUTT_TO_ALL(
-          5,
-          11212.646,
-          user_id,
-          Upgrades6,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 5: No_placement_CUTT_TO_ALL(
-          6,
-          25228.455,
-          user_id,
-          Upgrades6,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 6: No_placement_CUTT_TO_ALL(
-          7,
-          56764.023,
-          user_id,
-          Upgrades6,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        case 7: No_placement_CUTT_TO_ALL(
-          8,
-          127719.051,
-          user_id,
-          Upgrades6,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          Placementforadminfrom
-        )
-          break
-        default:
-          // Handle the default case if needed
-          break;
-      }
-      res.status(200).json('Updated successfully!');
-    }
-    else {
-      switch (Selected.Upgrade.level) {
-        case 0: GotPlacement_CUTT_TO_ALL(
-          1,
-          438,
-          user_id,
-          Upgrades6,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 1: GotPlacement_CUTT_TO_ALL(
-          2,
-          984.4,
-          user_id,
-          Upgrades6,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 2: GotPlacement_CUTT_TO_ALL(
-          3,
-          2214.844,
-          user_id,
-          Upgrades6,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 3: GotPlacement_CUTT_TO_ALL(
-          4,
-          4983.398,
-          user_id,
-          Upgrades6,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 4: GotPlacement_CUTT_TO_ALL(
-          5,
-          11212.646,
-          user_id,
-          Upgrades6,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 5: GotPlacement_CUTT_TO_ALL(
-          6,
-          25228.455,
-          user_id,
-          Upgrades6,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 6: GotPlacement_CUTT_TO_ALL(
-          7,
-          56764.023,
-          user_id,
-          Upgrades6,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        case 7: GotPlacement_CUTT_TO_ALL(
-          8,
-          127719.051,
-          user_id,
-          Upgrades6,
-          findReff,
-          find_admin,
-          find_income,
-          adminWallet,
-          placement_check,
-          placement_pay,
-          transactionUpgradeToAdmin,
-          transactionFromReff,
-          AllTaxAdmin,
-          Upgrade_pkg,
-          Taxforadminfrom,
-          Reff_pkg,
-          res
-        )
-          break
-        default:
-          // Handle the default case if needed
-          break;
-      }
-      res.status(200).json('Upgrade successful'); // Send a success response
-    }
-  }
-};
+//           //payment to referal
+//           await wallet.update(
+//             {
+//               payment: findReff.wallet.payment + 7298.232
+//             }
+//             ,
+//             {
+//               where: {
+//                 user_id: findReff.id
+//               }
+//             })
+//           // payment in 
+//           await TotalIncome.update(
+//             { income: find_income.income + 7298.232 },
+//             { where: { user_id: findReff.id } }
+//           );
+//           //payment refferal transaction
+//           await Transaction.create(
+//             {
+//               from: user_id,
+//               to: findReff.id,
+//               reason: Reff_transac,
+//               payment: 9122.789,
+//               user_id: user_id
+//             })
+//           // placement wallet
+//           await wallet.update(
+//             {
+//               payment: placement_check[0].wallet.payment + 25549.810
+//             }
+//             ,
+//             {
+//               where: {
+//                 user_id: placement_check[0].user_id
+//               }
+//             })
+//           // placement wala
+//           await TotalIncome.update(
+//             { income: find_income.income + 25549.810 },
+//             { where: { user_id: placement_check[0].user_id } }
+//           );
+
+//           // placement transaction
+//           await Transaction.create(
+//             {
+//               from: user_id,
+//               to: placement_check[0].user_id,
+//               reason: placement_Transaction,
+//               payment: 27368.368,
+//               user_id: user_id
+//             })
+//           // admin wallet
+//           await wallet.update(
+//             {
+//               payment: adminWallet.wallet.payment + 3649.116
+//             }
+//             ,
+//             {
+//               where: {
+//                 user_id: 1
+//               }
+//             })
+//           //admin total income
+//           await TotalIncome.update(
+//             { income: find_admin.income + 3649.116 },
+//             { where: { user_id: 1 } }
+//           );
+
+//           // admin wallet transaction
+//           await Transaction.create(
+//             {
+//               from: user_id,
+//               to: 1,
+//               reason: Taxforadminfrom,
+//               payment: 3649.116,
+//               user_id: user_id
+//             })
+//           break
+//         default:
+//           // Handle the default case if needed
+//           break;
+//       }
+//       res.status(200).json('Upgraded successfully!'); // Send a success response
+//     }
+//   } else if (Selected.pkg == Upgrades1) {
+//     for (let i = 1; i < placements.length; i += 2) {
+//       Placement_Upgrade.push(placements[i]);
+//     }
+//     placement_check = Placement_Upgrade.filter((placement) => placement.Upgrade.level > Selected?.Upgrade?.level);
+//     // res.json(placement_check)
+//     // return false
+//     if (placement_check.length === 0) {
+//       switch (Selected.Upgrade.level) {
+//         case 0: No_placement_CUTT_TO_ALL(
+//           1,
+//           12.5,
+//           user_id,
+//           Upgrades1,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 1: No_placement_CUTT_TO_ALL(
+//           2,
+//           28.125,
+//           user_id,
+//           Upgrades1,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 2: No_placement_CUTT_TO_ALL(
+//           3,
+//           63.281,
+//           user_id,
+//           Upgrades1,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 3: No_placement_CUTT_TO_ALL(
+//           4,
+//           142.383,
+//           user_id,
+//           Upgrades1,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 4: No_placement_CUTT_TO_ALL(
+//           5,
+//           320.361,
+//           user_id,
+//           Upgrades1,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 5: No_placement_CUTT_TO_ALL(
+//           6,
+//           720.813,
+//           user_id,
+//           Upgrades1,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 6: No_placement_CUTT_TO_ALL(
+//           7,
+//           1621.829,
+//           user_id,
+//           Upgrades1,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 7: No_placement_CUTT_TO_ALL(
+//           8,
+//           3649.116,
+//           user_id,
+//           Upgrades1,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         default:
+//           // Handle the default case if needed
+//           break;
+//       }
+//       res.status(200).json('Updated successfully!');
+//     }
+//     else {
+//       switch (Selected?.Upgrade?.level) {
+//         case 0: GotPlacement_CUTT_TO_ALL(
+//           1,
+//           12.5,
+//           user_id,
+//           Upgrades1,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 1: GotPlacement_CUTT_TO_ALL(
+//           2,
+//           28.125,
+//           user_id,
+//           Upgrades1,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 2: GotPlacement_CUTT_TO_ALL(
+//           3,
+//           63.281,
+//           user_id,
+//           Upgrades1,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 3: GotPlacement_CUTT_TO_ALL(
+//           4,
+//           142.383,
+//           user_id,
+//           Upgrades1,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 4: GotPlacement_CUTT_TO_ALL(
+//           5,
+//           320.361,
+//           user_id,
+//           Upgrades1,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 5: GotPlacement_CUTT_TO_ALL(
+//           6,
+//           720.813,
+//           user_id,
+//           Upgrades1,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           //upgrade levels
+//           await Upgrade.update({
+//             level: 6,
+//             upgrade: 720.813
+//           }, {
+//             where:
+//             {
+//               user_id: user_id,
+//               pkg_price: pkg
+//             }
+//           }
+//           )
+//           // upradde transaction
+//           await Transaction.create(
+//             {
+//               from: user_id,
+//               to: user_id,
+//               reason: Upgrade_pkg,
+//               payment: 720.813,
+//               user_id: user_id
+//             })
+
+//           //payment to referal
+//           await wallet.update(
+//             {
+//               payment: findReff.wallet.payment + 144.163
+//             }
+//             ,
+//             {
+//               where: {
+//                 user_id: findReff.id
+//               }
+//             })
+//           // payment in 
+//           await TotalIncome.update(
+//             { income: find_income.income + 144.163 },
+//             { where: { user_id: findReff.id } }
+//           );
+//           //payment refferal transaction
+//           await Transaction.create(
+//             {
+//               from: user_id,
+//               to: findReff.id,
+//               reason: Reff_transac,
+//               payment: 180.203,
+//               user_id: user_id
+//             })
+//           // placement wallet
+//           await wallet.update(
+//             {
+//               payment: placement_check[0].wallet.payment + 504.569
+//             }
+//             ,
+//             {
+//               where: {
+//                 user_id: placement_check[0].user_id
+//               }
+//             })
+//           // placement wala
+//           await TotalIncome.update(
+//             { income: find_income.income + 504.569 },
+//             { where: { user_id: placement_check[0].user_id } }
+//           );
+
+//           // placement transaction
+//           await Transaction.create(
+//             {
+//               from: user_id,
+//               to: placement_check[0].user_id,
+//               reason: placement_Transaction,
+//               payment: 540.610,
+//               user_id: user_id
+//             })
+//           // admin wallet
+//           await wallet.update(
+//             {
+//               payment: adminWallet.wallet.payment + 72.081
+//             }
+//             ,
+//             {
+//               where: {
+//                 user_id: 1
+//               }
+//             })
+//           //admin total income
+//           await TotalIncome.update(
+//             { income: find_admin.income + 72.081 },
+//             { where: { user_id: 1 } }
+//           );
+
+//           // admin wallet transaction
+//           await Transaction.create(
+//             {
+//               from: user_id,
+//               to: 1,
+//               reason: Taxforadminfrom,
+//               payment: 72.081,
+//               user_id: user_id
+//             })
+//           break
+//         case 6: GotPlacement_CUTT_TO_ALL(
+//           7,
+//           1621.829,
+//           user_id,
+//           Upgrades1,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 7: GotPlacement_CUTT_TO_ALL(
+//           8,
+//           3649.116,
+//           user_id,
+//           Upgrades1,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         default:
+//           // Handle the default case if needed
+//           break;
+//       }
+//       res.status(200).json('Upgrade successful'); // Send a success response
+//     }
+//   } else if (Selected.pkg == Upgrades2) {
+//     for (let i = 1; i < placements.length; i += 2) {
+//       Placement_Upgrade.push(placements[i]);
+//     }
+//     placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level > Selected?.Upgrade?.level);
+
+//     //user ka level
+//     if (placement_check.length === 0) {
+//       switch (Selected.Upgrade.level) {
+//         case 0: No_placement_CUTT_TO_ALL(
+//           1,
+//           25,
+//           user_id,
+//           Upgrades2,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 1: No_placement_CUTT_TO_ALL(
+//           2,
+//           56.250,
+//           user_id,
+//           Upgrades2,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 2: No_placement_CUTT_TO_ALL(
+//           3,
+//           126.563,
+//           user_id,
+//           Upgrades2,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 3: No_placement_CUTT_TO_ALL(
+//           4,
+//           284.766,
+//           user_id,
+//           Upgrades2,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 4: No_placement_CUTT_TO_ALL(
+//           5,
+//           640.723,
+//           user_id,
+//           Upgrades2,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 5: No_placement_CUTT_TO_ALL(
+//           6,
+//           1441.626,
+//           user_id,
+//           Upgrades2,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 6: No_placement_CUTT_TO_ALL(
+//           7,
+//           3243.658,
+//           user_id,
+//           Upgrades2,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 7: No_placement_CUTT_TO_ALL(
+//           8,
+//           7298.232,
+//           user_id,
+//           Upgrades2,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         default:
+//           // Handle the default case if needed
+//           break;
+//       }
+//       res.status(200).json('Updated successfully!');
+//     }
+//     else {
+//       switch (Selected.Upgrade.level) {
+//         case 0: GotPlacement_CUTT_TO_ALL(
+//           1,
+//           25,
+//           user_id,
+//           Upgrades2,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 1: GotPlacement_CUTT_TO_ALL(
+//           2,
+//           56.250,
+//           user_id,
+//           Upgrades2,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 2: GotPlacement_CUTT_TO_ALL(
+//           3,
+//           126.563,
+//           user_id,
+//           Upgrades2,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 3: GotPlacement_CUTT_TO_ALL(
+//           4,
+//           284.766,
+//           user_id,
+//           Upgrades2,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 4: GotPlacement_CUTT_TO_ALL(
+//           5,
+//           640.723,
+//           user_id,
+//           Upgrades2,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 5: GotPlacement_CUTT_TO_ALL(
+//           6,
+//           1441.626,
+//           user_id,
+//           Upgrades2,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 6: GotPlacement_CUTT_TO_ALL(
+//           7,
+//           3243.658,
+//           user_id,
+//           Upgrades2,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 7: GotPlacement_CUTT_TO_ALL(
+//           8,
+//           7298.232,
+//           user_id,
+//           Upgrades2,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         default:
+//           // Handle the default case if needed
+//           break;
+//       }
+//       res.status(200).json('Upgrade successful'); // Send a success response
+//     }
+//   } else if (Selected.pkg == Upgrades3) {
+//     for (let i = 1; i < placements.length; i += 2) {
+//       Placement_Upgrade.push(placements[i]);
+//     }
+//     placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level > Selected?.Upgrade?.level);
+
+//     //user ka level
+//     if (placement_check.length === 0) {
+//       switch (Selected.Upgrade.level) {
+//         case 0: No_placement_CUTT_TO_ALL(
+//           1,
+//           62.5,
+//           user_id,
+//           Upgrades3,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 1: No_placement_CUTT_TO_ALL(
+//           2,
+//           140.625,
+//           user_id,
+//           Upgrades3,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 2: No_placement_CUTT_TO_ALL(
+//           3,
+//           316.406,
+//           user_id,
+//           Upgrades3,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 3: No_placement_CUTT_TO_ALL(
+//           4,
+//           711.914,
+//           user_id,
+//           Upgrades3,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 4: No_placement_CUTT_TO_ALL(
+//           5,
+//           1601.807,
+//           user_id,
+//           Upgrades3,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 5: No_placement_CUTT_TO_ALL(
+//           6,
+//           3604.065,
+//           user_id,
+//           Upgrades3,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 6: No_placement_CUTT_TO_ALL(
+//           7,
+//           8109.146,
+//           user_id,
+//           Upgrades3,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 7: No_placement_CUTT_TO_ALL(
+//           8,
+//           18245.579,
+//           user_id,
+//           Upgrades3,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         default:
+//           // Handle the default case if needed
+//           break;
+//       }
+//       res.status(200).json('Updated successfully!');
+//     }
+//     else {
+//       switch (Selected.Upgrade.level) {
+//         case 0: GotPlacement_CUTT_TO_ALL(
+//           1,
+//           62.5,
+//           user_id,
+//           Upgrades3,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 1: GotPlacement_CUTT_TO_ALL(
+//           2,
+//           140.625,
+//           user_id,
+//           Upgrades3,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 2: GotPlacement_CUTT_TO_ALL(
+//           3,
+//           316.406,
+//           user_id,
+//           Upgrades3,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 3: GotPlacement_CUTT_TO_ALL(
+//           4,
+//           711.914,
+//           user_id,
+//           Upgrades3,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 4: GotPlacement_CUTT_TO_ALL(
+//           5,
+//           1601.807,
+//           user_id,
+//           Upgrades3,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 5: GotPlacement_CUTT_TO_ALL(
+//           6,
+//           3604.065,
+//           user_id,
+//           Upgrades3,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 6: GotPlacement_CUTT_TO_ALL(
+//           7,
+//           8109.146,
+//           user_id,
+//           Upgrades3,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 7: GotPlacement_CUTT_TO_ALL(
+//           8,
+//           18245.579,
+//           user_id,
+//           Upgrades3,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         default:
+//           // Handle the default case if needed
+//           break;
+//       }
+//       res.status(200).json('Upgrade successful'); // Send a success response
+//     }
+//   } else if (Selected.pkg == Upgrades5) {
+//     for (let i = 1; i < placements.length; i += 2) {
+//       Placement_Upgrade.push(placements[i]);
+//     }
+//     placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level > Selected?.Upgrade?.level);
+
+//     //user ka level
+//     if (placement_check.length === 0) {
+//       switch (Selected.Upgrade.level) {
+//         case 0: No_placement_CUTT_TO_ALL(
+//           1,
+//           250,
+//           user_id,
+//           Upgrades5,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 1: No_placement_CUTT_TO_ALL(
+//           2,
+//           562.5,
+//           user_id,
+//           Upgrades5,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 2: No_placement_CUTT_TO_ALL(
+//           3,
+//           1265.625,
+//           user_id,
+//           Upgrades5,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 3: No_placement_CUTT_TO_ALL(
+//           4,
+//           2847.656,
+//           user_id,
+//           Upgrades5,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 4: No_placement_CUTT_TO_ALL(
+//           5,
+//           6407.227,
+//           user_id,
+//           Upgrades5,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 5: No_placement_CUTT_TO_ALL(
+//           6,
+//           14416.260,
+//           user_id,
+//           Upgrades5,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 6: No_placement_CUTT_TO_ALL(
+//           7,
+//           32436.584,
+//           user_id,
+//           Upgrades5,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 7: No_placement_CUTT_TO_ALL(
+//           8,
+//           72982.315,
+//           user_id,
+//           Upgrades5,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         default:
+//           // Handle the default case if needed
+//           break;
+//       }
+//       res.status(200).json('Updated successfully!');
+//     }
+//     else {
+//       switch (Selected.Upgrade.level) {
+//         case 0: GotPlacement_CUTT_TO_ALL(
+//           1,
+//           250,
+//           user_id,
+//           Upgrades5,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 1: GotPlacement_CUTT_TO_ALL(
+//           2,
+//           562.5,
+//           user_id,
+//           Upgrades5,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 2: GotPlacement_CUTT_TO_ALL(
+//           3,
+//           1265.625,
+//           user_id,
+//           Upgrades5,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 3: GotPlacement_CUTT_TO_ALL(
+//           4,
+//           2847.565,
+//           user_id,
+//           Upgrades5,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 4: GotPlacement_CUTT_TO_ALL(
+//           5,
+//           6407.227,
+//           user_id,
+//           Upgrades5,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 5: GotPlacement_CUTT_TO_ALL(
+//           6,
+//           14416.260,
+//           user_id,
+//           Upgrades5,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 6: GotPlacement_CUTT_TO_ALL(
+//           7,
+//           32436.584,
+//           user_id,
+//           Upgrades5,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 7: GotPlacement_CUTT_TO_ALL(
+//           8,
+//           72982.315,
+//           user_id,
+//           Upgrades5,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         default:
+//           // Handle the default case if needed
+//           break;
+//       }
+//       res.status(200).json('Upgrade successful'); // Send a success response
+//     }
+//   } else if (Selected.pkg == Upgrades6) {
+//     for (let i = 1; i < placements.length; i += 2) {
+//       Placement_Upgrade.push(placements[i]);
+//     }
+//     placement_check = Placement_Upgrade.filter((placement) => placement?.Upgrade?.level > Selected?.Upgrade?.level);
+
+//     //user ka level
+//     if (placement_check.length === 0) {
+//       switch (Selected.Upgrade.level) {
+//         case 0: No_placement_CUTT_TO_ALL(
+//           1,
+//           438,
+//           user_id,
+//           Upgrades6,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 1: No_placement_CUTT_TO_ALL(
+//           2,
+//           984.4,
+//           user_id,
+//           Upgrades6,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 2: No_placement_CUTT_TO_ALL(
+//           3,
+//           2214.844,
+//           user_id,
+//           Upgrades6,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 3: No_placement_CUTT_TO_ALL(
+//           4,
+//           4983.398,
+//           user_id,
+//           Upgrades6,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 4: No_placement_CUTT_TO_ALL(
+//           5,
+//           11212.646,
+//           user_id,
+//           Upgrades6,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 5: No_placement_CUTT_TO_ALL(
+//           6,
+//           25228.455,
+//           user_id,
+//           Upgrades6,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 6: No_placement_CUTT_TO_ALL(
+//           7,
+//           56764.023,
+//           user_id,
+//           Upgrades6,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         case 7: No_placement_CUTT_TO_ALL(
+//           8,
+//           127719.051,
+//           user_id,
+//           Upgrades6,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           Placementforadminfrom
+//         )
+//           break
+//         default:
+//           // Handle the default case if needed
+//           break;
+//       }
+//       res.status(200).json('Updated successfully!');
+//     }
+//     else {
+//       switch (Selected.Upgrade.level) {
+//         case 0: GotPlacement_CUTT_TO_ALL(
+//           1,
+//           438,
+//           user_id,
+//           Upgrades6,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 1: GotPlacement_CUTT_TO_ALL(
+//           2,
+//           984.4,
+//           user_id,
+//           Upgrades6,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 2: GotPlacement_CUTT_TO_ALL(
+//           3,
+//           2214.844,
+//           user_id,
+//           Upgrades6,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 3: GotPlacement_CUTT_TO_ALL(
+//           4,
+//           4983.398,
+//           user_id,
+//           Upgrades6,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 4: GotPlacement_CUTT_TO_ALL(
+//           5,
+//           11212.646,
+//           user_id,
+//           Upgrades6,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 5: GotPlacement_CUTT_TO_ALL(
+//           6,
+//           25228.455,
+//           user_id,
+//           Upgrades6,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 6: GotPlacement_CUTT_TO_ALL(
+//           7,
+//           56764.023,
+//           user_id,
+//           Upgrades6,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         case 7: GotPlacement_CUTT_TO_ALL(
+//           8,
+//           127719.051,
+//           user_id,
+//           Upgrades6,
+//           findReff,
+//           find_admin,
+//           find_income,
+//           adminWallet,
+//           placement_check,
+//           placement_pay,
+//           transactionUpgradeToAdmin,
+//           transactionFromReff,
+//           AllTaxAdmin,
+//           Upgrade_pkg,
+//           Taxforadminfrom,
+//           Reff_pkg,
+//           res
+//         )
+//           break
+//         default:
+//           // Handle the default case if needed
+//           break;
+//       }
+//       res.status(200).json('Upgrade successful'); // Send a success response
+//     }
+//   }
+// };
 
 const ReffID = async (req, res) => {
   const user = req.headers.authorization.split(' ')[1]
