@@ -5164,7 +5164,7 @@ module.exports = {
   find_Direct_Reff_Transactions,
   userDetail,
   showusers,
-  // Upgrades,
+  Upgrades,
   placementInvest,
   verifyCode,
   verifyEmail,
